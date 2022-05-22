@@ -46,10 +46,12 @@ public:
     }
     void terminate()
     {
-        int status;
+        int status = 0;
         int ret = kill(this->pid_, SIGTERM);
-        printf("kill ret=%d\n", ret);
-        ret = wait(&status);
+        if (ret >= 0) {
+            printf("kill ret=%d\n", ret);
+            ret = wait(&status);
+        }
         sync();
         sync();
         sync();
