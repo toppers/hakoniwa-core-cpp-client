@@ -23,4 +23,5 @@ target_include_directories(
     hako-proxy 
     PRIVATE /usr/local/include
     PRIVATE ${HAKO_CORE_SOURCE_DIR}/third-party/json/single_include
+    PRIVATE ${HAKO_CORE_SOURCE_DIR}/src/include
 )
