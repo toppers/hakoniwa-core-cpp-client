@@ -75,7 +75,6 @@ public:
         return true;
     }
     bool set_binary_path(std::string path) {
-        struct stat buf;
         this->binary_path_.reset();
         this->binary_path_ = std::make_unique<std::string>(path);
         this->the_args.clear();
@@ -114,9 +113,9 @@ private:
         int ret = chdir(mgrp->current_dir_->c_str());
         if (ret >= 0) {
             printf("exec_args_count=%ld\n", mgrp->the_args.size());
-            int i;
+            std::size_t i;
             for (i = 0; i < mgrp->the_args.size(); i++) {
-                printf("the_args[%d]=%s\n", i, mgrp->the_args.at(i).c_str());
+                printf("the_args[%lu]=%s\n", i, mgrp->the_args.at(i).c_str());
                 exec_args[exec_arg_count++] = (char*)mgrp->the_args.at(i).c_str();
             }
             exec_args[exec_arg_count] = NULL;
