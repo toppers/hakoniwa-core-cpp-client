@@ -1,5 +1,5 @@
 #include "lib/hako_client.h"
-#include "proc/hako_process.hpp"
+#include "proxy/proc/hako_process.hpp"
 #include "nlohmann/json.hpp"
 #include <fstream>
 #include <iostream>
