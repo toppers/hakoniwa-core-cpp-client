@@ -40,7 +40,7 @@ static ErcdType init(char* ip_port, HakoniwaProxyControllerType* ctrlp)
     printf("INFO: Notification Setting success\n");
     ctrlp->process.set_current_dir(ctrlp->param["target_exec_dir"]);
     ctrlp->process.set_binary_path(ctrlp->param["target_bin_path"]);
-    for (int i = 0; i < ctrlp->param["target_options"].size(); i++) {
+    for (unsigned long i = 0; i < ctrlp->param["target_options"].size(); i++) {
         ctrlp->process.add_option(ctrlp->param["target_options"][i]);
     }
     return Ercd_OK;
