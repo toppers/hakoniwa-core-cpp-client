@@ -9,6 +9,7 @@ project(hakoniwa-core
 
 enable_testing()
 
+set(HAKO_CMD_SOURCE_DIR "${PROJECT_SOURCE_DIR}/core")
 set(HAKO_CMD_SOURCE_DIR "${PROJECT_SOURCE_DIR}/src/cmd")
 set(HAKO_LIB_SOURCE_DIR "${PROJECT_SOURCE_DIR}/src/lib")
 set(HAKO_PROXY_SOURCE_DIR "${PROJECT_SOURCE_DIR}/src/proxy")
@@ -23,8 +24,9 @@ message(STATUS "BUILD_TYPE" ${BUILD_TYPE})
 message(STATUS "GCOV" ${GCOV})
 
 #add_subdirectory(src/cmd)
-add_subdirectory(src/lib)
+#add_subdirectory(src/lib)
 #add_subdirectory(src/proxy)
+add_subdirectory(core)
 
 #if (test)
 #    add_subdirectory(test)
