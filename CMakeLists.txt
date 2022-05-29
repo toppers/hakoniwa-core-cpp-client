@@ -27,6 +27,7 @@ message(STATUS "GCOV" ${GCOV})
 #add_subdirectory(src/lib)
 add_subdirectory(core)
 add_subdirectory(src/proxy)
+add_subdirectory(src/hakoc)
 
 #if (test)
 #    add_subdirectory(test)
