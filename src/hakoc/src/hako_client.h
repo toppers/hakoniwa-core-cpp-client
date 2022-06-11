@@ -6,8 +6,11 @@
 extern "C" {
 #endif
 
-typedef long long int hako_time_t;
+#include "hako_capi_types.h"
 
+/*
+ * for hakoniwa proxy
+ */
 extern int hako_client_init(const char* asset_name);
 extern hako_time_t hako_client_get_worldtime();
 extern void hako_client_notify_simtime(hako_time_t simtime);
