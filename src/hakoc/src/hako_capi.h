@@ -33,6 +33,7 @@ extern bool hako_asset_reset_feedback(const char* asset_name, bool isOk);
 /*
  * for simevent
  */
+extern bool hako_simevent_init();
 extern int hako_simevent_get_state();
 extern bool hako_simevent_start();
 extern bool hako_simevent_stop();
