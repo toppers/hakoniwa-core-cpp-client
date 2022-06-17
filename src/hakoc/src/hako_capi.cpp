@@ -19,7 +19,7 @@ bool hako_master_init()
         if (hako_master == nullptr) {
             return false;
         }
-        std::shared_ptr<hako::IHakoSimulationEventController> hako_simevent = hako::get_simevent_controller();
+        hako_simevent = hako::get_simevent_controller();
         if (hako_simevent == nullptr) {
             return false;
         }
@@ -81,9 +81,9 @@ bool hako_asset_init()
         hako_asset = hako::create_asset_controller();
         if (hako_asset == nullptr) {
             std::cout << "ERROR: Not found hako-master on this PC" << std::endl;
-            return 1;
+            return false;
         }
-        std::shared_ptr<hako::IHakoSimulationEventController> hako_simevent = hako::get_simevent_controller();
+        hako_simevent = hako::get_simevent_controller();
         if (hako_simevent == nullptr) {
             return false;
         }
@@ -98,15 +98,34 @@ bool hako_asset_register(const char* name, hako_asset_callback_t *callbacks)
 {
     try {
         std::string asset_name(name);
-        AssetCallbackType cbk;
-        cbk.start = callbacks->start;
-        cbk.stop = callbacks->stop;
-        cbk.reset = callbacks->reset;
-        return hako_asset->asset_register(asset_name, cbk);
+        if (callbacks != nullptr) {
+            AssetCallbackType cbk;
+            cbk.start = callbacks->start;
+            cbk.stop = callbacks->stop;
+            cbk.reset = callbacks->reset;
+            return hako_asset->asset_register(asset_name, cbk);
+        }
+        else {
+            return hako_asset->asset_register_polling(asset_name);
+        }
     }
     catch (std::exception *e) {
         hako::logger::get("core")->error(e->what());
         return false;
+    }
+}
+bool hako_asset_register_polling(const char* name)
+{
+    return hako_asset_register(name, nullptr);
+}
+int  hako_asset_get_event(const char* name)
+{
+    try {
+        return (int)hako_asset->asset_get_event(name);
+    }
+    catch (std::exception *e) {
+        hako::logger::get("core")->error(e->what());
+        return (int)HakoSimulationAssetEventType::HakoSimAssetEvent_Error;
     }
 }
 
@@ -185,7 +204,7 @@ bool hako_simevent_init()
 {
     try {
         hako::logger::init("core");
-        std::shared_ptr<hako::IHakoSimulationEventController> hako_simevent = hako::get_simevent_controller();
+        hako_simevent = hako::get_simevent_controller();
         if (hako_simevent == nullptr) {
             return false;
         }

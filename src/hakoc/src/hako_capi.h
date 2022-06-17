@@ -22,6 +22,10 @@ extern hako_time_t hako_master_get_delta_time_usec();
  */
 extern bool hako_asset_init();
 extern bool hako_asset_register(const char* name, hako_asset_callback_t *callbacks);
+
+extern bool hako_asset_register_polling(const char* name);
+extern int  hako_asset_get_event(const char* name);
+
 extern bool hako_asset_unregister(const char* name);
 extern void hako_asset_notify_simtime(const char* name, hako_time_t simtime);
 extern hako_time_t hako_asset_get_worldtime();
