@@ -75,9 +75,12 @@ hako_time_t hako_master_get_delta_time_usec()
  */
 bool hako_asset_init()
 {
+    static bool log_is_initalized = false;
     try {
-        hako::logger::init("core");
-        hako::logger::init("asset");
+        if (log_is_initalized == false) {
+            hako::logger::init("core");
+            log_is_initalized = true;
+        }
         hako_asset = hako::create_asset_controller();
         if (hako_asset == nullptr) {
             std::cout << "ERROR: Not found hako-master on this PC" << std::endl;
