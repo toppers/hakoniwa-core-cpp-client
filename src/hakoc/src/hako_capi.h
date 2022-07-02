@@ -35,7 +35,7 @@ extern bool hako_asset_stop_feedback(const char* asset_name, bool isOk);
 extern bool hako_asset_reset_feedback(const char* asset_name, bool isOk);
 
 
-extern bool hako_asset_create_pdu_channel(const char* asset_name, HakoPduChannelIdType channel_id, size_t pdu_size);
+extern bool hako_asset_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_size);
 extern bool hako_asset_is_pdu_dirty(HakoPduChannelIdType channel_id);
 extern bool hako_asset_write_pdu(const char* asset_name, HakoPduChannelIdType channel_id, const char *pdu_data, size_t len);
 extern bool hako_asset_read_pdu(const char* asset_name, HakoPduChannelIdType channel_id, char *pdu_data, size_t len);

@@ -199,11 +199,10 @@ bool hako_asset_reset_feedback(const char* asset_name, bool isOk)
     }
 }
 
-bool hako_asset_create_pdu_channel(const char* asset_name, HakoPduChannelIdType channel_id, size_t pdu_size)
+bool hako_asset_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_size)
 {
     try {
-        std::string hako_asset_name(asset_name);
-        return hako_asset->create_pdu_channel(hako_asset_name, channel_id, pdu_size);
+        return hako_asset->create_pdu_channel(channel_id, pdu_size);
     } catch (std::exception *e) {
         hako::logger::get("core")->error(e->what());
         return false;

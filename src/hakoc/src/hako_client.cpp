@@ -29,11 +29,10 @@ void hako_client_notify_simtime(hako_time_t simtime)
     return;
 }
 
-int hako_client_create_pdu_channel(const char* asset_name, HakoPduChannelIdType channel_id, size_t pdu_size)
+int hako_client_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_size)
 {
     try {
-        std::string hako_client_name(asset_name);
-        if (hako_asset->create_pdu_channel(hako_client_name, channel_id, pdu_size) == true) {
+        if (hako_asset->create_pdu_channel(channel_id, pdu_size) == true) {
             return 0;
         }
         else {
