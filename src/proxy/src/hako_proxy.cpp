@@ -120,5 +120,16 @@ static int hako_init()
         std::cout << "ERROR: Can not register asset" << std::endl;
         return 1;
     }
+    for (unsigned int i = 0; i < ctrl.param["target_channels"].size(); i++) {
+        std::cout << "target_channels: " << i << " target_channels: " << ctrl.param["target_channels"][i].at("size") << std::endl;
+        bool err = ctrl.hako_asset->create_pdu_channel(
+            ctrl.param["target_channels"][i].at("channel_id"), 
+            ctrl.param["target_channels"][i].at("size")
+            );
+        if (err == false) {
+            std::cout << "ERROR: Can not create_pdu_channel()" << std::endl;
+            return 1;
+        }
+    }
     return 0;
 }
