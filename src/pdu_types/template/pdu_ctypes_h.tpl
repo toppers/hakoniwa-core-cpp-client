@@ -1,6 +1,11 @@
 #ifndef _pdu_ctype_{{container.pkg_name}}_{{container.msg_type_name}}_H_
 #define _pdu_ctype_{{container.pkg_name}}_{{container.msg_type_name}}_H_
 
+#include "pdu_primitive_ctypes.h"
+{%- for item in container.includes: %}
+#include "{{item}}"
+{%- endfor %}
+
 typedef struct {
 {%- for item in container.json_data["fields"]: -%}
 {%-	    if (container.is_primitive(item["type"])): %}

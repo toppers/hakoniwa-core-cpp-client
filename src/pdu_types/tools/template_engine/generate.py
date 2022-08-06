@@ -9,12 +9,15 @@ from jinja2 import Template, Environment, FileSystemLoader
 
 env = Environment(loader=FileSystemLoader('./', encoding='utf8'))
 
-if len(sys.argv) != 3:
-	print("ERROR: generate.py <tpl_file> <ros_json_file>")
+if len(sys.argv) != 4:
+	print("ERROR: generate.py <tpl_file> <ros_json_file> <dep_lists>")
 	sys.exit()
 
 tpl_file=sys.argv[1] 
 ros_json_file=sys.argv[2]
+dep_lists=sys.argv[3]
+
+
 
 tmp_str_array = ros_json_file.split(".")[1].split("/")
 pkg_name = tmp_str_array[len(tmp_str_array) - 2]
@@ -97,7 +100,6 @@ def get_msg_type(name):
 	else:
 		return tmp
 
-
 container = RosMessageContainer()
 container.to_conv = to_conv
 container.get_type = get_type
@@ -109,6 +111,12 @@ container.get_msg_type = get_msg_type
 container.pkg_name = pkg_name
 container.msg_type_name = msg_type_name
 container.get_array_size = get_array_size
+
+container.includes = []
+for line in open(dep_lists, 'r'):
+	pkg_name = line.split("/")[0]
+	msg_name = line.split("/")[1].strip()
+	container.includes.append(pkg_name + "/pdu_ctype_" + msg_name + ".h")
 
 tmp_file = open(ros_json_file)
 container.json_data = json.load(tmp_file)
