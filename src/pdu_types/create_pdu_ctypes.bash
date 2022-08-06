@@ -25,7 +25,7 @@ bash convert_rosmsg2json.bash ${SEARCH_PATH} ${PKG_MSG} ${CURR_DIR}/out_json
 cd ${CURR_DIR}
 
 #convert json file to c type header
+python3 tools/template_engine/generate.py ./template/pdu_ctypes_h.tpl ./out_json/${PKG_MSG}.json  
 
-
-rm -rf ${CURR_DIR}/out_json
-rm -rf dep_types.txt
+#rm -rf ${CURR_DIR}/out_json
+#rm -rf dep_types.txt
