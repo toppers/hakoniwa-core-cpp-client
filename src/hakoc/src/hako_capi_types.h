@@ -8,5 +8,6 @@ typedef struct {
     void (*reset) ();
 } hako_asset_callback_t;
 
+typedef int HakoPduChannelIdType;
 
 #endif /* _HAKO_CAPI_TYPES_H_ */
