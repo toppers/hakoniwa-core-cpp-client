@@ -209,10 +209,11 @@ bool hako_asset_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_s
         return false;
     }
 }
-bool hako_asset_is_pdu_dirty(HakoPduChannelIdType channel_id)
+bool hako_asset_is_pdu_dirty(const char* asset_name, HakoPduChannelIdType channel_id)
 {
     try {
-        return hako_asset->is_pdu_dirty(channel_id);
+        std::string hako_asset_name(asset_name);
+        return hako_asset->is_pdu_dirty(hako_asset_name, channel_id);
     } catch (std::exception *e) {
         hako::logger::get("core")->error(e->what());
         return -1;

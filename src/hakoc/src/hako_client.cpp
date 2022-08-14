@@ -43,10 +43,11 @@ int hako_client_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_s
         return -1;
     }
 }
-int hako_client_pdu_is_dirty(HakoPduChannelIdType channel_id)
+int hako_client_pdu_is_dirty(const char* asset_name, HakoPduChannelIdType channel_id)
 {
     try {
-        if (hako_asset->is_pdu_dirty(channel_id) == true) {
+        std::string hako_client_name(asset_name);
+        if (hako_asset->is_pdu_dirty(hako_client_name, channel_id) == true) {
             return 0;
         }
         else {
