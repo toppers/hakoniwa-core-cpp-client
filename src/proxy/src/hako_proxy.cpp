@@ -91,7 +91,9 @@ static void start_callback()
         std::string path = ctrl.param["target_bin_path"];
         printf("ERROR: can not invoke process %s¥n", path.c_str());
     }
-    ctrl.hako_asset->start_feedback(ctrl.asset_name_str, ret);
+    if ((ctrl.param["suppress_start_feedback"] == nullptr) || (ctrl.param["suppress_start_feedback"].get<bool>() == false)) {
+        ctrl.hako_asset->start_feedback(ctrl.asset_name_str, ret);
+    }
 }
 static void stop_callback()
 {
