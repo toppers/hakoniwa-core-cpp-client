@@ -20,8 +20,9 @@ add_library(
     ${HAKO_CORE_SOURCE_DIR}/src/hako/hako_master_impl.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/core/simulation/time/hako_time.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/core/rpc/hako_internal_rpc.cpp
-    ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/hako_shared_memory.cpp
-    ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/hako_sem.cpp
+    ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/posix/hako_shared_memory_mmap.cpp
+    ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/posix/hako_sem.cpp
+    ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/posix/hako_mmap.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_string.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_logger.cpp
 )
