@@ -25,7 +25,7 @@ bool hako_master_init()
         }
         return true;
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -35,7 +35,7 @@ bool hako_master_execute()
     try {
         return hako_master->execute();
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -43,10 +43,10 @@ bool hako_master_execute()
 void hako_master_set_config_simtime(hako_time_t max_delay_time_usec, hako_time_t delta_time_usec)
 {
     try {
-        hako::logger::get("master")->info("max_delay={0} usec delta={1} usec", max_delay_time_usec, delta_time_usec);
+        //hako::logger::get("master")->info("max_delay={0} usec delta={1} usec", max_delay_time_usec, delta_time_usec);
         hako_master->set_config_simtime(max_delay_time_usec, delta_time_usec);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return;
     }
     return;
@@ -56,7 +56,7 @@ hako_time_t hako_master_get_max_deltay_time_usec()
     try {
         return hako_master->get_max_deltay_time_usec();
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return 0;
     }
 }
@@ -65,7 +65,7 @@ hako_time_t hako_master_get_delta_time_usec()
     try {
         return hako_master->get_delta_time_usec();
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return 0;
     }
 }
@@ -92,7 +92,7 @@ bool hako_asset_init()
         }
         return true;
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -113,7 +113,7 @@ bool hako_asset_register(const char* name, hako_asset_callback_t *callbacks)
         }
     }
     catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -127,7 +127,7 @@ int  hako_asset_get_event(const char* name)
         return (int)hako_asset->asset_get_event(name);
     }
     catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return (int)HakoSimulationAssetEventType::HakoSimAssetEvent_Error;
     }
 }
@@ -138,7 +138,7 @@ bool hako_asset_unregister(const char* name)
         std::string asset_name(name);
         return hako_asset->asset_unregister(asset_name);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -150,7 +150,7 @@ void hako_asset_notify_simtime(const char* name, hako_time_t simtime)
         hako_asset->notify_simtime(asset_name, (HakoTimeType)simtime);
     }
     catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return;
     }
 }
@@ -160,7 +160,7 @@ hako_time_t hako_asset_get_worldtime()
     try {
         return (hako_time_t)hako_asset->get_worldtime();
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return 0;
     }
 }
@@ -172,7 +172,7 @@ bool hako_asset_start_feedback(const char* asset_name, bool isOk)
         std::string hako_asset_name(asset_name);
         return hako_asset->start_feedback(hako_asset_name, isOk);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -183,7 +183,7 @@ bool hako_asset_stop_feedback(const char* asset_name, bool isOk)
         std::string hako_asset_name(asset_name);
         return hako_asset->stop_feedback(hako_asset_name, isOk);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -194,7 +194,7 @@ bool hako_asset_reset_feedback(const char* asset_name, bool isOk)
         std::string hako_asset_name(asset_name);
         return hako_asset->reset_feedback(hako_asset_name, isOk);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -205,7 +205,7 @@ bool hako_asset_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_s
         hako_asset_init();//TODO
         return hako_asset->create_pdu_channel(channel_id, pdu_size);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -215,7 +215,7 @@ bool hako_asset_is_pdu_dirty(const char* asset_name, HakoPduChannelIdType channe
         std::string hako_asset_name(asset_name);
         return hako_asset->is_pdu_dirty(hako_asset_name, channel_id);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }
@@ -226,7 +226,7 @@ bool hako_asset_write_pdu(const char* asset_name, HakoPduChannelIdType channel_i
         std::string hako_asset_name(asset_name);
         return hako_asset->write_pdu(hako_asset_name, channel_id, pdu_data, len);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -237,7 +237,7 @@ bool hako_asset_read_pdu(const char* asset_name, HakoPduChannelIdType channel_id
         std::string hako_asset_name(asset_name);
         return hako_asset->read_pdu(hako_asset_name, channel_id, pdu_data, len);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -248,7 +248,7 @@ void hako_asset_notify_read_pdu_done(const char* asset_name)
         std::string hako_asset_name(asset_name);
         hako_asset->notify_read_pdu_done(hako_asset_name);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return;
     }
 }
@@ -259,7 +259,7 @@ void hako_asset_notify_write_pdu_done(const char* asset_name)
         std::string hako_asset_name(asset_name);
         hako_asset->notify_write_pdu_done(hako_asset_name);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return;
     }
 }
@@ -270,7 +270,7 @@ bool hako_asset_is_pdu_sync_mode(const char* asset_name)
         std::string hako_asset_name(asset_name);
         return hako_asset->is_pdu_sync_mode(hako_asset_name);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -280,7 +280,7 @@ bool hako_asset_is_simulation_mode()
     try {
         return hako_asset->is_simulation_mode();
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -290,7 +290,7 @@ bool hako_asset_is_pdu_created()
     try {
         return hako_asset->is_pdu_created();
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -310,7 +310,7 @@ bool hako_simevent_init()
         }
         return true;
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -320,7 +320,7 @@ int hako_simevent_get_state()
     try {
         return (int)hako_simevent->state();
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }
@@ -330,7 +330,7 @@ bool hako_simevent_start()
     try {
         return hako_simevent->start();
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -340,7 +340,7 @@ bool hako_simevent_stop()
     try {
         return hako_simevent->stop();
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
@@ -350,7 +350,7 @@ bool hako_simevent_reset()
     try {
         return hako_simevent->reset();
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
