@@ -15,7 +15,7 @@ bool hako_master_init()
     try {
         hako::init();
         hako::logger::init("master");
-        std::shared_ptr<hako::IHakoMasterController> hako_master = hako::create_master();
+        hako_master = hako::create_master();
         if (hako_master == nullptr) {
             return false;
         }
