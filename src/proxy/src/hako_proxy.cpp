@@ -66,7 +66,7 @@ int main(int argc, char** argv)
         ctrl.process.terminate();
     }
     ctrl.hako_asset->asset_unregister(ctrl.asset_name_str);
-    hako::logger::get(ctrl.asset_name_str)->flush();
+    //hako::logger::get(ctrl.asset_name_str)->flush();
 
     std::cout << "INFO: PROXY exit" << std::endl;
     return 0;
@@ -104,9 +104,9 @@ static void stop_callback()
 static int hako_init()
 {
     ctrl.asset_name_str = ctrl.param["asset_name"];
-    hako::logger::init("core");
-    hako::logger::init(ctrl.asset_name_str);
-    hako::logger::get(ctrl.asset_name_str)->info("asset_name={0}", ctrl.asset_name_str);
+    //hako::logger::init("core");
+    //hako::logger::init(ctrl.asset_name_str);
+    //hako::logger::get(ctrl.asset_name_str)->info("asset_name={0}", ctrl.asset_name_str);
 
     ctrl.hako_asset = hako::create_asset_controller();
     if (ctrl.hako_asset == nullptr) {
