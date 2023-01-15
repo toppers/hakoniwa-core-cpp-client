@@ -5,6 +5,10 @@ project(hako-client
 )
 
 find_package(spdlog REQUIRED)
+find_package(PythonLibs REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
+
+
 
 add_library(
     hakoc
@@ -19,6 +23,7 @@ MESSAGE(STATUS "OS_TYPE=" ${OS_TYPE})
 add_library(
     shakoc SHARED
     src/hako_capi.cpp
+    src/hako_capi_py.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/hako_impl.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/hako_asset_impl.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/hako_simevent_impl.cpp
@@ -53,6 +58,7 @@ target_link_libraries(
     shakoc 
     -pthread
     spdlog::spdlog
+    ${PYTHON_LIBRARIES}
 )
 
 target_include_directories(
