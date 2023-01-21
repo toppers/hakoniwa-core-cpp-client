@@ -1,0 +1,24 @@
+{
+  "fields": [
+    {
+      "name": "channel",
+      "value": 1
+    },
+    {
+      "name": "ide",
+      "value": 2
+    },
+    {
+      "name": "rtr",
+      "value": 3
+    },
+    {
+      "name": "dlc",
+      "value": 4
+    },
+    {
+      "name": "canid",
+      "value": 5
+    }
+  ]
+}

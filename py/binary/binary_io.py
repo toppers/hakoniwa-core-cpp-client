@@ -135,13 +135,3 @@ def writeBinary(binary_data, off, bin):
 def readBinary(binary_data, off, size):
     return binary_data[off:off+size]
 
-def find_filepath(path, filename):
-    f_array = filename.split('/')
-    if (len(f_array) > 1):
-        filename = f_array[len(f_array) - 1]
-    tmp = glob.glob(path + filename, recursive=True)
-    if (len(tmp) == 0):
-        print("ERROR: find_filepath(" + path + " ," + filename +")" )
-        exit(1)
-    return tmp[0]
-

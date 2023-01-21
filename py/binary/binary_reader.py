@@ -3,8 +3,9 @@
 import json
 import sys
 
-import binary_io
-import offset_parser
+from binary import binary_io
+from binary import offset_parser
+from binary import offset_map
 
 def binary_read(offmap, typename, binary_data):
     json_data = {
@@ -14,7 +15,8 @@ def binary_read(offmap, typename, binary_data):
     return json_data
 
 def binary_read_recursive(offmap, binary_data, json_data, base_off, typename):
-    lines = offmap[typename]
+    #lines = offmap[typename]
+    lines = offmap.get(typename)
     for line in lines:
         off = offset_parser.member_off(line) + base_off
         type = offset_parser.member_type(line)

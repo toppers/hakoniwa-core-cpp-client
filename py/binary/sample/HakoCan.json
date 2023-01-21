@@ -1,0 +1,52 @@
+{
+  "fields": [
+    {
+      "name": "head",
+      "value": {
+        "fields": [
+          {
+            "name": "channel",
+            "value": 1
+          },
+          {
+            "name": "ide",
+            "value": 2
+          },
+          {
+            "name": "rtr",
+            "value": 3
+          },
+          {
+            "name": "dlc",
+            "value": 4
+          },
+          {
+            "name": "canid",
+            "value": 5
+          }
+        ]
+      }
+
+    },
+    {
+      "name": "body",
+      "value": {
+        "fields": [
+          {
+            "name": "data",
+            "value": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

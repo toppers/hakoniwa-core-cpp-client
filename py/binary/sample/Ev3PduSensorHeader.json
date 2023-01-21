@@ -1,0 +1,24 @@
+{
+  "fields": [
+    {
+      "name": "name",
+      "value": "Hello world!!"
+    },
+    {
+      "name": "version",
+      "value": 123
+    },
+    {
+      "name": "hakoniwa_time",
+      "value": 456
+    },
+    {
+      "name": "ext_off",
+      "value": 789
+    },
+    {
+      "name": "ext_size",
+      "value": 1234
+    }
+  ]
+}
