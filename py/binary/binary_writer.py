@@ -13,32 +13,32 @@ def binary_write(offmap, binary_data, json_data, typename):
 def binary_write_recursive(offmap, binary_data, json_data, base_off, typename):
     #lines = offmap[typename]
     lines = offmap.get(typename)
-    for v in json_data['fields']:
-        line = offset_parser.select_by_name(lines, v['name'])
+    for key in json_data:
+        line = offset_parser.select_by_name(lines, key)
         off = offset_parser.member_off(line) + base_off
         type = offset_parser.member_type(line)
         if (offset_parser.is_primitive(line)):
             if (offset_parser.is_single(line)):
-                bin = binary_io.typeTobin(type, v['value'])
+                bin = binary_io.typeTobin(type, json_data[key])
                 binary_io.writeBinary(binary_data, off, bin)
             else:
                 i = 0
                 elm_size = offset_parser.member_size(line)
                 array_size = offset_parser.array_size(line)
                 one_elm_size = int(elm_size / array_size)
-                for elm in v['value']:
+                for elm in json_data[key]:
                     bin = binary_io.typeTobin(type, elm)
                     binary_io.writeBinary(binary_data, off + (i * one_elm_size), bin)
                     i = i + 1
         else:
             if (offset_parser.is_single(line)):
-                binary_write_recursive(offmap, binary_data, v['value'], off, type)
+                binary_write_recursive(offmap, binary_data, json_data[key], off, type)
             else:
                 i = 0
                 elm_size = offset_parser.member_size(line)
                 array_size = offset_parser.array_size(line)
                 one_elm_size = int(elm_size / array_size)
-                for elm in v['value']:
+                for elm in json_data[key]:
                     binary_write_recursive(offmap, binary_data, elm, off + (i * one_elm_size), type)
                     i = i + 1
             
