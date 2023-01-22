@@ -43,12 +43,13 @@ static PyObject* asset_read_pdu(PyObject* self, PyObject* args)
     }
     char *asset_name;
     HakoPduChannelIdType channel_id;
-    char* pdu_data;
+    PyObject* py_pdu_data;
     size_t len;
-    if (!PyArg_ParseTuple(args, "siYK", &asset_name, &channel_id, &pdu_data, &len))
+    if (!PyArg_ParseTuple(args, "siYK", &asset_name, &channel_id, &py_pdu_data, &len))
     {
         return NULL;
     }
+    char* pdu_data = PyByteArray_AsString(py_pdu_data);
     bool ret = hako_asset_read_pdu(asset_name, channel_id, pdu_data, len);
     return Py_BuildValue("O", ret ? Py_True : Py_False);
 }
