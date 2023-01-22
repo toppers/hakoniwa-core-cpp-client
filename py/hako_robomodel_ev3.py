@@ -32,6 +32,10 @@ class HakoRoboModelEv3:
         self.binary_data = bytearray(1024)
         self.actions = { 0: binary_reader.binary_read(self.hako.offmap, 'Ev3PduActuator', self.binary_data) }
 
+    def delta_usec(self):
+        #10msec
+        return 10000
+
     def foward(self, speed):
         self.actions[0]['motors'][(int)(HakoEv3Motor.LEFT)]['power'] = speed
         self.actions[0]['motors'][(int)(HakoEv3Motor.RIGHT)]['power'] = speed

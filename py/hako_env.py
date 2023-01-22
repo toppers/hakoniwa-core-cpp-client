@@ -18,8 +18,9 @@ class HakoEnv:
         return self.hako.robo
 
     def reset(self):
-        self.hako.stop()
-        self.hako.reset()
+        if self.hako.state() == hako.HakoState['RUNNING']:
+            self.hako.stop()
+            self.hako.reset()
         self.hako.start()
 
     def step(self):
