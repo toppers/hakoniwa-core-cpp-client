@@ -39,6 +39,7 @@ def binTofloat64(binary):
 
 def binTostring(binary):
     return binary.decode().replace('\0', '')
+    #return "Not Supported.."
 
 
 def int8Tobin(arg):

@@ -11,14 +11,25 @@ static PyObject* asset_write_pdu(PyObject* self, PyObject* args)
     else if (args == NULL) {
         return NULL;
     }
+    PyObject* py_pdu_data;
     char *asset_name;
     HakoPduChannelIdType channel_id;
-    char* pdu_data;
     size_t len;
-    if (!PyArg_ParseTuple(args, "siYK", &asset_name, &channel_id, &pdu_data, &len))
+    if (!PyArg_ParseTuple(args, "siYK", &asset_name, &channel_id, &py_pdu_data, &len))
     {
         return NULL;
     }
+    char* pdu_data = PyByteArray_AsString(py_pdu_data);
+#if 0
+    printf("len=%d\n", len);
+    for (int i = 0; i < 20; i++) {
+        printf("%02d :", i);
+        for (int j = 0; j < 10; j++) {
+            printf("%d ", pdu_data[(i*10) + j]);
+        }
+        printf("\n");
+    }
+#endif
     bool ret = hako_asset_write_pdu(asset_name, channel_id, pdu_data, len);
     return Py_BuildValue("O", ret ? Py_True : Py_False);
 }

@@ -29,7 +29,7 @@ env.reset()
 
 robo = env.robo()
 #10secs
-while not done and total_time < 1000:
+while not done and total_time < 10000:
     robo.foward(10)
     state, reward, done, info = env.step()
     total_time = total_time + 1

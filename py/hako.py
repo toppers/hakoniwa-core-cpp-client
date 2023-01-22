@@ -117,7 +117,10 @@ class Hako:
         self.wait_state(HakoState['RUNNING'])
     
     def read_pdu(self, channel_id):
-        hakoc.asset_read_pdu(self.asset_name, channel_id, self.read_buffers[channel_id], self.read_pdusize[channel_id])
+        #print("hakoc.read_pdu: start")
+        #hakoc.asset_read_pdu(self.asset_name, channel_id, self.read_buffers[channel_id], self.read_pdusize[channel_id])
+        #print("hakoc.read_pdu: end")
+        pass
     
     def read_pdus(self):
         ret = {}
@@ -125,14 +128,24 @@ class Hako:
             self.read_pdu(channel_id)
             typename = self.read_types[channel_id]
             binary_data = self.read_buffers[channel_id]
-            ret[channel_id] = binary_reader.binary_read(self.offmap, typename, binary_data)
+            #print("read_pdu: channel_id=" + str(channel_id))
+            #ret[channel_id] = binary_reader.binary_read(self.offmap, typename, binary_data)
+            #print("read_pdu done: channel_id=" + str(channel_id))
         hakoc.asset_notify_read_pdu_done(self.asset_name)
+        #print("hakoc.read_pdu done")
     
     def write_pdu(self, channel_id, pdu_json):
         typename = self.write_types[channel_id]
         #print(json.dumps(pdu_json))
         binary_data = self.write_buffers[channel_id]
         binary_writer.binary_write(self.offmap, binary_data, pdu_json, typename)
+        #i = 0
+        #for b in binary_data:
+        #    print("data[" + str(i) + "] = " + str(b))
+        #    if i > 512:
+        #        break
+        #    i = i + 1
+        #sys.exit(0)
 
     def write_pdus(self):
         for channel_id in self.write_pdusize:
@@ -166,9 +179,11 @@ class Hako:
                 #print("asset_time_usec: false")
                 time.sleep(0.01)
             else:
-                print("time: " + str(self.asset_time_usec))
+                #print("time: " + str(self.asset_time_usec))
                 self.write_pdus()
+                #print("write_pdu: done")
                 state = self.read_pdus()
+                #print("read_pdu: done")
                 self.asset_time_usec = self.asset_time_usec + self.robo.delta_usec()
                 time.sleep(0.01)
                 return state
