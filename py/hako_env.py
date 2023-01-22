@@ -17,17 +17,14 @@ class HakoEnv:
     def robo(self):
         return self.hako.robo
 
-    def actions(self):
-        return self.hako.robo.actions
-
     def reset(self):
         self.hako.stop()
         self.hako.reset()
         self.hako.start()
 
     def step(self):
-        for channel_id in self.robo.actions:
-            self.hako.write_pdu(channel_id, self.robo.actions[channel_id])
+        for channel_id in self.robo().actions:
+            self.hako.write_pdu(channel_id, self.robo().actions[channel_id])
         state = self.hako.execute()
         reward = 0
         done = False

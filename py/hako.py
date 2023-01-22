@@ -7,7 +7,7 @@ from binary import binary_writer
 from binary import binary_reader
 import hakoc
 import time
-from . import hako_robomodel
+import hako_robomodel
 from enum import Enum
 
 # HakoSimAssetEvent_None = 0
@@ -15,7 +15,7 @@ from enum import Enum
 # HakoSimAssetEvent_Stop = 2
 # HakoSimAssetEvent_Reset = 3
 # HakoSimAssetEvent_Error = 4
-class HakoEvent(Enum):
+class HakoEvent:
     NONE = 0
     START = 1
     STOP = 2
@@ -29,7 +29,7 @@ class HakoEvent(Enum):
 # HakoSim_Resetting,
 # HakoSim_Error,
 # HakoSim_Terminated,
-class HakoState(Enum):
+class HakoState:
     STOPPED = 0
     RUNNABLE = 1
     RUNNING = 2
@@ -49,7 +49,7 @@ class Hako:
         self.read_buffers = {}
         self.asset_time_usec = 0
         hakoc.asset_init()
-        self.robo = hako_robomodel.create(robo_type)
+        self.robo = hako_robomodel.create(self, robo_type)
     
     def register(self, name):
         self.asset_name = name
@@ -59,6 +59,8 @@ class Hako:
         self.write_channels[channel_id] = pdu_size
         self.write_buffers[channel_id] = bytearray(pdu_size)
         self.write_types[channel_id] = typename
+        print("channel=" + str(channel_id))
+        print("pdu_size=" + str(pdu_size))
         hakoc.asset_create_pdu_channel(channel_id, pdu_size)
 
     def subscribe_pdu_channel(self, channel_id, pdu_size, typename):
@@ -72,15 +74,15 @@ class Hako:
     def wait_event(self):
         while True:
             current_ev = hakoc.asset_get_event()
-            if current_ev == HakoEvent.NONE:
+            if current_ev == (int)(HakoEvent.NONE):
                 time.sleep(0.01)
-            elif current_ev == HakoEvent.START:
+            elif current_ev == (int)(HakoEvent.START):
                 hakoc.asset_start_feedback(self.asset_name, True)
                 return True
-            elif current_ev == HakoEvent.STOP:
+            elif current_ev == (int)(HakoEvent.STOP):
                 hakoc.asset_stop_feedback(self.asset_name, True)
                 return True
-            elif current_ev == HakoEvent.RESET:
+            elif current_ev == (int)(HakoEvent.RESET):
                 hakoc.asset_reset_feedback(self.asset_name, True)
                 return True
             else:
@@ -89,16 +91,16 @@ class Hako:
 
     def stop(self):
         hakoc.stop()
-        self.wait_event(HakoEvent.STOP)
+        self.wait_event((int)(HakoEvent.STOP))
     
     def reset(self):
         hakoc.reset()
-        self.wait_event(HakoEvent.RESET)
+        self.wait_event((int)(HakoEvent.RESET))
         self.asset_time_usec = 0
     
     def start(self):
         hakoc.start()
-        self.wait_event(HakoEvent.START)
+        self.wait_event((int)(HakoEvent.START))
     
     def read_pdu(self, channel_id):
         hakoc.asset_read_pdu(self.asset_name, channel_id, self.read_buffers[channel_id], self.read_channels[channel_id])
@@ -126,7 +128,7 @@ class Hako:
             result = hakoc.asset_notify_simtime(self.asset_name, self.asset_time_usec)
             if result == False:
                 time.sleep(0.01)
-            elif self.state() != HakoState.RUNNING:
+            elif self.state() != (int)(HakoState.RUNNING):
                 time.sleep(0.01)
             elif hakoc.asset_is_pdu_created() == False:
                 time.sleep(0.01)

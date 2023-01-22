@@ -15,7 +15,7 @@ static PyObject* asset_write_pdu(PyObject* self, PyObject* args)
     HakoPduChannelIdType channel_id;
     char* pdu_data;
     size_t len;
-    if (!PyArg_ParseTuple(args, "sisi", &asset_name, &channel_id, &pdu_data, &len))
+    if (!PyArg_ParseTuple(args, "sisK", &asset_name, &channel_id, &pdu_data, &len))
     {
         return NULL;
     }
@@ -34,7 +34,7 @@ static PyObject* asset_read_pdu(PyObject* self, PyObject* args)
     HakoPduChannelIdType channel_id;
     char* pdu_data;
     size_t len;
-    if (!PyArg_ParseTuple(args, "sisi", &asset_name, &channel_id, &pdu_data, &len))
+    if (!PyArg_ParseTuple(args, "sisK", &asset_name, &channel_id, &pdu_data, &len))
     {
         return NULL;
     }
@@ -69,7 +69,7 @@ static PyObject* asset_create_pdu_channel(PyObject* self, PyObject* args)
     }
     HakoPduChannelIdType channel_id;
     size_t pdu_size;
-    if (!PyArg_ParseTuple(args, "iI", &channel_id, &pdu_size))
+    if (!PyArg_ParseTuple(args, "iK", &channel_id, &pdu_size))
     {
         return NULL;
     }

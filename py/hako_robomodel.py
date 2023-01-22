@@ -6,7 +6,7 @@ from binary import binary_reader
 import hako_robomodel_ev3
 
 
-def create(robo_type, hako):
+def create(hako, robo_type):
     if robo_type == "ev3":
         return hako_robomodel_ev3.HakoRoboModelEv3(hako)
     else:
