@@ -8,21 +8,23 @@ from binary import binary_reader
 import hako
 import time
 
-class HakoEv3Motor:
-    LEFT = 0
-    RIGHT = 1
-    ARM = 2
+HakoEv3Motor = {
+    'LEFT': 0,
+    'RIGHT': 1,
+    'ARM': 2
+}
 
 
-class HakoEv3Color:
-  NONE = 0
-  BLACK = 1
-  BLUE = 2
-  GREEN = 3
-  YELLOW = 4
-  RED = 5
-  WHITE = 6
-  BROWN = 7
+HakoEv3Color = {
+  'NONE': 0,
+  'BLACK': 1,
+  'BLUE': 2,
+  'GREEN': 3,
+  'YELLOW': 4,
+  'RED': 5,
+  'WHITE': 6,
+  'BROWN': 7
+}
 
 class HakoRoboModelEv3:
     def __init__(self, hako):
@@ -37,23 +39,23 @@ class HakoRoboModelEv3:
         return 10000
 
     def foward(self, speed):
-        self.actions[0]['motors'][(int)(HakoEv3Motor.LEFT)]['power'] = speed
-        self.actions[0]['motors'][(int)(HakoEv3Motor.RIGHT)]['power'] = speed
+        self.actions[0]['motors'][HakoEv3Motor['LEFT'])]['power'] = speed
+        self.actions[0]['motors'][HakoEv3Motor['RIGHT']]['power'] = speed
     
     def turn(self, speed):
         if speed > 0:
-            self.actions[0]['motors'][(int)(HakoEv3Motor.LEFT)]['power'] = speed
-            self.actions[0]['motors'][(int)(HakoEv3Motor.RIGHT)]['power'] = 0
+            self.actions[0]['motors'][HakoEv3Motor['LEFT']]['power'] = speed
+            self.actions[0]['motors'][HakoEv3Motor['RIGHT']]['power'] = 0
         else:
-            self.actions[0]['motors'][(int)(HakoEv3Motor.LEFT)]['power'] = 0
-            self.actions[0]['motors'][(int)(HakoEv3Motor.RIGHT)]['power'] = -speed
+            self.actions[0]['motors'][HakoEv3Motor['LEFT']]['power'] = 0
+            self.actions[0]['motors'][HakoEv3Motor['RIGHT']]['power'] = -speed
             
     def stop(self):
-        self.actions[0]['motors'][(int)(HakoEv3Motor.LEFT)]['power'] = 0
-        self.actions[0]['motors'][(int)(HakoEv3Motor.RIGHT)]['power'] = 0
+            self.actions[0]['motors'][HakoEv3Motor['LEFT']]['power'] = 0
+            self.actions[0]['motors'][HakoEv3Motor['RIGHT']]['power'] = 0
     
     def arm_move(self, speed):
-        self.actions[0]['motors'][(int)(HakoEv3Motor.ARM)]['power'] = speed
+            self.actions[0]['motors'][HakoEv3Motor['ARM']]['power'] = speed
     
     def arm_stop(self):
-        self.actions[0]['motors'][(int)(HakoEv3Motor.ARM)]['power'] = 0
+            self.actions[0]['motors'][HakoEv3Motor['ARM']]['power'] = 0

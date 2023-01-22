@@ -118,7 +118,7 @@ class Hako:
     
     def read_pdu(self, channel_id):
         #print("hakoc.read_pdu: start")
-        #hakoc.asset_read_pdu(self.asset_name, channel_id, self.read_buffers[channel_id], self.read_pdusize[channel_id])
+        hakoc.asset_read_pdu(self.asset_name, channel_id, self.read_buffers[channel_id], self.read_pdusize[channel_id])
         #print("hakoc.read_pdu: end")
         pass
     
@@ -129,10 +129,10 @@ class Hako:
             typename = self.read_types[channel_id]
             binary_data = self.read_buffers[channel_id]
             #print("read_pdu: channel_id=" + str(channel_id))
-            #ret[channel_id] = binary_reader.binary_read(self.offmap, typename, binary_data)
+            ret[channel_id] = binary_reader.binary_read(self.offmap, typename, binary_data)
             #print("read_pdu done: channel_id=" + str(channel_id))
         hakoc.asset_notify_read_pdu_done(self.asset_name)
-        #print("hakoc.read_pdu done")
+        return ret
     
     def write_pdu(self, channel_id, pdu_json):
         typename = self.write_types[channel_id]
