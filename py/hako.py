@@ -7,6 +7,7 @@ from binary import binary_writer
 from binary import binary_reader
 import hakoc
 import time
+from . import hako_robomodel
 from enum import Enum
 
 # HakoSimAssetEvent_None = 0
@@ -38,7 +39,7 @@ class HakoState(Enum):
     TERMINATED = 6
 
 class Hako:
-    def __init__(self, offset_path):
+    def __init__(self, offset_path, robo_type):
         self.offmap = offset_map.create_offmap(offset_path)
         self.write_channels = {}
         self.write_buffers = {}
@@ -46,9 +47,10 @@ class Hako:
         self.read_channels = {}
         self.read_types = {}
         self.read_buffers = {}
-        self.asset_time = 0
+        self.asset_time_usec = 0
         hakoc.asset_init()
-        
+        self.robo = hako_robomodel.create(robo_type)
+    
     def register(self, name):
         self.asset_name = name
         hakoc.asset_register(name)
@@ -92,7 +94,7 @@ class Hako:
     def reset(self):
         hakoc.reset()
         self.wait_event(HakoEvent.RESET)
-        self.asset_time = 0
+        self.asset_time_usec = 0
     
     def start(self):
         hakoc.start()
@@ -121,7 +123,7 @@ class Hako:
 
     def execute(self):
         while True:
-            result = hakoc.asset_notify_simtime(self.asset_name, self.asset_time)
+            result = hakoc.asset_notify_simtime(self.asset_name, self.asset_time_usec)
             if result == False:
                 time.sleep(0.01)
             elif self.state() != HakoState.RUNNING:
@@ -133,7 +135,9 @@ class Hako:
             elif hakoc.asset_is_pdu_sync_mode() == False:
                 self.write_pdus()
                 time.sleep(0.01)
-            else:
+            elif self.asset_time_usec >= hakoc.asset_get_worldtime():
+                time.sleep(0.01)
+            else:                
                 self.write_pdus()
                 state = self.read_pdus()
                 return state

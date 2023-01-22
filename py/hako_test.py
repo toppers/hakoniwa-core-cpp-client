@@ -14,10 +14,11 @@ pass
 #create hakoniwa env
 env = hako.make("ev3")
 
-actions = env.get_actions()
+actions = env.actions()
 #do simulation
 total_time = 0
 done = False
 while not done and total_time < 10000:
-    state, reward, done, info = env.step(actions)
+    env.robo.foward(10)
+    state, reward, done, info = env.step()
 
