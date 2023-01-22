@@ -12,40 +12,30 @@ import time
 class HakoEnv:
     def __init__(self, model_name):
         offset_path = '/usr/local/lib/hakoniwa/binary/offset'
-        self.offmap = offset_map.create_offmap(offset_path)
-        hakoc.asset_init()
-        hakoc.asset_register("ai_" + model_name)
-        
+        self.hako = hako.Hako(offset_path)
+        #TODO robot dependent code..
+        self.hako.create_pdu_channel(0, 1024, 'Ev3PduActuator')
+        #TODO robot dependent code..
+        self.hako.subscribe_pdu_channel(1, 1024, 'Ev3PduSensor')
+        self.hako.register("ai_" + model_name)
 
-    def execute(self, action):
-        #check event
-        #notify simtime
-        #pdu create check
-        #simulation mode check
-        #time check
-        #read pdu
-        #write pdu
-        state = "none"
-        return True, state
+    def get_actions(self):
+        #TODO robot dependent code..
+        binary_data = bytearray(1024)
+        return { 0: binary_reader.binary_read(self.hako.offmap, 'Ev3PduActuator', binary_data) }
 
     def reset(self):
-        hakoc.stop()
-        #check event
-        hakoc.reset()
-        #check event
-        hakoc.start()
-        #check event
+        self.hako.stop()
+        self.hako.reset()
+        self.hako.start()
 
     def step(self, action):
-        is_step_foward = False
-        while is_step_foward == False:
-            is_step_foward, state = self.execute(action)
-            if is_step_foward == False:
-                time.sleep(0.01)
-
-        reward = "bbb"
-        done = True
-        info = "ccc"
+        for channel_id in action:
+            self.hako.write_pdu(channel_id, action[channel_id])
+        state = self.hako.execute()
+        reward = 0
+        done = False
+        info = "none"
         return state, reward, done, info
 
 def make(model_name):

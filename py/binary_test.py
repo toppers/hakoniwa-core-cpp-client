@@ -14,13 +14,13 @@ offset_path=sys.argv[1]
 typename=sys.argv[2]
 binary_def_json=sys.argv[3]
 outfile=sys.argv[4]
-json_open = open(binary_def_json, 'r')
-base_json_data = json.load(json_open)
+#json_open = open(binary_def_json, 'r')
+#base_json_data = json.load(json_open)
 
 offmap = offset_map.create_offmap(offset_path)
 binary_data = bytearray(1024)
 
-binary_writer.binary_write(offmap, binary_data, base_json_data, typename)
+##binary_writer.binary_write(offmap, binary_data, base_json_data, typename)
 
 value = binary_reader.binary_read(offmap, typename, binary_data)
 
