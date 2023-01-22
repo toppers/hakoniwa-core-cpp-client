@@ -8,7 +8,7 @@ from binary import binary_reader
 import os
 
 if len(sys.argv) != 4:
-	print("Usage: binary_writer.py <offset_path> <typename> <infile>")
+	print("Usage: binary_read.py <offset_path> <typename> <infile>")
 	sys.exit()
 
 offset_path=sys.argv[1] 
