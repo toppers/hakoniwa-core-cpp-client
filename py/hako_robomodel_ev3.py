@@ -76,3 +76,6 @@ class HakoRoboModelEv3:
     
     def color_sensors(self, state):
         return state[1]['color_sensors']
+
+    def touch_sensor(self, state, id):
+        return state[1]['touch_sensors'][id]['value']
