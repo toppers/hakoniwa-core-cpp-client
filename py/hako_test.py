@@ -8,6 +8,7 @@ from binary import binary_reader
 import hako_env
 import time
 import signal
+import hako_robomodel_ev3 as ev3
 
 def handler(signum, frame):
   print(f'SIGNAL(signum={signum})')
@@ -32,6 +33,15 @@ robo = env.robo()
 while not done and total_time < 10000:
     robo.foward(10)
     state, reward, done, info = env.step()
+    
+    distance = robo.ultrasonic_sensor(state)
+    print("distance=" + str(distance))
+    color_sensors = robo.color_sensors(state)
+    print("color[0]*="+str(color_sensors[0]))
+    print("color[0].color=" + ev3.HakoEv3ColorName[color_sensors[0]['color']])
+    #print("color[1]*="+str(color_sensors[1]))
+    #print("color[1].color=" + ev3.HakoEv3ColorName[color_sensors[1]['color']])
+    
     total_time = total_time + 1
 
 print("END")

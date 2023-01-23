@@ -25,6 +25,16 @@ HakoEv3Color = {
   'WHITE': 6,
   'BROWN': 7
 }
+HakoEv3ColorName = {
+    0: 'None',
+    1: 'BLACK',
+    2: 'BLUE',
+    3: 'GREEN',
+    4: 'YELLOW',
+    5: 'RED',
+    6: 'WHITE',
+    7: 'BROWN'
+}
 
 class HakoRoboModelEv3:
     def __init__(self, hako):
@@ -59,3 +69,10 @@ class HakoRoboModelEv3:
     
     def arm_stop(self):
             self.actions[0]['motors'][HakoEv3Motor['ARM']]['power'] = 0
+    
+    
+    def ultrasonic_sensor(self, state):
+        return state[1]['sensor_ultrasonic']
+    
+    def color_sensors(self, state):
+        return state[1]['color_sensors']
