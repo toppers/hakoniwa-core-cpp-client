@@ -51,6 +51,17 @@ static PyObject* asset_read_pdu(PyObject* self, PyObject* args)
     }
     char* pdu_data = PyByteArray_AsString(py_pdu_data);
     bool ret = hako_asset_read_pdu(asset_name, channel_id, pdu_data, len);
+#if 0
+    printf("len=%d\n", len);
+    for (int i = 0; i < 20; i++) {
+        printf("%02d :", i);
+        for (int j = 0; j < 10; j++) {
+            printf("%d ", pdu_data[(i*10) + j]);
+        }
+        printf("\n");
+    }
+#endif
+
     return Py_BuildValue("O", ret ? Py_True : Py_False);
 }
 

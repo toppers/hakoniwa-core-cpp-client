@@ -39,7 +39,7 @@ class HakoRoboModelEv3:
         return 10000
 
     def foward(self, speed):
-        self.actions[0]['motors'][HakoEv3Motor['LEFT'])]['power'] = speed
+        self.actions[0]['motors'][HakoEv3Motor['LEFT']]['power'] = speed
         self.actions[0]['motors'][HakoEv3Motor['RIGHT']]['power'] = speed
     
     def turn(self, speed):
