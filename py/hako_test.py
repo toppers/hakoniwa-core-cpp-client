@@ -5,6 +5,7 @@ import sys
 from binary import offset_map
 from binary import binary_writer
 from binary import binary_reader
+import qtable_model
 import hako_env
 import time
 import signal
@@ -17,32 +18,37 @@ def handler(signum, frame):
 # signal.SIGALRMのシグナルハンドラを登録
 signal.signal(signal.SIGINT, handler)
 
-#TODO get ai model
-pass
-
 #create hakoniwa env
 env = hako_env.make("base_practice_1", "ev3")
 
+#get ai model
+model = qtable_model.get_model(env.robo().num_states(), env.robo().num_actions())
+
 #do simulation
-total_time = 0
-done = False
-env.reset()
 
 robo = env.robo()
-#10secs
-while not done and total_time < 10000:
-    robo.foward(10)
-    state, reward, done, info = env.step()
-    
-    distance = robo.ultrasonic_sensor(state)
-    print("distance=" + str(distance))
-    color_sensors = robo.color_sensors(state)
-    print("color[0]*="+str(color_sensors[0]))
-    print("color[0].color=" + ev3.HakoEv3ColorName[color_sensors[0]['color']])
-    #print("color[1]*="+str(color_sensors[1]))
-    #print("color[1].color=" + ev3.HakoEv3ColorName[color_sensors[1]['color']])
-    
-    total_time = total_time + 1
+
+for episode in range(100):
+  total_time = 0
+  done = False
+  env.reset()
+  state = 0
+  #100secs
+  while not done and total_time < 10000:
+      action = model.get_action(state)
+      next_state, reward, done, _ = env.step(action)
+      
+      print("episode=" + str(episode))
+      print("state=" + str(state))
+      print("reward=" + str(reward))
+      print("action=" + str(action))
+      print("done=" + str(done))
+      print("total_time=" + str(total_time))
+      
+      model.learn(state, action, reward, next_state)
+      
+      state = next_state    
+      total_time = total_time + 1
 
 print("END")
 env.reset()

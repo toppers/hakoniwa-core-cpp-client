@@ -71,8 +71,49 @@ class HakoRoboModelEv3:
             self.actions[0]['motors'][HakoEv3Motor['ARM']]['power'] = 0
     
     
-    def ultrasonic_sensor(self, state):
-        return state[1]['sensor_ultrasonic']
+    def ultrasonic_sensor(self, obserbation):
+        return obserbation[1]['sensor_ultrasonic']
     
-    def color_sensors(self, state):
-        return state[1]['color_sensors']
+    def color_sensors(self, obserbation):
+        return obserbation[1]['color_sensors']
+
+    def rewaord(self, obserbation):
+        value = self.ultrasonic_sensor(obserbation)
+        if value >= 110 and value <= 145:
+            return 0.1, False
+        elif value < 110:
+            return -5, False
+        elif value > 145 and value <= 170:
+            return -5, False
+        else:
+            return -10, True
+
+    def num_actions(self):
+        return 6
+    
+    def action(self, action_no):
+        if action_no == 0:
+            self.foward(50)
+        elif action_no == 1:
+            self.foward(20)
+        elif action_no == 2:
+            self.turn(20)
+        elif action_no == 3:
+            self.turn(50)
+        elif action_no == 4:
+            self.turn(-20)
+        else:
+            self.turn(-50)
+
+    def num_states(self):
+        return 4
+    
+    # 0 or 1 or 2 or 3
+    def state(self, obserbation):
+        o = obserbation[1]['color_sensors'][0]['reflect']
+        min = 40.0
+        size = 60.0
+        #0 -1
+        ret_o = (o - min) / size
+        #print("ret_o=" + str(ret_o))
+        return (int)((ret_o * 30.0) / 10.0)

@@ -23,12 +23,14 @@ class HakoEnv:
             self.hako.reset()
         self.hako.start()
 
-    def step(self):
+    def step(self, action):
         for channel_id in self.robo().actions:
             self.hako.write_pdu(channel_id, self.robo().actions[channel_id])
-        state = self.hako.execute()
-        reward = 0
-        done = False
+        
+        self.robo().action(action)
+        obserbation = self.hako.execute()
+        state = self.robo().state(obserbation)
+        reward, done = self.robo().rewaord(obserbation)
         info = "none"
         return state, reward, done, info
 
