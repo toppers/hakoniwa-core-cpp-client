@@ -90,7 +90,7 @@ class HakoRoboModelEv3:
 
     def num_actions(self):
         return 6
-    
+
     def action(self, action_no):
         if action_no == 0:
             self.foward(50)
@@ -117,3 +117,9 @@ class HakoRoboModelEv3:
         ret_o = (o - min) / size
         #print("ret_o=" + str(ret_o))
         return (int)((ret_o * 30.0) / 10.0)
+    
+    def color_sensors(self, state):
+        return state[1]['color_sensors']
+
+    def touch_sensor(self, state, id):
+        return state[1]['touch_sensors'][id]['value']
