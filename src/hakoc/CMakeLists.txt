@@ -4,7 +4,6 @@ project(hako-client
     LANGUAGES C CXX
 )
 
-find_package(spdlog REQUIRED)
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
@@ -51,13 +50,11 @@ target_link_libraries(
     hakoc 
     hako
     -pthread
-    spdlog::spdlog
 )
 
 target_link_libraries(
     shakoc 
     -pthread
-    spdlog::spdlog
     ${PYTHON_LIBRARIES}
 )
 

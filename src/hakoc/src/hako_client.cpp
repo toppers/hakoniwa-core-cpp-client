@@ -39,7 +39,7 @@ int hako_client_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_s
             return -1;
         }
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }
@@ -53,7 +53,7 @@ int hako_client_start_feedback()
             return -1;
         }
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }
@@ -69,7 +69,7 @@ int hako_client_pdu_is_dirty(const char* asset_name, HakoPduChannelIdType channe
             return -1;
         }
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }
@@ -84,7 +84,7 @@ int hako_client_write_pdu(const char* asset_name, HakoPduChannelIdType channel_i
             return -1;
         }
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }
@@ -100,7 +100,7 @@ int hako_client_read_pdu(const char* asset_name, HakoPduChannelIdType channel_id
             return -1;
         }
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }
@@ -111,7 +111,7 @@ void hako_client_notify_read_pdu_done(const char* asset_name)
         std::string hako_client_name(asset_name);
         hako_asset->notify_read_pdu_done(hako_client_name);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return;
     }
 }
@@ -122,7 +122,7 @@ void hako_client_notify_write_pdu_done(const char* asset_name)
         std::string hako_client_name(asset_name);
         hako_asset->notify_write_pdu_done(hako_client_name);
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return;
     }
 }
@@ -138,7 +138,7 @@ int hako_client_is_pdu_sync_mode(const char* asset_name)
             return -1;
         }
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }
@@ -153,7 +153,7 @@ int hako_client_is_simulation_mode()
             return -1;
         }
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }
@@ -168,7 +168,7 @@ int hako_client_is_pdu_created()
             return -1;
         }
     } catch (std::exception *e) {
-        hako::logger::get("core")->error(e->what());
+        //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }

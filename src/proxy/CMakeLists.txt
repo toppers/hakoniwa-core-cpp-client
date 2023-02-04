@@ -4,7 +4,6 @@ project(hako-proxy
     LANGUAGES C CXX
 )
 
-find_package(spdlog REQUIRED)
 
 add_executable(
     hako-proxy
@@ -15,7 +14,6 @@ target_link_libraries(
     hako-proxy 
     hako
     -pthread
-    spdlog::spdlog
 )
 
 
