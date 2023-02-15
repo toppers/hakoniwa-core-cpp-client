@@ -3,7 +3,7 @@
 import glob
 import json
 import sys
-from binary import offset_parser
+from hako_binary import offset_parser
 
 class OffsetMap:
     def __init__(self, offset_path):

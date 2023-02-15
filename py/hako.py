@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 import json
 import sys
-from binary import offset_map
-from binary import binary_writer
-from binary import binary_reader
+from hako_binary import offset_map
+from hako_binary import binary_writer
+from hako_binary import binary_reader
 import hakoc
 import time
 import hako_robomodel

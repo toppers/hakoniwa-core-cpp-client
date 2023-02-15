@@ -3,9 +3,9 @@
 import json
 import sys
 
-from binary import binary_io
-from binary import offset_parser
-from binary import offset_map
+from hako_binary import binary_io
+from hako_binary import offset_parser
+from hako_binary import offset_map
 
 def binary_read(offmap, typename, binary_data):
     json_data = {}
