@@ -35,6 +35,7 @@ def binary_read_recursive(offmap, binary_data, json_data, base_off, typename):
                     bin = binary_io.readBinary(binary_data, off, size)
                     array_value = base64.b64encode(bin).decode('utf-8')
                 else:
+                    encode_type = "text"
                     i = 0
                     array_value = []
                     while i < array_size:
