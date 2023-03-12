@@ -8,6 +8,9 @@ from hako_binary import binary_io
 from hako_binary import offset_parser
 from hako_binary import offset_map
 
+def decode_base64(data):
+    return base64.b64decode(data)
+
 def binary_read(offmap, typename, binary_data):
     json_data = {}
     binary_read_recursive(offmap, binary_data, json_data, 0, typename)
@@ -27,7 +30,6 @@ def binary_read_recursive(offmap, binary_data, json_data, base_off, typename):
                 value = binary_io.binTovalue(type, bin)
                 json_data[name] = value
             else:
-                i = 0
                 array_size = offset_parser.array_size(line)
                 one_elm_size = int(size / array_size)
                 if (array_size > 100):
