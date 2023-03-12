@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 import sys
+import base64
 
 from hako_binary import binary_io
 from hako_binary import offset_parser
@@ -29,14 +30,21 @@ def binary_read_recursive(offmap, binary_data, json_data, base_off, typename):
                 i = 0
                 array_size = offset_parser.array_size(line)
                 one_elm_size = int(size / array_size)
-                array_value = []
-                while i < array_size:
-                    toff =  off + (i * one_elm_size)
-                    tsize = one_elm_size
-                    bin = binary_io.readBinary(binary_data, toff, tsize)
-                    value = binary_io.binTovalue(type, bin)
-                    array_value.append(value)
-                    i = i + 1
+                if (array_size > 100):
+                    encode_type = "base64"
+                    bin = binary_io.readBinary(binary_data, off, size)
+                    array_value = base64.b64encode(bin).decode('utf-8')
+                else:
+                    i = 0
+                    array_value = []
+                    while i < array_size:
+                        toff =  off + (i * one_elm_size)
+                        tsize = one_elm_size
+                        bin = binary_io.readBinary(binary_data, toff, tsize)
+                        value = binary_io.binTovalue(type, bin)
+                        array_value.append(value)
+                        i = i + 1
+                json_data[name + '_encode_type'] = encode_type
                 json_data[name] = array_value
         else:
             if (offset_parser.is_single(line)):
