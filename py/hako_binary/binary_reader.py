@@ -32,10 +32,11 @@ def binary_read_recursive(offmap, binary_data, json_data, base_off, typename):
             else:
                 array_size = offset_parser.array_size(line)
                 one_elm_size = int(size / array_size)
-                if (array_size > 100):
-                    encode_type = "base64"
+                if (one_elm_size == 1):
+                    encode_type = "binary"
                     bin = binary_io.readBinary(binary_data, off, size)
-                    array_value = base64.b64encode(bin)
+                    array_value = bin
+                    #array_value = base64.b64encode(bin)
                 else:
                     encode_type = "text"
                     i = 0

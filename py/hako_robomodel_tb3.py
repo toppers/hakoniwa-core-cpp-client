@@ -27,3 +27,30 @@ class HakoRoboModelTb3:
         #20msec
         return 20000
 
+    def camera_data(self, sensors):
+        return (sensors[6]['data'])
+
+    def laser_scan(self, sensors):
+        return (sensors[8]['ranges'])
+
+    def get_forward_distance(self, scan_datas):
+        min1 = min(scan_datas[0:15])
+        min2 = min(scan_datas[345:359])
+        return min(min1, min2)
+            
+    def get_right_distance(self, scan_datas):
+        return min(scan_datas[60:120])
+    
+    def foward(self, speed):
+        self.actions[0]['linear']['x'] = speed
+    
+    def turn(self, speed):
+        self.actions[0]['angular']['z'] = speed
+            
+    def stop(self):
+        self.actions[0]['linear']['x'] = 0.0
+        self.actions[0]['angular']['z'] = 0.0
+
+    def step(self):
+        for channel_id in self.actions:
+            self.hako.write_pdu(channel_id, self.actions[channel_id])
