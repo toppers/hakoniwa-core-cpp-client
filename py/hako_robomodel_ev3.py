@@ -39,14 +39,13 @@ HakoEv3ColorName = {
 class HakoRoboModelEv3:
     def __init__(self, hako):
         self.hako = hako
-        self.hako.create_pdu_channel(0, 1024, 'Ev3PduActuator')
-        self.hako.subscribe_pdu_channel(1, 1024, 'Ev3PduSensor')
-        self.binary_data = bytearray(1024)
+        self.hako.create_pdu_channel(0, 196, 'Ev3PduActuator')
+        self.hako.subscribe_pdu_channel(1, 248, 'Ev3PduSensor')
+        self.binary_data = bytearray(196)
         self.actions = { 0: binary_reader.binary_read(self.hako.offmap, 'Ev3PduActuator', self.binary_data) }
 
     def delta_usec(self):
-        #10msec
-        return 10000
+        return 20000
 
     def foward(self, speed):
         self.actions[0]['motors'][HakoEv3Motor['LEFT']]['power'] = speed
@@ -79,31 +78,31 @@ class HakoRoboModelEv3:
 
     def rewaord(self, obserbation):
         value = self.ultrasonic_sensor(obserbation)
-        if value >= 110 and value <= 145:
-            return 0.1, False
-        elif value < 110:
-            return -5, False
-        elif value > 145 and value <= 170:
-            return -5, False
+        if (value <= 120):
+            return value, False
+        elif value > 120 and value <= 250:
+            return (120 - value), False
         else:
-            return -10, True
+            return -value, True
 
     def num_actions(self):
         return 6
 
     def action(self, action_no):
+        max = 50
+        min = 20
         if action_no == 0:
-            self.foward(50)
+            self.foward(max)
         elif action_no == 1:
-            self.foward(20)
+            self.foward(min)
         elif action_no == 2:
-            self.turn(20)
+            self.turn(min)
         elif action_no == 3:
-            self.turn(50)
+            self.turn(max)
         elif action_no == 4:
-            self.turn(-20)
+            self.turn(-min)
         else:
-            self.turn(-50)
+            self.turn(-max)
 
     def num_states(self):
         return 4

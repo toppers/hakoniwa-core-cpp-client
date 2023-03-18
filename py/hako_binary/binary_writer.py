@@ -15,6 +15,8 @@ def binary_write_recursive(offmap, binary_data, json_data, base_off, typename):
     lines = offmap.get(typename)
     for key in json_data:
         line = offset_parser.select_by_name(lines, key)
+        if line is None:
+            continue
         off = offset_parser.member_off(line) + base_off
         type = offset_parser.member_type(line)
         if (offset_parser.is_primitive(line)):
