@@ -409,6 +409,45 @@ static PyObject* simevent_get_state(PyObject* self, PyObject* args)
     int ret = hako_simevent_get_state();
     return Py_BuildValue("i", ret);
 }
+static PyObject* master_init(PyObject* self, PyObject* args)
+{
+    if (self == NULL) {
+        return NULL;
+    }
+    else if (args == NULL) {
+        return NULL;
+    }
+    bool ret = hako_master_init();
+    return Py_BuildValue("O", ret ? Py_True : Py_False);
+}
+static PyObject* master_execute(PyObject* self, PyObject* args)
+{
+    if (self == NULL) {
+        return NULL;
+    }
+    else if (args == NULL) {
+        return NULL;
+    }
+    bool ret = hako_master_execute();
+    return Py_BuildValue("O", ret ? Py_True : Py_False);
+}
+static PyObject* master_set_config_simtime(PyObject* self, PyObject* args)
+{
+    if (self == NULL) {
+        return NULL;
+    }
+    else if (args == NULL) {
+        return NULL;
+    }
+    hako_time_t max_delay_time_usec;
+    hako_time_t delta_time_usec;
+    if (!PyArg_ParseTuple(args, "LL", &max_delay_time_usec, &delta_time_usec))
+    {
+        return NULL;
+    }
+    hako_master_set_config_simtime(max_delay_time_usec, delta_time_usec);
+    return Py_BuildValue("");
+}
 
 //definition of all methods of my module
 static PyMethodDef hako_methods[] = {
@@ -444,6 +483,10 @@ static PyMethodDef hako_methods[] = {
     { .ml_name = "stop", .ml_meth = simevent_stop, .ml_flags = METH_VARARGS,  .ml_doc = "Stop Simulation"},
     { .ml_name = "reset", .ml_meth = simevent_reset, .ml_flags = METH_VARARGS,  .ml_doc = "Reset Simulation"},
     { .ml_name = "state", .ml_meth = simevent_get_state, .ml_flags = METH_VARARGS,  .ml_doc = "Get simulation state"},
+
+    { .ml_name = "master_init", .ml_meth = master_init, .ml_flags = METH_VARARGS,  .ml_doc = "Initialize hakoniwa master object"},
+    { .ml_name = "master_execute", .ml_meth = master_execute, .ml_flags = METH_VARARGS,  .ml_doc = "Execute simulation"},
+    { .ml_name = "master_set_config_simtime", .ml_meth = master_set_config_simtime, .ml_flags = METH_VARARGS,  .ml_doc = "Set master config"},
     { .ml_name = NULL, .ml_meth = NULL, .ml_flags = 0,  .ml_doc = NULL},
 };
 
