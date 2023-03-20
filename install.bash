@@ -19,3 +19,4 @@ else
 fi
 
 sudo cp -rp py/hako_binary/offset /usr/local/lib/hakoniwa/hako_binary/
+sudo cp -rp py /usr/local/lib/hakoniwa/

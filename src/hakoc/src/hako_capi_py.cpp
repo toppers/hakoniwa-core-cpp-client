@@ -114,7 +114,7 @@ static PyObject* asset_create_pdu_lchannel(PyObject* self, PyObject* args)
     {
         return NULL;
     }
-    bool ret = hako_asset_create_pdu_channel(channel_id, pdu_size);
+    bool ret = hako_asset_create_pdu_lchannel(asset_name, channel_id, pdu_size);
     return Py_BuildValue("O", ret ? Py_True : Py_False);
 }
 static PyObject* asset_get_worldtime(PyObject* self, PyObject* args)
