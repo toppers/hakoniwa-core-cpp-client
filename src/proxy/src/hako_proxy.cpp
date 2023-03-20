@@ -124,7 +124,8 @@ static int hako_init()
     }
     for (unsigned int i = 0; i < ctrl.param["target_channels"].size(); i++) {
         std::cout << "target_channels: " << i << " target_channels: " << ctrl.param["target_channels"][i].at("size") << std::endl;
-        bool err = ctrl.hako_asset->create_pdu_channel(
+        bool err = ctrl.hako_asset->create_pdu_lchannel(
+            ctrl.asset_name_str,
             ctrl.param["target_channels"][i].at("channel_id"), 
             ctrl.param["target_channels"][i].at("size")
             );

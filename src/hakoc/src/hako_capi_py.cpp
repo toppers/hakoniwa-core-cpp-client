@@ -99,7 +99,24 @@ static PyObject* asset_create_pdu_channel(PyObject* self, PyObject* args)
     bool ret = hako_asset_create_pdu_channel(channel_id, pdu_size);
     return Py_BuildValue("O", ret ? Py_True : Py_False);
 }
-
+static PyObject* asset_create_pdu_lchannel(PyObject* self, PyObject* args)
+{
+    if (self == NULL) {
+        return NULL;
+    }
+    else if (args == NULL) {
+        return NULL;
+    }
+    HakoPduChannelIdType channel_id;
+    size_t pdu_size;
+    char *asset_name;
+    if (!PyArg_ParseTuple(args, "siK", &asset_name, &channel_id, &pdu_size))
+    {
+        return NULL;
+    }
+    bool ret = hako_asset_create_pdu_channel(channel_id, pdu_size);
+    return Py_BuildValue("O", ret ? Py_True : Py_False);
+}
 static PyObject* asset_get_worldtime(PyObject* self, PyObject* args)
 {
     if (self == NULL) {
@@ -404,6 +421,7 @@ static PyMethodDef hako_methods[] = {
     { .ml_name = "asset_read_pdu", .ml_meth = asset_read_pdu, .ml_flags = METH_VARARGS,  .ml_doc = "TODO"},
     { .ml_name = "asset_is_pdu_dirty", .ml_meth = asset_is_pdu_dirty, .ml_flags = METH_VARARGS,  .ml_doc = "TODO"},
     { .ml_name = "asset_create_pdu_channel", .ml_meth = asset_create_pdu_channel, .ml_flags = METH_VARARGS,  .ml_doc = "TODO"},
+    { .ml_name = "asset_create_pdu_lchannel", .ml_meth = asset_create_pdu_lchannel, .ml_flags = METH_VARARGS,  .ml_doc = "TODO"},
     { .ml_name = "asset_get_worldtime", .ml_meth = asset_get_worldtime, .ml_flags = METH_VARARGS,  .ml_doc = "TODO"},
     { .ml_name = "asset_notify_simtime", .ml_meth = asset_notify_simtime, .ml_flags = METH_VARARGS,  .ml_doc = "TODO"},
 

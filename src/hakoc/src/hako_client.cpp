@@ -43,6 +43,22 @@ int hako_client_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_s
         return -1;
     }
 }
+
+int hako_client_create_pdu_lchannel(const char* asset_name, HakoPduChannelIdType channel_id, size_t pdu_size)
+{
+    try {
+        std::string hako_client_name(asset_name);
+        if (hako_asset->create_pdu_lchannel(hako_client_name, channel_id, pdu_size) == true) {
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    } catch (std::exception *e) {
+        //hako::logger::get("core")->error(e->what());
+        return -1;
+    }
+}
 int hako_client_start_feedback()
 {
     try {

@@ -50,21 +50,22 @@ class Hako:
         self.read_types = {}
         self.read_buffers = {}
         self.asset_time_usec = 0
+        self.robo_type = robo_type
         hakoc.asset_init()
-        self.robo = hako_robomodel.create(self, robo_type)
     
     def register(self, name):
         self.asset_name = name
+        self.robo = hako_robomodel.create(self, self.robo_type)
         hakoc.asset_register(name)
     
-    def create_pdu_channel(self, channel_id, pdu_size, typename):
+    def create_pdu_lchannel(self, channel_id, pdu_size, typename):
         self.write_pdusize[channel_id] = pdu_size
         self.write_buffers[channel_id] = bytearray(pdu_size)
         self.write_types[channel_id] = typename
         #print("create_channel: " + str(self.write_buffers[channel_id]))
-        hakoc.asset_create_pdu_channel(channel_id, pdu_size)
+        hakoc.asset_create_pdu_lchannel(self.asset_name, channel_id, pdu_size)
 
-    def subscribe_pdu_channel(self, channel_id, pdu_size, typename):
+    def subscribe_pdu_lchannel(self, channel_id, pdu_size, typename):
         self.read_pdusize[channel_id] = pdu_size
         self.read_buffers[channel_id] = bytearray(pdu_size)
         self.read_types[channel_id] = typename

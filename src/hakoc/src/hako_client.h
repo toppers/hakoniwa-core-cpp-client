@@ -16,6 +16,7 @@ extern hako_time_t hako_client_get_worldtime();
 extern void hako_client_notify_simtime(hako_time_t simtime);
 extern int hako_client_start_feedback();
 extern int hako_client_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_size);
+extern int hako_client_create_pdu_lchannel(const char* asset_name, HakoPduChannelIdType channel_id, size_t pdu_size);
 extern int hako_client_pdu_is_dirty(const char* asset_name, HakoPduChannelIdType channel_id);
 extern int hako_client_write_pdu(const char* asset_name, HakoPduChannelIdType channel_id, const char *pdu_data, size_t len);
 extern int hako_client_read_pdu(const char* asset_name, HakoPduChannelIdType channel_id, char *pdu_data, size_t len);
