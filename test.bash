@@ -5,4 +5,15 @@ export PYTHONPATH="/usr/local/lib/hakoniwa:$PYTHONPATH"
 export PYTHONPATH="/usr/local/lib/hakoniwa/py:$PYTHONPATH"
 
 cd test
-python3 -m unittest
+
+for item in `ls`
+do
+    if [ -d $item ]
+    then
+        bash cleanup.bash
+        cd $item
+        python3 -m unittest
+        cd ..
+        bash cleanup.bash
+    fi
+done

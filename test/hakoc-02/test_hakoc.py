@@ -1,13 +1,11 @@
 import unittest
 import hakoc
 import hako
-import subprocess
 
 class TestHako(unittest.TestCase):
 
  
     def test_asset_pdu_02(self):
-        subprocess.run("../cleanup.bash")
         ret = hakoc.master_init()
         self.assertEqual(ret, True)
         hakoc.master_set_config_simtime(20 * 1000, 100 * 1000)
@@ -60,4 +58,3 @@ class TestHako(unittest.TestCase):
         print("result=" + str2)
         self.assertEqual(str2, "HELLO WORLD from asset-02")
 
-        subprocess.run("../cleanup.bash")
