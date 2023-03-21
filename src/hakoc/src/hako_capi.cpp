@@ -220,7 +220,7 @@ bool hako_asset_create_pdu_lchannel(const char* robo_name, HakoPduChannelIdType 
         return false;
     }
 }
-HakoPduChannelIdType get_pdu_channel(const char* robo_name, HakoPduChannelIdType channel_id)
+HakoPduChannelIdType hako_asset_get_pdu_channel(const char* robo_name, HakoPduChannelIdType channel_id)
 {
     try {
         std::string hako_robo_name(robo_name);
