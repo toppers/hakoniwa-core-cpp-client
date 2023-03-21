@@ -12,7 +12,7 @@ class HakoEnv:
     def __init__(self, model_name, robo_type):
         offset_path = '/usr/local/lib/hakoniwa/py/hako_binary/offset'
         self.hako = hako.Hako(offset_path, robo_type)
-        self.hako.register("ai_" + model_name)
+        self.hako.register("ai_" + model_name, model_name)
 
     def robo(self):
         return self.hako.robo
