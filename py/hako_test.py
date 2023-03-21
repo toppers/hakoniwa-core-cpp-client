@@ -19,7 +19,7 @@ def handler(signum, frame):
 signal.signal(signal.SIGINT, handler)
 
 #create hakoniwa env
-env = hako_env.make("base_practice_1", "ev3")
+env = hako_env.make("EV3RoboModel", "ev3")
 
 #get ai model
 model = qtable_model.get_model(env.robo().num_states(), env.robo().num_actions())

@@ -53,8 +53,9 @@ class Hako:
         self.robo_type = robo_type
         hakoc.asset_init()
     
-    def register(self, name):
+    def register(self, name, control_asset_name):
         self.asset_name = name
+        self.control_asset_name = control_asset_name
         self.robo = hako_robomodel.create(self, self.robo_type)
         hakoc.asset_register(name)
     
@@ -63,7 +64,7 @@ class Hako:
         self.write_buffers[channel_id] = bytearray(pdu_size)
         self.write_types[channel_id] = typename
         #print("create_channel: " + str(self.write_buffers[channel_id]))
-        hakoc.asset_create_pdu_lchannel(self.asset_name, channel_id, pdu_size)
+        hakoc.asset_create_pdu_lchannel(self.control_asset_name, channel_id, pdu_size)
 
     def subscribe_pdu_lchannel(self, channel_id, pdu_size, typename):
         self.read_pdusize[channel_id] = pdu_size
@@ -119,7 +120,7 @@ class Hako:
     
     def read_pdu(self, channel_id):
         #print("hakoc.read_pdu: start")
-        hakoc.asset_read_pdu(self.asset_name, channel_id, self.read_buffers[channel_id], self.read_pdusize[channel_id])
+        hakoc.asset_read_pdu(self.control_asset_name, channel_id, self.read_buffers[channel_id], self.read_pdusize[channel_id])
         #print("hakoc.read_pdu: end")
         pass
     
@@ -154,7 +155,7 @@ class Hako:
             #print("wirte_pdus: channel_id:" + str(channel_id))
             #print("wirte_pdus: write_pdusize:" + str(self.write_pdusize[channel_id]))        
             #print("wirte_pdus: write_buffers:" + str(self.write_buffers[channel_id]))
-            hakoc.asset_write_pdu(self.asset_name, channel_id, self.write_buffers[channel_id], self.write_pdusize[channel_id])
+            hakoc.asset_write_pdu(self.control_asset_name, channel_id, self.write_buffers[channel_id], self.write_pdusize[channel_id])
             hakoc.asset_notify_write_pdu_done(self.asset_name)
 
     def execute(self):
