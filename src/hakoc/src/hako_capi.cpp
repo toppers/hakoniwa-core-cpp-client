@@ -220,6 +220,18 @@ bool hako_asset_create_pdu_lchannel(const char* robo_name, HakoPduChannelIdType 
         return false;
     }
 }
+HakoPduChannelIdType get_pdu_channel(const char* robo_name, HakoPduChannelIdType channel_id)
+{
+    try {
+        std::string hako_robo_name(robo_name);
+        hako_asset_init();//TODO
+        return hako_asset->get_pdu_channel(hako_robo_name, channel_id);
+    } catch (std::exception *e) {
+        //hako::logger::get("core")->error(e->what());
+        return -1;
+    }
+}
+
 bool hako_asset_is_pdu_dirty(const char* asset_name, const char* robo_name, HakoPduChannelIdType channel_id)
 {
     try {
