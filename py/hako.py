@@ -120,7 +120,7 @@ class Hako:
     
     def read_pdu(self, channel_id):
         #print("hakoc.read_pdu: start")
-        hakoc.asset_read_pdu(self.control_asset_name, channel_id, self.read_buffers[channel_id], self.read_pdusize[channel_id])
+        hakoc.asset_read_pdu(self.asset_name, self.control_asset_name, channel_id, self.read_buffers[channel_id], self.read_pdusize[channel_id])
         #print("hakoc.read_pdu: end")
         pass
     
@@ -155,7 +155,7 @@ class Hako:
             #print("wirte_pdus: channel_id:" + str(channel_id))
             #print("wirte_pdus: write_pdusize:" + str(self.write_pdusize[channel_id]))        
             #print("wirte_pdus: write_buffers:" + str(self.write_buffers[channel_id]))
-            hakoc.asset_write_pdu(self.control_asset_name, channel_id, self.write_buffers[channel_id], self.write_pdusize[channel_id])
+            hakoc.asset_write_pdu(self.asset_name, self.control_asset_name, channel_id, self.write_buffers[channel_id], self.write_pdusize[channel_id])
             hakoc.asset_notify_write_pdu_done(self.asset_name)
 
     def execute(self):
