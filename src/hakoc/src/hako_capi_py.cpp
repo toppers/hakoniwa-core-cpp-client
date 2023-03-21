@@ -112,12 +112,12 @@ static PyObject* asset_create_pdu_lchannel(PyObject* self, PyObject* args)
     }
     HakoPduChannelIdType channel_id;
     size_t pdu_size;
-    char *asset_name;
-    if (!PyArg_ParseTuple(args, "siK", &asset_name, &channel_id, &pdu_size))
+    char *robo_name;
+    if (!PyArg_ParseTuple(args, "siK", &robo_name, &channel_id, &pdu_size))
     {
         return NULL;
     }
-    bool ret = hako_asset_create_pdu_lchannel(asset_name, channel_id, pdu_size);
+    bool ret = hako_asset_create_pdu_lchannel(robo_name, channel_id, pdu_size);
     return Py_BuildValue("O", ret ? Py_True : Py_False);
 }
 static PyObject* asset_get_worldtime(PyObject* self, PyObject* args)

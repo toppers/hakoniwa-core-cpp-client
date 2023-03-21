@@ -37,22 +37,22 @@ class TestHako(unittest.TestCase):
         ctrl_02.wait_state(hako.HakoState['RUNNING'])
 
         binary_data_01 = bytearray(b"HELLO WORLD from asset-01")
-        ret = hakoc.asset_write_pdu('TestAsset_01', 0, binary_data_01, len(binary_data_01))
+        ret = hakoc.asset_write_pdu('TestAsset_01', 'robo_01', 0, binary_data_01, len(binary_data_01))
         self.assertEqual(ret, True)
 
         binary_data_02 = bytearray(b"HELLO WORLD from asset-02")
-        ret = hakoc.asset_write_pdu('TestAsset_02', 1, binary_data_02, len(binary_data_02))
+        ret = hakoc.asset_write_pdu('TestAsset_01', 'robo_02', 1, binary_data_02, len(binary_data_02))
         self.assertEqual(ret, True)
 
         read_buffer_01 = bytearray(len(binary_data_01))
-        ret = hakoc.asset_read_pdu('TestAsset_01', 0, read_buffer_01, len(binary_data_01))
+        ret = hakoc.asset_read_pdu('TestAsset_01', 'robo_01', 0, read_buffer_01, len(binary_data_01))
         self.assertEqual(ret, True)
         str1 = read_buffer_01.decode()
         print("result=" + str1)
         self.assertEqual(str1, "HELLO WORLD from asset-01")
 
         read_buffer_02 = bytearray(len(binary_data_02))
-        ret = hakoc.asset_read_pdu('TestAsset_02', 1, read_buffer_02, len(binary_data_02))
+        ret = hakoc.asset_read_pdu('TestAsset_01', 'robo_02', 1, read_buffer_02, len(binary_data_02))
         self.assertEqual(ret, True)
         str2 = read_buffer_02.decode()
         print("result=" + str2)
