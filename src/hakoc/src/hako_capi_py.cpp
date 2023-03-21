@@ -13,9 +13,10 @@ static PyObject* asset_write_pdu(PyObject* self, PyObject* args)
     }
     PyObject* py_pdu_data;
     char *asset_name;
+    char *robo_name;
     HakoPduChannelIdType channel_id;
     size_t len;
-    if (!PyArg_ParseTuple(args, "siYK", &asset_name, &channel_id, &py_pdu_data, &len))
+    if (!PyArg_ParseTuple(args, "ssiYK", &asset_name, &robo_name, &channel_id, &py_pdu_data, &len))
     {
         return NULL;
     }
@@ -30,7 +31,7 @@ static PyObject* asset_write_pdu(PyObject* self, PyObject* args)
         printf("\n");
     }
 #endif
-    bool ret = hako_asset_write_pdu(asset_name, channel_id, pdu_data, len);
+    bool ret = hako_asset_write_pdu(asset_name, robo_name, channel_id, pdu_data, len);
     return Py_BuildValue("O", ret ? Py_True : Py_False);
 }
 static PyObject* asset_read_pdu(PyObject* self, PyObject* args)
@@ -42,15 +43,16 @@ static PyObject* asset_read_pdu(PyObject* self, PyObject* args)
         return NULL;
     }
     char *asset_name;
+    char *robo_name;
     HakoPduChannelIdType channel_id;
     PyObject* py_pdu_data;
     size_t len;
-    if (!PyArg_ParseTuple(args, "siYK", &asset_name, &channel_id, &py_pdu_data, &len))
+    if (!PyArg_ParseTuple(args, "ssiYK", &asset_name, &robo_name, &channel_id, &py_pdu_data, &len))
     {
         return NULL;
     }
     char* pdu_data = PyByteArray_AsString(py_pdu_data);
-    bool ret = hako_asset_read_pdu(asset_name, channel_id, pdu_data, len);
+    bool ret = hako_asset_read_pdu(asset_name, robo_name, channel_id, pdu_data, len);
 #if 0
     printf("len=%d\n", len);
     for (int i = 0; i < 20; i++) {
@@ -74,12 +76,13 @@ static PyObject* asset_is_pdu_dirty(PyObject* self, PyObject* args)
         return NULL;
     }
     char *asset_name;
+    char *robo_name;
     HakoPduChannelIdType channel_id;
-    if (!PyArg_ParseTuple(args, "si", &asset_name, &channel_id))
+    if (!PyArg_ParseTuple(args, "ssi", &asset_name, &robo_name, &channel_id))
     {
         return NULL;
     }
-    bool ret = hako_asset_is_pdu_dirty(asset_name, channel_id);
+    bool ret = hako_asset_is_pdu_dirty(asset_name, robo_name, channel_id);
     return Py_BuildValue("O", ret ? Py_True : Py_False);
 }
 static PyObject* asset_create_pdu_channel(PyObject* self, PyObject* args)

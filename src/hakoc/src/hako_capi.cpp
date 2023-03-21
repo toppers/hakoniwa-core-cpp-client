@@ -209,44 +209,47 @@ bool hako_asset_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_s
         return false;
     }
 }
-bool hako_asset_create_pdu_lchannel(const char* asset_name, HakoPduChannelIdType channel_id, size_t pdu_size)
+bool hako_asset_create_pdu_lchannel(const char* robo_name, HakoPduChannelIdType channel_id, size_t pdu_size)
 {
     try {
-        std::string hako_asset_name(asset_name);
+        std::string hako_robo_name(robo_name);
         hako_asset_init();//TODO
-        return hako_asset->create_pdu_lchannel(hako_asset_name, channel_id, pdu_size);
+        return hako_asset->create_pdu_lchannel(hako_robo_name, channel_id, pdu_size);
     } catch (std::exception *e) {
         //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
-bool hako_asset_is_pdu_dirty(const char* asset_name, HakoPduChannelIdType channel_id)
+bool hako_asset_is_pdu_dirty(const char* asset_name, const char* robo_name, HakoPduChannelIdType channel_id)
 {
     try {
         std::string hako_asset_name(asset_name);
-        return hako_asset->is_pdu_dirty(hako_asset_name, channel_id);
+        std::string hako_robo_name(robo_name);
+        return hako_asset->is_pdu_dirty(hako_asset_name, hako_robo_name, channel_id);
     } catch (std::exception *e) {
         //hako::logger::get("core")->error(e->what());
         return -1;
     }
 }
 
-bool hako_asset_write_pdu(const char* asset_name, HakoPduChannelIdType channel_id, const char *pdu_data, size_t len)
+bool hako_asset_write_pdu(const char* asset_name, const char* robo_name, HakoPduChannelIdType channel_id, const char *pdu_data, size_t len)
 {
     try {
         std::string hako_asset_name(asset_name);
-        return hako_asset->write_pdu(hako_asset_name, channel_id, pdu_data, len);
+        std::string hako_robo_name(robo_name);
+        return hako_asset->write_pdu(hako_asset_name, hako_robo_name, channel_id, pdu_data, len);
     } catch (std::exception *e) {
         //hako::logger::get("core")->error(e->what());
         return false;
     }
 }
 
-bool hako_asset_read_pdu(const char* asset_name, HakoPduChannelIdType channel_id, char *pdu_data, size_t len)
+bool hako_asset_read_pdu(const char* asset_name, const char* robo_name, HakoPduChannelIdType channel_id, char *pdu_data, size_t len)
 {
     try {
         std::string hako_asset_name(asset_name);
-        return hako_asset->read_pdu(hako_asset_name, channel_id, pdu_data, len);
+        std::string hako_robo_name(robo_name);
+        return hako_asset->read_pdu(hako_asset_name, hako_robo_name, channel_id, pdu_data, len);
     } catch (std::exception *e) {
         //hako::logger::get("core")->error(e->what());
         return false;

@@ -44,10 +44,10 @@ int hako_client_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_s
     }
 }
 
-int hako_client_create_pdu_lchannel(const char* asset_name, HakoPduChannelIdType channel_id, size_t pdu_size)
+int hako_client_create_pdu_lchannel(const char* robo_name, HakoPduChannelIdType channel_id, size_t pdu_size)
 {
     try {
-        std::string hako_client_name(asset_name);
+        std::string hako_client_name(robo_name);
         if (hako_asset->create_pdu_lchannel(hako_client_name, channel_id, pdu_size) == true) {
             return 0;
         }
@@ -74,11 +74,12 @@ int hako_client_start_feedback()
     }
 }
 
-int hako_client_pdu_is_dirty(const char* asset_name, HakoPduChannelIdType channel_id)
+int hako_client_pdu_is_dirty(const char* asset_name, const char* robo_name, HakoPduChannelIdType channel_id)
 {
     try {
-        std::string hako_client_name(asset_name);
-        if (hako_asset->is_pdu_dirty(hako_client_name, channel_id) == true) {
+        std::string hako_asset_name(asset_name);
+        std::string hako_client_name(robo_name);
+        if (hako_asset->is_pdu_dirty(hako_asset_name, hako_client_name, channel_id) == true) {
             return 0;
         }
         else {
@@ -89,11 +90,12 @@ int hako_client_pdu_is_dirty(const char* asset_name, HakoPduChannelIdType channe
         return -1;
     }
 }
-int hako_client_write_pdu(const char* asset_name, HakoPduChannelIdType channel_id, const char *pdu_data, size_t len)
+int hako_client_write_pdu(const char* asset_name, const char* robo_name, HakoPduChannelIdType channel_id, const char *pdu_data, size_t len)
 {
     try {
-        std::string hako_client_name(asset_name);
-        if (hako_asset->write_pdu(hako_client_name, channel_id, pdu_data, len) == true) {
+        std::string hako_asset_name(asset_name);
+        std::string hako_client_name(robo_name);
+        if (hako_asset->write_pdu(hako_asset_name, hako_client_name, channel_id, pdu_data, len) == true) {
             return 0;
         }
         else {
@@ -105,11 +107,12 @@ int hako_client_write_pdu(const char* asset_name, HakoPduChannelIdType channel_i
     }
 }
 
-int hako_client_read_pdu(const char* asset_name, HakoPduChannelIdType channel_id, char *pdu_data, size_t len)
+int hako_client_read_pdu(const char* asset_name, const char* robo_name, HakoPduChannelIdType channel_id, char *pdu_data, size_t len)
 {
     try {
-        std::string hako_client_name(asset_name);
-        if (hako_asset->read_pdu(hako_client_name, channel_id, pdu_data, len) == true) {
+        std::string hako_asset_name(asset_name);
+        std::string hako_client_name(robo_name);
+        if (hako_asset->read_pdu(hako_asset_name, hako_client_name, channel_id, pdu_data, len) == true) {
             return 0;
         }
         else {
