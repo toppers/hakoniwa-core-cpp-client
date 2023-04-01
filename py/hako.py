@@ -53,10 +53,10 @@ class Hako:
         self.robo_type = robo_type
         hakoc.asset_init()
     
-    def register(self, name, control_asset_name):
+    def register(self, name, control_asset_name, model_filepath = None):
         self.asset_name = name
         self.control_asset_name = control_asset_name
-        self.robo = hako_robomodel.create(self, self.robo_type)
+        self.robo = hako_robomodel.create(self, self.robo_type, model_filepath)
         hakoc.asset_register(name)
     
     def create_pdu_lchannel(self, channel_id, pdu_size, typename):

@@ -9,10 +9,10 @@ import hako
 
 
 class HakoEnv:
-    def __init__(self, model_name, robo_type):
+    def __init__(self, model_name, robo_type, model_filepath = None):
         offset_path = '/usr/local/lib/hakoniwa/py/hako_binary/offset'
         self.hako = hako.Hako(offset_path, robo_type)
-        self.hako.register("ai_" + model_name, model_name)
+        self.hako.register("ai_" + model_name, model_name, model_filepath)
 
     def robo(self):
         return self.hako.robo
@@ -34,6 +34,6 @@ class HakoEnv:
         info = "none"
         return state, reward, done, info
 
-def make(model_name, robo_type):
-    return HakoEnv(model_name, robo_type)
+def make(model_name, robo_type, model_filepath = None):
+    return HakoEnv(model_name, robo_type, model_filepath)
 
