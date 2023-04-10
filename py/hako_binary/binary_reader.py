@@ -31,23 +31,8 @@ def binary_read_recursive(offmap, binary_data, json_data, base_off, typename):
                 json_data[name] = value
             else:
                 array_size = offset_parser.array_size(line)
-                one_elm_size = int(size / array_size)
-                if (one_elm_size == 1):
-                    encode_type = "binary"
-                    bin = binary_io.readBinary(binary_data, off, size)
-                    array_value = bin
-                    #array_value = base64.b64encode(bin)
-                else:
-                    encode_type = "text"
-                    i = 0
-                    array_value = []
-                    while i < array_size:
-                        toff =  off + (i * one_elm_size)
-                        tsize = one_elm_size
-                        bin = binary_io.readBinary(binary_data, toff, tsize)
-                        value = binary_io.binTovalue(type, bin)
-                        array_value.append(value)
-                        i = i + 1
+                encode_type = "binary"
+                array_value = binary_io.readBinary(binary_data, off, size)
                 json_data[name + '_encode_type'] = encode_type
                 json_data[name] = array_value
         else:
