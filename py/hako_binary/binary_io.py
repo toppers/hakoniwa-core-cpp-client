@@ -126,6 +126,30 @@ def binTovalue(type, arg):
         return binTostring(arg)
     else:
         return None
+def binToArrayValues(type, arg):
+    # little endian
+    if (type == "int8"):
+        return struct.unpack(f'<{len(arg)}b', arg)
+    elif (type == "uint8"):
+        return struct.unpack(f'<{len(arg)}B', arg)
+    elif (type == "int16"):
+        return struct.unpack(f'<{len(arg)//2}h', arg)
+    elif (type == "uint16"):
+        return struct.unpack(f'<{len(arg)//2}H', arg)
+    elif (type == "int32"):
+        return struct.unpack(f'<{len(arg)//4}i', arg)
+    elif (type == "uint32"):
+        return struct.unpack(f'<{len(arg)//4}I', arg)
+    elif (type == "int64"):
+        return struct.unpack(f'<{len(arg)//8}q', arg)
+    elif (type == "uint64"):
+        return struct.unpack(f'<{len(arg)//8}Q', arg)
+    elif (type == "float32"):
+        return struct.unpack(f'<{len(arg)//4}f', arg)
+    elif (type == "float64"):
+        return struct.unpack(f'<{len(arg)//8}d', arg)
+    else:
+        return None
 
 def writeBinary(binary_data, off, bin):
     i = 0
