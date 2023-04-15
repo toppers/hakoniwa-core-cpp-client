@@ -57,10 +57,10 @@ class HakoRoboModelAny:
     def subscribe_pdu_lchannel(self, writers):
         for writer in writers:
             writer = ObjectLike(writer)
-            type = writer.type.split('/')[1]
+            typename = writer.type.split('/')[1]
             self.channel_map[writer.org_name] = writer.channel_id
-            #print("type=" + type)
-            #print("channel_id=" + str(writer.channel_id))
-            #print("pdu_size=" + str(writer.pdu_size))
-            self.hako.subscribe_pdu_lchannel(writer.channel_id, writer.pdu_size, 'JointState')
+            print("subscribe:channel_id=" + str(writer.channel_id))
+            print("subscribe:typename=" + typename)
+            print("subscribe:pdu_size=" + str(writer.pdu_size))
+            self.hako.subscribe_pdu_lchannel(writer.channel_id, writer.pdu_size, typename)
 
