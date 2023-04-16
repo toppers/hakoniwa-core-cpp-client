@@ -31,9 +31,8 @@ def binary_read_recursive(offmap, binary_data, json_data, base_off, typename):
                 json_data[name] = value
             else:
                 array_size = offset_parser.array_size(line)
-                encode_type = "binary"
                 array_value = binary_io.readBinary(binary_data, off, size)
-                json_data[name + '_encode_type'] = encode_type
+                json_data[name + '__raw' ] = array_value
                 json_data[name] = binary_io.binToArrayValues(type, array_value)
         else:
             if (offset_parser.is_single(line)):
