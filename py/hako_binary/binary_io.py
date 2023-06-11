@@ -73,7 +73,7 @@ def float64Tobin(arg):
     return struct.pack('d', arg)
 
 def stringTobin(arg):
-    return arg.encode(encoding='utf-8')
+    return arg.encode(encoding='utf-8') + b'\x00'
 
 def typeTobin(type, arg):
     if (type == "int8"):
