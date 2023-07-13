@@ -87,6 +87,7 @@ class Hako:
                 return True
             elif current_ev == HakoEvent['RESET']:
                 hakoc.asset_reset_feedback(self.asset_name, True)
+                self.asset_time_usec = 0
                 return True
             else:
                 print("ERROR: unknown event:" + current_ev)
@@ -95,6 +96,13 @@ class Hako:
     def wait_state(self, expect_state):
         while True:
             if self.state() != expect_state:
+                time.sleep(0.01)
+            else:
+                return True
+
+    def wait_pdu_created(self):
+        while True:
+            if hakoc.asset_is_pdu_created() == False:
                 time.sleep(0.01)
             else:
                 return True
@@ -157,6 +165,49 @@ class Hako:
             #print("wirte_pdus: write_buffers:" + str(self.write_buffers[channel_id]))
             hakoc.asset_write_pdu(self.asset_name, self.control_asset_name, channel_id, self.write_buffers[channel_id], self.write_pdusize[channel_id])
             hakoc.asset_notify_write_pdu_done(self.asset_name)
+
+    def get_worldtime(self):
+        return hakoc.asset_get_worldtime()
+
+    def usleep(self, sleep_time_usec):
+        curr_time = hakoc.asset_get_worldtime()
+        target_time = curr_time + sleep_time_usec
+        while curr_time < target_time:
+            #print(f"curr_time={curr_time} asset_time_usec={self.asset_time_usec} target_time={target_time}")
+            if self.execute_step() == False:
+                if self.state() != HakoState['RUNNING']:
+                    break
+                else:
+                    time.sleep(0.01)
+            curr_time = hakoc.asset_get_worldtime()
+
+    def execute_step(self):
+        result = hakoc.asset_notify_simtime(self.asset_name, self.asset_time_usec)
+        if result == False:
+            print("notify_simtime: false")
+            return False
+        elif self.state() != HakoState['RUNNING']:
+            print("running: false")
+            return False
+        elif hakoc.asset_is_pdu_created() == False:
+            print("pdu_created: false")
+            return False
+        elif hakoc.asset_is_pdu_sync_mode(self.asset_name) == True:
+            print("sync_mode: true")
+            self.write_pdus()
+            return False
+        elif hakoc.asset_is_simulation_mode() == False:
+            print("simulation mode: false")
+            return False
+        elif self.asset_time_usec >= hakoc.asset_get_worldtime():
+            return False
+        else:
+            self.write_pdus()
+            #print("write_pdu: done")
+            state = self.read_pdus()
+            #print("read_pdu: done")
+            self.asset_time_usec = self.asset_time_usec + self.robo.delta_usec()
+            return True
 
     def execute(self):
         while True:
