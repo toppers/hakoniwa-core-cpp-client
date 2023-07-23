@@ -18,6 +18,7 @@ using namespace hako::client::proxy;
 
 typedef struct {
     std::string asset_name_str;
+    std::string robo_name_str;
     json param;
     ProcessManager process;
     std::shared_ptr<hako::IHakoSimulationEventController> hako_sim_ctrl;
@@ -104,6 +105,7 @@ static void stop_callback()
 static int hako_init()
 {
     ctrl.asset_name_str = ctrl.param["asset_name"];
+    ctrl.robo_name_str = ctrl.param["robo_name"];
     //hako::logger::init("core");
     //hako::logger::init(ctrl.asset_name_str);
     //hako::logger::get(ctrl.asset_name_str)->info("asset_name={0}", ctrl.asset_name_str);
@@ -125,7 +127,7 @@ static int hako_init()
     for (unsigned int i = 0; i < ctrl.param["target_channels"].size(); i++) {
         std::cout << "target_channels: " << i << " target_channels: " << ctrl.param["target_channels"][i].at("size") << std::endl;
         bool err = ctrl.hako_asset->create_pdu_lchannel(
-            ctrl.asset_name_str,
+            ctrl.robo_name_str,
             ctrl.param["target_channels"][i].at("channel_id"), 
             ctrl.param["target_channels"][i].at("size")
             );

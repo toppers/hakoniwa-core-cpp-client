@@ -1,5 +1,6 @@
 {
     "asset_name": "Athrill",
+    "robo_name": "Robot1",
     "target_exec_dir": "src/proxy",
     "target_bin_path": "./sample-proc.bash",
     "target_options": [
