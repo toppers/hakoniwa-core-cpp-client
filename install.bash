@@ -8,6 +8,7 @@ else
 fi
 
 sudo cp cmake-build/core/sample/base-procs/hako-cmd/hako-cmd /usr/local/bin/hakoniwa/
+sudo cp cmake-build/src/proxy/hako-proxy /usr/local/bin/hakoniwa/
 sudo cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/
 sudo cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/hakoc.so
 
