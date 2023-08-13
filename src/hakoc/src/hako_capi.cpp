@@ -14,7 +14,6 @@ bool hako_master_init()
 {
     try {
         hako::init();
-        hako::logger::init("master");
         hako_master = hako::create_master();
         if (hako_master == nullptr) {
             return false;
@@ -78,7 +77,6 @@ bool hako_asset_init()
     static bool log_is_initalized = false;
     try {
         if (log_is_initalized == false) {
-            hako::logger::init("core");
             log_is_initalized = true;
         }
         hako_asset = hako::create_asset_controller();
@@ -329,7 +327,6 @@ bool hako_asset_is_pdu_created()
 bool hako_simevent_init()
 {
     try {
-        hako::logger::init("core");
         hako_simevent = hako::get_simevent_controller();
         if (hako_simevent == nullptr) {
             return false;
