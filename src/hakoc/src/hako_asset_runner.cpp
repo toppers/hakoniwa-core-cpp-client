@@ -189,12 +189,19 @@ bool hako_asset_runner_step(hako_time_t increment_step)
 
 bool hako_asset_runner_pdu_read(const char* robo_name, HakoPduChannelIdType lchannel, char* buffer, size_t buffer_len)
 {
-    // 実装
-    return true; // 仮の戻り値
+    bool ret = hako_asset_runner_ctrl.hako_asset->read_pdu(hako_asset_runner_ctrl.asset_name_str, robo_name, lchannel, buffer, buffer_len);
+    if (ret == false) {
+        return false;
+    }
+    return true;
 }
 
 bool hako_asset_runner_pdu_write(const char* robo_name, HakoPduChannelIdType lchannel, const char* buffer, size_t buffer_len)
 {
-    // 実装
-    return true; // 仮の戻り値
+    bool ret = hako_asset_runner_ctrl.hako_asset->write_pdu(hako_asset_runner_ctrl.asset_name_str, robo_name, lchannel, buffer, buffer_len);
+    if (ret == false) {
+        return false;
+    }
+    hako_asset_runner_ctrl.hako_asset->notify_write_pdu_done(hako_asset_runner_ctrl.asset_name_str);
+    return true;
 }
