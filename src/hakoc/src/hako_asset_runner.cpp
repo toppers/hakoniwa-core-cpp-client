@@ -4,6 +4,14 @@
 #include <fstream>
 #include <iostream>
 
+#define HAKO_ASSERT_RUNNER_ASSERT(expr)	\
+do {	\
+	if (!(expr))	{	\
+		printf("ASSERTION FAILED:%s:%s:%d:%s", __FILE__, __FUNCTION__, __LINE__, #expr);	\
+		assert(!(expr));	\
+	}	\
+} while (0)
+
 using json = nlohmann::json;
 
 struct PduReader {
@@ -35,6 +43,7 @@ struct HakoAssetRunnerType {
     hako_time_t current_usec;
     json param;
     std::shared_ptr<hako::IHakoAssetController> hako_asset;
+    std::shared_ptr<hako::IHakoSimulationEventController> hako_sim;
     std::vector<Robot> robots;
 };
 
@@ -127,6 +136,7 @@ static void hako_asset_runner_parse_robots(void)
 
 bool hako_asset_runner_init(const char* asset_name, const char* config_path, hako_time_t delta_usec)
 {
+    hako::init();
     std::ifstream ifs(config_path);
     
     if (!ifs.is_open()) {
@@ -146,6 +156,11 @@ bool hako_asset_runner_init(const char* asset_name, const char* config_path, hak
     }
     hako_asset_runner_ctrl.hako_asset = hako::create_asset_controller();
     if (hako_asset_runner_ctrl.hako_asset == nullptr) {
+        std::cerr << "ERROR: Not found hako-master on this PC" << std::endl;
+        return false;
+    }
+    hako_asset_runner_ctrl.hako_sim = hako::get_simevent_controller();
+    if (hako_asset_runner_ctrl.hako_sim == nullptr) {
         std::cerr << "ERROR: Not found hako-master on this PC" << std::endl;
         return false;
     }
@@ -173,34 +188,154 @@ bool hako_asset_runner_init(const char* asset_name, const char* config_path, hak
 
     return true;
 }
-
+#define WAIT_TIME_USEC (1000 * 10)
 void hako_asset_runner_fin(void)
 {
     // nothing to do.
 }
 
-static bool hako_asset_runner_wait_running(void)
+static bool hako_asset_runner_wait_state(HakoSimulationStateType target)
 {
-    //TODO
+    do {
+        HakoSimulationStateType curr = hako_asset_runner_ctrl.hako_sim->state();
+        if (curr == target) {
+            break;
+        }
+        usleep(WAIT_TIME_USEC);
+    } while (true);
     return true;
 }
-static bool hako_asset_runner_proc(void)
+
+static bool hako_asset_runner_wait_event(HakoSimulationAssetEventType target)
 {
-    //TODO
+    bool target_event_is_occureed = false;
+    while (target_event_is_occureed == false) {
+        auto event = hako_asset_runner_ctrl.hako_asset->asset_get_event(hako_asset_runner_ctrl.asset_name_str);
+        target_event_is_occureed = (target == event);
+        switch (event) {
+            case HakoSimAssetEvent_None:
+                usleep(WAIT_TIME_USEC);
+                break;
+            case HakoSimAssetEvent_Start:
+                hako_asset_runner_ctrl.hako_asset->start_feedback(hako_asset_runner_ctrl.asset_name_str, true);
+                break;
+            case HakoSimAssetEvent_Stop:
+                hako_asset_runner_ctrl.hako_asset->stop_feedback(hako_asset_runner_ctrl.asset_name_str, true);
+                break;
+            case HakoSimAssetEvent_Reset:
+                hako_asset_runner_ctrl.hako_asset->reset_feedback(hako_asset_runner_ctrl.asset_name_str, true);
+                break;
+            default:
+                std::cerr << "ERROR: hako_asset_runner_wait_event() unkonwn event= " << event << std::endl;
+                return false;
+        }
+    }
+    return true;
+}
+
+static bool hako_asset_runner_wait_pdu_created()
+{
+    do {
+        bool result = hako_asset_runner_ctrl.hako_asset->is_pdu_created();
+        if (result) {
+            break;
+        }
+        usleep(WAIT_TIME_USEC);
+    } while (true);
+    return true;
+}
+
+static bool hako_asset_runner_wait_running(void)
+{
+    std::cout << "WAIT START" << std::endl;
+    if (hako_asset_runner_wait_event(HakoSimAssetEvent_Start) == false) {
+        return false;
+    }
+    std::cout << "WAIT RUNNING" << std::endl;
+    if (hako_asset_runner_wait_state(HakoSim_Running) == false) {
+        return false;
+    }
+    std::cout << "PDU CREATED" << std::endl;
+    return hako_asset_runner_wait_pdu_created();
+}
+static bool hako_asset_runner_execute(hako_time_t increment_step)
+{
+    hako_asset_runner_ctrl.hako_asset->notify_simtime(hako_asset_runner_ctrl.asset_name_str, hako_asset_runner_ctrl.current_usec);
+    HakoSimulationStateType curr = hako_asset_runner_ctrl.hako_sim->state();
+    if (curr != HakoSim_Running) {
+        std::cout << "NOT RUNNING: curr = " << curr << std::endl;
+        return false;
+    }
+    bool result = hako_asset_runner_ctrl.hako_asset->is_pdu_created();
+    if (result == false) {
+        std::cout << "PDU IS NOT CREATED" << std::endl;
+        return false;
+    }
+    result = hako_asset_runner_ctrl.hako_asset->is_pdu_sync_mode(hako_asset_runner_ctrl.asset_name_str);
+    if (result == false) {
+        std::cout << "SYNC MODE" << std::endl;
+        return false;
+    }
+    result = hako_asset_runner_ctrl.hako_asset->is_simulation_mode();
+    if (result == false) {
+        std::cout << "NOT SIMULATION MODE" << std::endl;
+        return false;
+    }
+    hako_time_t world_time = hako_asset_runner_ctrl.hako_asset->get_worldtime();
+    if (hako_asset_runner_ctrl.current_usec >= world_time) {
+        return false;
+    }
+    hako_asset_runner_ctrl.current_usec += ( hako_asset_runner_ctrl.delta_usec * increment_step );
+    return true;
+}
+static void hako_asset_runner_pdus_write_done(void)
+{
+    for (const Robot& robot : hako_asset_runner_ctrl.robots) {
+        for (const PduWriter& writer : robot.pdu_writers) {
+            std::cout << "Robot: " << robot.name << ", PduWriter: " << writer.name << std::endl;
+            std::cout << "channel_id: " << writer.channel_id << " pdu_size: " << writer.pdu_size << std::endl;
+            char * buffer = (char*) malloc(writer.pdu_size);
+            HAKO_ASSERT_RUNNER_ASSERT(buffer != NULL);
+            memset(buffer, 0, writer.pdu_size);
+            auto ret = hako_asset_runner_pdu_write(robot.name.c_str(), writer.channel_id, buffer, writer.pdu_size);
+            HAKO_ASSERT_RUNNER_ASSERT(ret == true);
+            free(buffer);
+        }
+    }
+
+}
+static bool hako_asset_runner_proc(hako_time_t increment_step)
+{
+    while (hako_asset_runner_execute(increment_step) == false) {
+        HakoSimulationStateType curr = hako_asset_runner_ctrl.hako_sim->state();
+        if (curr != HakoSim_Running) {
+            std::cout << "WAIT STOP" << std::endl;
+            auto ret = hako_asset_runner_wait_event(HakoSimAssetEvent_Stop);
+            HAKO_ASSERT_RUNNER_ASSERT(ret == true);
+            std::cout << "WAIT RESET" << std::endl;
+            ret = hako_asset_runner_wait_event(HakoSimAssetEvent_Reset);
+            HAKO_ASSERT_RUNNER_ASSERT(ret == true);
+            break;
+        }
+        else if (hako_asset_runner_ctrl.hako_asset->is_pdu_sync_mode(hako_asset_runner_ctrl.asset_name_str) == true) {
+            hako_asset_runner_pdus_write_done();
+        }
+        usleep(WAIT_TIME_USEC);
+    }
     return true;
 }
 bool hako_asset_runner_step(hako_time_t increment_step)
 {
-    // WAINT FOR RUNNING STATE
-    hako_asset_runner_wait_running();
-
-    // RUNNING PROC
-    bool ret = hako_asset_runner_proc();
-    if (ret) {
-        hako_asset_runner_ctrl.current_usec += ( hako_asset_runner_ctrl.delta_usec * increment_step );
+    while (true) {
+        // WAINT FOR RUNNING STATE
+        auto ret = hako_asset_runner_wait_running();
+        HAKO_ASSERT_RUNNER_ASSERT(ret == true);
+        // RUNNING PROC
+        if (hako_asset_runner_proc(increment_step) == true) {
+            break;
+        }
     }
-
-    return true; // 仮の戻り値
+    return true;
 }
 
 /***********************
