@@ -1,6 +1,8 @@
 #ifndef _HAKO_CAPI_TYPES_H_
 #define _HAKO_CAPI_TYPES_H_
 
+#include <stddef.h>
+
 typedef long long int hako_time_t;
 typedef struct {
     void (*start) ();
