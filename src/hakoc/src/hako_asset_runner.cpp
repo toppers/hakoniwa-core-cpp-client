@@ -32,6 +32,7 @@ struct Robot {
 struct HakoAssetRunnerType {
     std::string asset_name_str;
     hako_time_t delta_usec;
+    hako_time_t current_usec;
     json param;
     std::shared_ptr<hako::IHakoAssetController> hako_asset;
     std::vector<Robot> robots;
@@ -135,6 +136,7 @@ bool hako_asset_runner_init(const char* asset_name, const char* config_path, hak
 
     hako_asset_runner_ctrl.asset_name_str = asset_name;
     hako_asset_runner_ctrl.delta_usec = delta_usec;
+    hako_asset_runner_ctrl.current_usec = 0;
     try {
         hako_asset_runner_ctrl.param = json::parse(ifs);
         hako_asset_runner_parse_robots();
@@ -177,9 +179,27 @@ void hako_asset_runner_fin(void)
     // nothing to do.
 }
 
+static bool hako_asset_runner_wait_running(void)
+{
+    //TODO
+    return true;
+}
+static bool hako_asset_runner_proc(void)
+{
+    //TODO
+    return true;
+}
 bool hako_asset_runner_step(hako_time_t increment_step)
 {
-    // 実装
+    // WAINT FOR RUNNING STATE
+    hako_asset_runner_wait_running();
+
+    // RUNNING PROC
+    bool ret = hako_asset_runner_proc();
+    if (ret) {
+        hako_asset_runner_ctrl.current_usec += ( hako_asset_runner_ctrl.delta_usec * increment_step );
+    }
+
     return true; // 仮の戻り値
 }
 
