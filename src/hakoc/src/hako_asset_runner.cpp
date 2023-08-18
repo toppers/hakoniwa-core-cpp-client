@@ -258,7 +258,7 @@ static bool hako_asset_runner_wait_running(void)
     std::cout << "PDU CREATED" << std::endl;
     return hako_asset_runner_wait_pdu_created();
 }
-static bool hako_asset_runner_execute(hako_time_t increment_step)
+static bool hako_asset_runner_execute(void)
 {
     hako_asset_runner_ctrl.hako_asset->notify_simtime(hako_asset_runner_ctrl.asset_name_str, hako_asset_runner_ctrl.current_usec);
     HakoSimulationStateType curr = hako_asset_runner_ctrl.hako_sim->state();
@@ -285,7 +285,7 @@ static bool hako_asset_runner_execute(hako_time_t increment_step)
     if (hako_asset_runner_ctrl.current_usec >= world_time) {
         return false;
     }
-    hako_asset_runner_ctrl.current_usec += ( hako_asset_runner_ctrl.delta_usec * increment_step );
+    hako_asset_runner_ctrl.current_usec += hako_asset_runner_ctrl.delta_usec;
     return true;
 }
 static void hako_asset_runner_pdus_write_done(void)
@@ -304,9 +304,9 @@ static void hako_asset_runner_pdus_write_done(void)
     }
 
 }
-static bool hako_asset_runner_proc(hako_time_t increment_step)
+static bool hako_asset_runner_proc(void)
 {
-    while (hako_asset_runner_execute(increment_step) == false) {
+    while (hako_asset_runner_execute() == false) {
         HakoSimulationStateType curr = hako_asset_runner_ctrl.hako_sim->state();
         if (curr != HakoSim_Running) {
             std::cout << "WAIT STOP" << std::endl;
@@ -315,7 +315,7 @@ static bool hako_asset_runner_proc(hako_time_t increment_step)
             std::cout << "WAIT RESET" << std::endl;
             ret = hako_asset_runner_wait_event(HakoSimAssetEvent_Reset);
             HAKO_ASSERT_RUNNER_ASSERT(ret == true);
-            break;
+            return false;
         }
         else if (hako_asset_runner_ctrl.hako_asset->is_pdu_sync_mode(hako_asset_runner_ctrl.asset_name_str) == true) {
             hako_asset_runner_pdus_write_done();
@@ -324,20 +324,22 @@ static bool hako_asset_runner_proc(hako_time_t increment_step)
     }
     return true;
 }
+
 bool hako_asset_runner_step(hako_time_t increment_step)
 {
-    while (true) {
-        // WAINT FOR RUNNING STATE
-        auto ret = hako_asset_runner_wait_running();
-        HAKO_ASSERT_RUNNER_ASSERT(ret == true);
-        // RUNNING PROC
-        if (hako_asset_runner_proc(increment_step) == true) {
-            break;
+    // WAINT FOR RUNNING STATE
+    auto ret = hako_asset_runner_wait_running();
+    HAKO_ASSERT_RUNNER_ASSERT(ret == true);
+    hako_time_t target_time_usec = hako_asset_runner_ctrl.current_usec + (increment_step * hako_asset_runner_ctrl.delta_usec);
+
+    // RUNNING PROC
+    while (hako_asset_runner_ctrl.delta_usec < target_time_usec) {
+        if (hako_asset_runner_proc() == false) {
+            return false;
         }
     }
     return true;
 }
-
 /***********************
  * pdu io
  ***********************/
