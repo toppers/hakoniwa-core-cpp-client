@@ -20,9 +20,10 @@ extern "C" {
  *
  * @param[in] asset_name アセット名
  * @param[in] config_path 箱庭アセットのコンフィグファイルパス
+ * @param[in] delta_usec シミュレーションのステップ間隔（マイクロ秒単位）
  * @return 初期化が成功した場合は true、失敗した場合は false
  */
-extern bool hako_asset_runner_init(const char* asset_name, const char* config_path);
+extern bool hako_asset_runner_init(const char* asset_name, const char* config_path, hako_time_t delta_usec);
 
 /**
  * @brief 箱庭アセットの終了関数

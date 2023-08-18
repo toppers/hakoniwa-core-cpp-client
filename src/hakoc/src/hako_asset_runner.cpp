@@ -31,6 +31,7 @@ struct Robot {
 
 struct HakoAssetRunnerType {
     std::string asset_name_str;
+    hako_time_t delta_usec;
     json param;
     std::shared_ptr<hako::IHakoAssetController> hako_asset;
     std::vector<Robot> robots;
@@ -123,7 +124,7 @@ static void hako_asset_runner_parse_robots(void)
     }
 }
 
-bool hako_asset_runner_init(const char* asset_name, const char* config_path)
+bool hako_asset_runner_init(const char* asset_name, const char* config_path, hako_time_t delta_usec)
 {
     std::ifstream ifs(config_path);
     
@@ -133,6 +134,7 @@ bool hako_asset_runner_init(const char* asset_name, const char* config_path)
     }
 
     hako_asset_runner_ctrl.asset_name_str = asset_name;
+    hako_asset_runner_ctrl.delta_usec = delta_usec;
     try {
         hako_asset_runner_ctrl.param = json::parse(ifs);
         hako_asset_runner_parse_robots();
@@ -172,7 +174,7 @@ bool hako_asset_runner_init(const char* asset_name, const char* config_path)
 
 void hako_asset_runner_fin(void)
 {
-    // 実装
+    // nothing to do.
 }
 
 bool hako_asset_runner_step(hako_time_t increment_step)
