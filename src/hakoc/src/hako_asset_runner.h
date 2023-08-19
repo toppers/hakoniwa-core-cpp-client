@@ -26,6 +26,37 @@ extern "C" {
 extern bool hako_asset_runner_init(const char* asset_name, const char* config_path, hako_time_t delta_usec);
 
 /**
+ * @brief コールバック関数を登録します。
+ *
+ * この関数は、アセットに対してセットアップ、タスク実行、リセットなど
+ * アクションに関連するコールバック関数を登録します。未登録の場合は、
+ * 下記に記載の実行タイミングで呼び出しは行われません。
+ * 
+ * - setup
+ *   - 実行タイミング：箱庭アセットの登録および初期化処理終了後
+ *   - 実行処理内容：シミュレーション実行前に初期化が必要な処理を記載
+ * - write_initial_pdu_data
+ *   - 実行タイミング：PDUの初期値設定可能なタイミング
+ *   - 実行処理内容：初期値設定したいチャネルに対してPDUの書き込みを行う。未設定の場合はゼロクリア。
+ * - do_task
+ *   - 実行タイミング：delta_usec単位で呼び出し
+ *   - 実行処理内容：シミュレーション中に実行したい処理を記載
+ * - reset
+ *   - 実行タイミング：reset イベント発生時
+ *   - 実行処理内容：reset イベントで実行したい処理を記載
+ *
+ * @param[in] callback コールバック関数へのポインタを含む構造体へのポインタ
+ * @return 登録が成功した場合は true、失敗した場合は false
+ */
+typedef struct {
+    void (*setup) ();
+    void (*write_initial_pdu_data) (const char* robot_name, HakoPduChannelIdType lchannel);
+    void (*do_task) ();
+    void (*reset) ();
+} hako_asset_runner_callback_t;
+extern bool hako_asset_runner_register_callback(const hako_asset_runner_callback_t*callback);
+
+/**
  * @brief 箱庭アセットの終了関数
  *
  * この関数は箱庭アセットを終了します。

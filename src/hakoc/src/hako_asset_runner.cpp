@@ -38,10 +38,12 @@ struct Robot {
 };
 
 struct HakoAssetRunnerType {
+    bool is_initialized;
     std::string asset_name_str;
     hako_time_t delta_usec;
     hako_time_t current_usec;
     json param;
+    const hako_asset_runner_callback_t *callback;
     std::shared_ptr<hako::IHakoAssetController> hako_asset;
     std::shared_ptr<hako::IHakoSimulationEventController> hako_sim;
     std::vector<Robot> robots;
@@ -136,6 +138,7 @@ static void hako_asset_runner_parse_robots(void)
 
 bool hako_asset_runner_init(const char* asset_name, const char* config_path, hako_time_t delta_usec)
 {
+    hako_asset_runner_ctrl.is_initialized = false;
     hako::init();
     std::ifstream ifs(config_path);
     
@@ -185,9 +188,18 @@ bool hako_asset_runner_init(const char* asset_name, const char* config_path, hak
             }            
         }
     }
-
+    hako_asset_runner_ctrl.is_initialized = true;
     return true;
 }
+bool hako_asset_runner_register_callback(const hako_asset_runner_callback_t* callback)
+{
+    if (hako_asset_runner_ctrl.is_initialized == false) {
+        return false;
+    }
+    hako_asset_runner_ctrl.callback = callback;
+    return true;
+}
+
 #define WAIT_TIME_USEC (1000 * 10)
 void hako_asset_runner_fin(void)
 {
@@ -223,6 +235,11 @@ static bool hako_asset_runner_wait_event(HakoSimulationAssetEventType target)
                 hako_asset_runner_ctrl.hako_asset->stop_feedback(hako_asset_runner_ctrl.asset_name_str, true);
                 break;
             case HakoSimAssetEvent_Reset:
+                if (hako_asset_runner_ctrl.callback != NULL) {
+                    if (hako_asset_runner_ctrl.callback->reset != NULL) {
+                        hako_asset_runner_ctrl.callback->reset();
+                    }
+                }
                 hako_asset_runner_ctrl.hako_asset->reset_feedback(hako_asset_runner_ctrl.asset_name_str, true);
                 break;
             default:
@@ -256,7 +273,15 @@ static bool hako_asset_runner_wait_running(void)
         return false;
     }
     std::cout << "PDU CREATED" << std::endl;
-    return hako_asset_runner_wait_pdu_created();
+    if (hako_asset_runner_wait_pdu_created() == false) {
+        return false;
+    }
+    if (hako_asset_runner_ctrl.callback != NULL) {
+        if (hako_asset_runner_ctrl.callback->setup != NULL) {
+            hako_asset_runner_ctrl.callback->setup();
+        }
+    }
+    return true;
 }
 static bool hako_asset_runner_execute(void)
 {
@@ -285,6 +310,11 @@ static bool hako_asset_runner_execute(void)
     if (hako_asset_runner_ctrl.current_usec >= world_time) {
         return false;
     }
+    if (hako_asset_runner_ctrl.callback != NULL) {
+        if (hako_asset_runner_ctrl.callback->do_task != NULL) {
+            hako_asset_runner_ctrl.callback->do_task();
+        }
+    }
     hako_asset_runner_ctrl.current_usec += hako_asset_runner_ctrl.delta_usec;
     return true;
 }
@@ -294,12 +324,21 @@ static void hako_asset_runner_pdus_write_done(void)
         for (const PduWriter& writer : robot.pdu_writers) {
             std::cout << "Robot: " << robot.name << ", PduWriter: " << writer.name << std::endl;
             std::cout << "channel_id: " << writer.channel_id << " pdu_size: " << writer.pdu_size << std::endl;
-            char * buffer = (char*) malloc(writer.pdu_size);
-            HAKO_ASSERT_RUNNER_ASSERT(buffer != NULL);
-            memset(buffer, 0, writer.pdu_size);
-            auto ret = hako_asset_runner_pdu_write(robot.name.c_str(), writer.channel_id, buffer, writer.pdu_size);
-            HAKO_ASSERT_RUNNER_ASSERT(ret == true);
-            free(buffer);
+            bool is_called = false;
+            if (hako_asset_runner_ctrl.callback != NULL) {
+                if (hako_asset_runner_ctrl.callback->write_initial_pdu_data != NULL) {
+                    hako_asset_runner_ctrl.callback->write_initial_pdu_data(robot.name.c_str(), writer.channel_id);
+                    is_called = true;
+                }
+            }
+            if (is_called == false) {
+                char * buffer = (char*) malloc(writer.pdu_size);
+                HAKO_ASSERT_RUNNER_ASSERT(buffer != NULL);
+                memset(buffer, 0, writer.pdu_size);
+                auto ret = hako_asset_runner_pdu_write(robot.name.c_str(), writer.channel_id, buffer, writer.pdu_size);
+                HAKO_ASSERT_RUNNER_ASSERT(ret == true);
+                free(buffer);
+            }
         }
     }
 
