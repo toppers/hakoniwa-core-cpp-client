@@ -103,6 +103,25 @@ extern bool hako_asset_runner_pdu_read(const char* robo_name, HakoPduChannelIdTy
 extern bool hako_asset_runner_pdu_write(const char* robo_name, HakoPduChannelIdType lchannel, const char* buffer, size_t buffer_len);
 
 
+/*
+ * example of api uscase
+ */
+/*
+extern hako_asset_runner_callback_t my_callbacks;
+void main(void)
+{
+    hako_asset_runner_init("sample", "./config.json", 1000*10);
+    hako_asset_runner_register_callback(&my_callbacks);
+    while (true) {
+        if (hako_asset_runner_step(1) == false) {
+            break;
+        }
+    }
+    hako_asset_runner_fin();
+}
+*/
+
+
 #ifdef __cplusplus
 }
 #endif
