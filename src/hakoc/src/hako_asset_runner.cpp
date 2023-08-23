@@ -50,6 +50,7 @@ struct HakoAssetRunnerType {
 };
 
 static HakoAssetRunnerType hako_asset_runner_ctrl;
+static bool hako_asset_runner_wait_running(void);
 
 /***********************
  * simulation control
@@ -188,6 +189,10 @@ bool hako_asset_runner_init(const char* asset_name, const char* config_path, hak
             }            
         }
     }
+    // WAINT FOR RUNNING STATE
+    ret = hako_asset_runner_wait_running();
+    HAKO_ASSERT_RUNNER_ASSERT(ret == true);
+
     hako_asset_runner_ctrl.is_initialized = true;
     return true;
 }
@@ -240,6 +245,7 @@ static bool hako_asset_runner_wait_event(HakoSimulationAssetEventType target)
                         hako_asset_runner_ctrl.callback->reset();
                     }
                 }
+                hako_asset_runner_ctrl.current_usec = 0;
                 hako_asset_runner_ctrl.hako_asset->reset_feedback(hako_asset_runner_ctrl.asset_name_str, true);
                 break;
             default:
@@ -297,8 +303,8 @@ static bool hako_asset_runner_execute(void)
         return false;
     }
     result = hako_asset_runner_ctrl.hako_asset->is_pdu_sync_mode(hako_asset_runner_ctrl.asset_name_str);
-    if (result == false) {
-        std::cout << "SYNC MODE" << std::endl;
+    if (result == true) {
+        std::cout << "SYNC MODE: true" << std::endl;
         return false;
     }
     result = hako_asset_runner_ctrl.hako_asset->is_simulation_mode();
@@ -316,6 +322,7 @@ static bool hako_asset_runner_execute(void)
         }
     }
     hako_asset_runner_ctrl.current_usec += hako_asset_runner_ctrl.delta_usec;
+    //std::cout << "# current_usec = " << hako_asset_runner_ctrl.current_usec << std::endl;
     return true;
 }
 static void hako_asset_runner_pdus_write_done(void)
@@ -354,6 +361,9 @@ static bool hako_asset_runner_proc(void)
             std::cout << "WAIT RESET" << std::endl;
             ret = hako_asset_runner_wait_event(HakoSimAssetEvent_Reset);
             HAKO_ASSERT_RUNNER_ASSERT(ret == true);
+            // WAINT FOR RUNNING STATE
+            ret = hako_asset_runner_wait_running();
+            HAKO_ASSERT_RUNNER_ASSERT(ret == true);
             return false;
         }
         else if (hako_asset_runner_ctrl.hako_asset->is_pdu_sync_mode(hako_asset_runner_ctrl.asset_name_str) == true) {
@@ -366,13 +376,12 @@ static bool hako_asset_runner_proc(void)
 
 bool hako_asset_runner_step(hako_time_t increment_step)
 {
-    // WAINT FOR RUNNING STATE
-    auto ret = hako_asset_runner_wait_running();
-    HAKO_ASSERT_RUNNER_ASSERT(ret == true);
     hako_time_t target_time_usec = hako_asset_runner_ctrl.current_usec + (increment_step * hako_asset_runner_ctrl.delta_usec);
 
     // RUNNING PROC
-    while (hako_asset_runner_ctrl.delta_usec < target_time_usec) {
+    //std::cout << "current_usec = " << hako_asset_runner_ctrl.current_usec << std::endl;
+    //std::cout << "target_time_usec = " << target_time_usec << std::endl;
+    while (hako_asset_runner_ctrl.current_usec < target_time_usec) {
         if (hako_asset_runner_proc() == false) {
             return false;
         }
