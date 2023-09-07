@@ -66,9 +66,11 @@ static void hako_asset_runner_parse_robots(void)
         // name を取得
         robot->name = robot_json["name"];
         
+        // ロボット側が被制御対象のコンフィグファイルなので、READとWRITEは逆になることに注意
+
         // PduReaders を取得
-        if (robot_json.find("shm_pdu_readers") != robot_json.end()) {
-            const json& pdu_readers_json = robot_json["shm_pdu_readers"];
+        if (robot_json.find("shm_pdu_writers") != robot_json.end()) {
+            const json& pdu_readers_json = robot_json["shm_pdu_writers"];
             for (const auto& reader_json : pdu_readers_json) {
                 PduReader* reader = new PduReader{
                     reader_json["type"],
@@ -82,8 +84,8 @@ static void hako_asset_runner_parse_robots(void)
         } else {
             // nothing to do
         }
-        if (robot_json.find("rpc_pdu_readers") != robot_json.end()) {
-            const json& pdu_readers_json = robot_json["shm_pdu_readers"];
+        if (robot_json.find("rpc_pdu_writers") != robot_json.end()) {
+            const json& pdu_readers_json = robot_json["rpc_pdu_writers"];
             for (const auto& reader_json : pdu_readers_json) {
                 PduReader* reader = new PduReader{
                     reader_json["type"],
@@ -99,8 +101,8 @@ static void hako_asset_runner_parse_robots(void)
         }
         
         // PduWriters を取得
-        if (robot_json.find("shm_pdu_writers") != robot_json.end()) {
-            const json& pdu_writers_json = robot_json["shm_pdu_writers"];
+        if (robot_json.find("shm_pdu_readers") != robot_json.end()) {
+            const json& pdu_writers_json = robot_json["shm_pdu_readers"];
             for (const auto& writer_json : pdu_writers_json) {
                 PduWriter* writer = new PduWriter{
                     writer_json["type"],
@@ -116,8 +118,8 @@ static void hako_asset_runner_parse_robots(void)
         } else {
             // nothing to do
         }
-        if (robot_json.find("rpc_pdu_writers") != robot_json.end()) {
-            const json& pdu_writers_json = robot_json["shm_pdu_writers"];
+        if (robot_json.find("rpc_pdu_readers") != robot_json.end()) {
+            const json& pdu_writers_json = robot_json["rpc_pdu_readers"];
             for (const auto& writer_json : pdu_writers_json) {
                 PduWriter* writer = new PduWriter{
                     writer_json["type"],
