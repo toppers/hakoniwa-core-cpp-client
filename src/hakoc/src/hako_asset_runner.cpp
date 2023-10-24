@@ -371,7 +371,6 @@ static bool hako_asset_runner_proc(void)
         else if (hako_asset_runner_ctrl.hako_asset->is_pdu_sync_mode(hako_asset_runner_ctrl.asset_name_str) == true) {
             hako_asset_runner_pdus_write_done();
         }
-        usleep(WAIT_TIME_USEC);
     }
     return true;
 }
@@ -411,4 +410,9 @@ bool hako_asset_runner_pdu_write(const char* robo_name, HakoPduChannelIdType lch
     }
     hako_asset_runner_ctrl.hako_asset->notify_write_pdu_done(hako_asset_runner_ctrl.asset_name_str);
     return true;
+}
+
+hako_time_t hako_asset_runner_get_world_time()
+{
+    return hako_asset_runner_ctrl.hako_asset->get_worldtime();
 }

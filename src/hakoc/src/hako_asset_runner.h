@@ -103,6 +103,8 @@ extern bool hako_asset_runner_pdu_read(const char* robo_name, HakoPduChannelIdTy
 extern bool hako_asset_runner_pdu_write(const char* robo_name, HakoPduChannelIdType lchannel, const char* buffer, size_t buffer_len);
 
 
+extern hako_time_t hako_asset_runner_get_world_time();
+
 /*
  * example of api uscase
  */
