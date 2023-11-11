@@ -200,9 +200,6 @@ bool hako_asset_runner_init(const char* asset_name, const char* config_path, hak
 }
 bool hako_asset_runner_register_callback(const hako_asset_runner_callback_t* callback)
 {
-    if (hako_asset_runner_ctrl.is_initialized == false) {
-        return false;
-    }
     hako_asset_runner_ctrl.callback = callback;
     return true;
 }
@@ -289,6 +286,9 @@ static bool hako_asset_runner_wait_running(void)
             hako_asset_runner_ctrl.callback->setup();
         }
     }
+    else {
+	// nothing to do
+    }
     return true;
 }
 static bool hako_asset_runner_execute(void)
@@ -311,7 +311,7 @@ static bool hako_asset_runner_execute(void)
     }
     result = hako_asset_runner_ctrl.hako_asset->is_simulation_mode();
     if (result == false) {
-        std::cout << "NOT SIMULATION MODE" << std::endl;
+        //std::cout << "NOT SIMULATION MODE" << std::endl;
         return false;
     }
     hako_time_t world_time = hako_asset_runner_ctrl.hako_asset->get_worldtime();
