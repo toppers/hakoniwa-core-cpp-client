@@ -1,10 +1,12 @@
 #!/bin/bash
 
-if [ -d /usr/local/bin/hakoniwa ]
+if [ ! -d /usr/local/bin/hakoniwa ]
 then
-	:
-else
 	sudo mkdir /usr/local/bin/hakoniwa
+fi
+if [ ! -d /usr/local/lib/hakoniwa ]
+then
+	sudo mkdir /usr/local/lib/hakoniwa
 fi
 
 sudo cp cmake-build/core/sample/base-procs/hako-cmd/hako-cmd /usr/local/bin/hakoniwa/
