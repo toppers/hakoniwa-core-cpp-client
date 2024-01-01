@@ -29,6 +29,9 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 find_package(Threads REQUIRED)
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 # This branch assumes that gRPC and all its dependencies are already installed
 # on this system, so they can be located by find_package().
@@ -82,7 +85,7 @@ add_custom_command(
 include_directories(
   "${CMAKE_CURRENT_BINARY_DIR}"
   "${PROJECT_SOURCE_DIR}/.."
-  "${PROJECT_SOURCE_DIR}/../../hakoniwa-core-cpp/third-party/json/single_include"
+  "${nlohmann_json_SOURCE_DIR}/single_include"
 )
 
 foreach(_target hako_rpc_client)

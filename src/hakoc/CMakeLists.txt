@@ -21,7 +21,6 @@ message(STATUS "PYTHON_LIBRARIES:${PYTHON_LIBRARIES}" )
 message(STATUS "Python_LIBRARIES:${Python_LIBRARIES}" )
 message(STATUS "Python_LIBRARY_DIRS:${Python_LIBRARY_DIRS}" )
 
-
 add_library(
     hakoc
     src/hako_client.cpp
@@ -31,6 +30,10 @@ if(WIN32)
     set(OS_TYPE "win")
 endif(WIN32)
 MESSAGE(STATUS "OS_TYPE=" ${OS_TYPE})
+
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 add_library(
     shakoc SHARED
@@ -75,21 +78,21 @@ target_link_libraries(
 target_include_directories(
     hakoc
     PRIVATE /usr/local/include
-    PRIVATE ${HAKO_CORE_SOURCE_DIR}/third-party/json/single_include
     PRIVATE ${HAKO_CORE_SOURCE_DIR}/src/include
+    PRIVATE ${nlohmann_json_SOURCE_DIR}/single_include
 )
 
 target_include_directories(
     shakoc
     PRIVATE /usr/local/include
-    PRIVATE ${HAKO_CORE_SOURCE_DIR}/third-party/json/single_include
     PRIVATE ${HAKO_CORE_SOURCE_DIR}/src/include
     PRIVATE ${HAKO_CORE_SOURCE_DIR}/src/hako
+    PRIVATE ${nlohmann_json_SOURCE_DIR}/single_include
 )
 
 target_include_directories(
     hakoarun
     PRIVATE /usr/local/include
-    PRIVATE ${HAKO_CORE_SOURCE_DIR}/third-party/json/single_include
     PRIVATE ${HAKO_CORE_SOURCE_DIR}/src/include
+    PRIVATE ${nlohmann_json_SOURCE_DIR}/single_include
 )
