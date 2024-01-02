@@ -4,6 +4,9 @@ project(hako-proxy
     LANGUAGES C CXX
 )
 
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 add_executable(
     hako-proxy
@@ -16,10 +19,9 @@ target_link_libraries(
     -pthread
 )
 
-
 target_include_directories(
     hako-proxy 
     PRIVATE /usr/local/include
-    PRIVATE ${HAKO_CORE_SOURCE_DIR}/third-party/json/single_include
     PRIVATE ${HAKO_CORE_SOURCE_DIR}/src/include
+    PRIVATE ${nlohmann_json_SOURCE_DIR}/single_include
 )
