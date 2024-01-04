@@ -32,11 +32,12 @@
 
 また、箱庭アセットは、必要に応じて、以下の箱庭コア機能を利用できます。
 
-* 箱庭シミュレーション時間を取得する **[UC-HAKO-ASSET-4]**
-* 箱庭PDUデータを読み込みする **[UC-HAKO-ASSET-5]**
-* 箱庭PDUデータを書き込みする **[UC-HAKO-ASSET-6]**
+* 箱庭PDUデータを読み込みする **[UC-HAKO-ASSET-4]**
+* 箱庭PDUデータを書き込みする **[UC-HAKO-ASSET-5]**
+* 箱庭シミュレーション時間を取得する **[UC-HAKO-ASSET-6]**
+* スリープする **[UC-HAKO-ASSET-7]**
 
-<img width="674" alt="スクリーンショット 2024-01-04 14 36 01" src="https://github.com/toppers/hakoniwa-core-cpp-client/assets/164193/4b690689-d5ac-4eba-82cd-69dafb4fdf50">
+<img width="876" alt="スクリーンショット 2024-01-04 15 26 06" src="https://github.com/toppers/hakoniwa-core-cpp-client/assets/164193/f32eaf6f-725d-4c80-8b23-e6aebb96f7c1">
 
 
 
@@ -110,13 +111,16 @@ TODO
 #### 箱庭アセットのリセット処理 [UC-HAKO-ASSET-3-c]
 TODO
 
-### 箱庭シミュレーション時間を取得する [UC-HAKO-ASSET-4]
+### 箱庭PDUデータを読み込みする [UC-HAKO-ASSET-4]
 TODO
 
-### 箱庭PDUデータを読み込みする [UC-HAKO-ASSET-5]
+### 箱庭PDUデータを書き込みする [UC-HAKO-ASSET-5]
 TODO
 
-### 箱庭PDUデータを書き込みする [UC-HAKO-ASSET-6]
+### 箱庭シミュレーション時間を取得する [UC-HAKO-ASSET-6]
+TODO
+
+### スリープする [UC-HAKO-ASSET-7]
 TODO
 
 
