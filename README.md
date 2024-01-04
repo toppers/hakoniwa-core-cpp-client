@@ -43,7 +43,56 @@
 ## 箱庭 API 仕様
 
 ### 箱庭アセットを登録する [UC-HAKO-ASSET-1]
-TODO
+
+
+**関数名**: `hako_asset_register`
+
+**目的**:  
+箱庭シミュレーション環境内で使用されるアセットを登録し、コールバック関数を関連付けます。
+
+**引数**:  
+- `asset_name`: 登録するアセットの名前。アセットを一意に識別するために使用されます。型: `const char*`
+- `config_path`: アセットの設定ファイルへのパス。アセットの初期化や設定に必要な情報が含まれることを想定します。型: `const char*`
+- `callback`: アセットのイベント処理を行うコールバック関数へのポインタ。このコールバックは、アセットの初期化、シミュレーションステップ、リセットなどのイベントが発生したときに呼び出されます。型: `hako_asset_callback_t*`
+- `delta_usec`: シミュレーション時間のタイムステップをマイクロ秒単位で指定します。この値はシミュレーションが更新される頻度を決定します。型: `hako_time_t`
+
+**戻り値**:  
+成功時は `0` を返します。失敗時は非 `0` のエラーコードを返します。
+
+**エラーハンドリング**:  
+- `asset_name` が NULL または空文字列の場合、`EINVAL`（不正な引数）エラーコードを返します。
+- `config_path` が不正なパスであるか、指定された設定ファイルが存在しない場合、`ENOENT`（ファイルが存在しない）エラーコードを返します。
+- `callback` が NULL の場合、`EINVAL` エラーコードを返します。
+- `delta_usec` が許容される範囲外の場合、`ERANGE`（数値の範囲外）エラーコードを返します。
+
+**使用例**:
+
+```c
+#include <errno.h>
+#include "hako_asset.h"
+
+// コールバック関数の実装
+void my_asset_callback(hako_event_t event, void* user_data) {
+    // イベントタイプに応じた処理をここに記述する
+}
+
+int main() {
+    const char* asset_name = "my_asset";
+    const char* config_path = "/path/to/config.json";
+
+    // コールバック関数と時間ステップを指定してアセットを登録
+    int result = hako_asset_register(asset_name, config_path, my_asset_callback, 1000000); // 1秒ごとに更新
+
+    if (result != 0) {
+        // エラーハンドリング
+        printf("Error: %s\n", strerror(errno));
+    }
+
+    // シミュレーションの実行など、他の処理を続ける
+    return 0;
+}
+```
+
 
 ### 箱庭コア機能に対してシミュレーション実行を依頼する [UC-HAKO-ASSET-2]
 
