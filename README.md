@@ -160,7 +160,7 @@ int main() {
   * 箱庭アセットの初期化処理 [UC-HAKO-ASSET-3-a]
 * on_simulation_step()
   * 箱庭アセットのシミュレーション実行処理 [UC-HAKO-ASSET-3-b]
-*on_reset()
+* on_reset()
   * 箱庭アセットのリセット処理 [UC-HAKO-ASSET-3-c]
 
 
@@ -171,10 +171,10 @@ int main() {
 |---|---|---|---|
 |hako_asset_register|X|X|X|
 |hako_asset_execute|X|X|X|
-|hako_asset_usleep|X|O|X|
 |hako_asset_pdu_read|O|O|O|
 |hako_asset_pdu_write|O|O|O|
 |hako_asset_simulation_time|O|O|O|
+|hako_asset_usleep|X|O|X|
 
 
 **使用例**:
