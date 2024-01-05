@@ -181,10 +181,9 @@ int main() {
 
 ```c
 typedef struct {
-    void (*on_initialize)(void* context);
-    void (*on_simulation_step)(void* context);
-    void (*on_reset)(void* context);
-    // 他のイベントタイプに対応する関数ポインタを追加する
+    void (*on_initialize)(void);
+    void (*on_simulation_step)(void);
+    void (*on_reset)(void);
 } hako_asset_callbacks_t;
 
 void my_initialize_callback(void* context) {
@@ -208,13 +207,46 @@ hako_asset_callbacks_t callbacks = {
 
 ```
 #### 箱庭アセットの初期化処理 [UC-HAKO-ASSET-3-a]
-TODO
+
+**コールバック関数名**: `on_initialize`
+
+**目的**:  
+本コールバック関数は、箱庭のシミュレーション開始時点で１回だけ呼び出されます。
+箱庭アセットとして、必要な初期化をこの関数内で実装してください。
+
+**引数**:  
+なし
+
+**戻り値**:  
+なし
 
 #### 箱庭アセットのシミュレーション実行処理 [UC-HAKO-ASSET-3-b]
-TODO
+
+**コールバック関数名**: `on_simulation_step`
+
+**目的**:  
+本コールバック関数は、箱庭のシミュレーション時間ステップ毎に呼び出されます。
+箱庭アセットとして、シミュレーション実行処理をこの関数内で実装してください。
+
+**引数**:  
+なし
+
+**戻り値**:  
+なし
 
 #### 箱庭アセットのリセット処理 [UC-HAKO-ASSET-3-c]
-TODO
+
+**コールバック関数名**: `on_reset`
+
+**目的**:  
+本コールバック関数は、箱庭のシミュレーションがリセットされたタイミングで呼び出されます。
+箱庭アセットとして、シミュレーションリセット処理をこの関数内で実装してください。
+
+**引数**:  
+なし
+
+**戻り値**:  
+なし
 
 ### 箱庭PDUデータを読み込みする [UC-HAKO-ASSET-4]
 TODO
