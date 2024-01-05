@@ -97,7 +97,6 @@ int main() {
 
 ### 箱庭コア機能に対してシミュレーション実行を依頼する [UC-HAKO-ASSET-2]
 
-
 **関数名**: `hako_asset_execute`
 
 **目的**:  
@@ -154,8 +153,60 @@ int main() {
 
 
 ### 箱庭コア機能からのイベント（コールバック）として、箱庭アセットの処理を実行する [UC-HAKO-ASSET-3]
-TODO
 
+箱庭アセットを作成するユーザは、`hako_asset_callbacks_t` のイベントコールバック関数を実装する必要があります。
+
+* on_initialize()
+  * 箱庭アセットの初期化処理 [UC-HAKO-ASSET-3-a]
+* on_simulation_step()
+  * 箱庭アセットのシミュレーション実行処理 [UC-HAKO-ASSET-3-b]
+*on_reset()
+  * 箱庭アセットのリセット処理 [UC-HAKO-ASSET-3-c]
+
+
+上記コールバック処理では、箱庭アセットAPIを利用することができますが、一部、利用できないものがあります。
+詳細は以下の通りです。
+
+|箱庭アセットAPI|on_initialize|on_simulation_step|on_reset|
+|---|---|---|---|
+|hako_asset_register|X|X|X|
+|hako_asset_execute|X|X|X|
+|hako_asset_usleep|X|O|X|
+|hako_asset_pdu_read|O|O|O|
+|hako_asset_pdu_write|O|O|O|
+|hako_asset_simulation_time|O|O|O|
+
+
+**使用例**:
+
+```c
+typedef struct {
+    void (*on_initialize)(void* context);
+    void (*on_simulation_step)(void* context);
+    void (*on_reset)(void* context);
+    // 他のイベントタイプに対応する関数ポインタを追加する
+} hako_asset_callbacks_t;
+
+void my_initialize_callback(void* context) {
+    // 初期化時の処理
+}
+
+void my_simulation_step_callback(void* context) {
+    // 各シミュレーションステップ時の処理
+}
+
+void my_reset_callback(void* context) {
+    // リセット時の処理
+}
+
+// 使用例
+hako_asset_callbacks_t callbacks = {
+    .on_initialize = my_initialize_callback,
+    .on_simulation_step = my_simulation_step_callback,
+    .on_reset = my_reset_callback
+};
+
+```
 #### 箱庭アセットの初期化処理 [UC-HAKO-ASSET-3-a]
 TODO
 
