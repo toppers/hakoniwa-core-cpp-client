@@ -249,7 +249,63 @@ hako_asset_callbacks_t callbacks = {
 なし
 
 ### 箱庭PDUデータを読み込みする [UC-HAKO-ASSET-4]
-TODO
+
+**関数名**: `hako_asset_pdu_read`
+
+**目的**:  
+指定されたロボット名とチャンネルIDに基づいて、箱庭PDUデータを読み込みます。
+
+**引数**:  
+- `robo_name`: PDUデータを読み込む対象のロボット名。型: `const char*`
+- `lchannel`: 読み込むデータのチャンネルID。型: `HakoPduChannelIdType`
+- `buffer`: 読み込んだデータを格納するバッファへのポインタ。型: `char*`
+- `buffer_len`: バッファの長さを指定します。型: `size_t`
+
+**戻り値**:  
+成功時は読み込んだデータのバイト数を返します。失敗時は `-1` を返し、`errno` がエラーの原因を示します。
+
+**エラーハンドリング**:  
+- `robo_name` が NULL または空文字列の場合、`errno` に `EINVAL` を設定します。
+- `buffer` が NULL または `buffer_len` が 0 の場合、`errno` に `EINVAL` を設定します。
+- 指定された `robo_name` や `lchannel` が存在しない場合、`errno` に `ENODEV` を設定します。
+
+**使用例**:
+
+```c
+#include <errno.h>
+#include "hako_asset.h"
+
+// PDU読み込みのサンプル実装
+int read_pdu_data(const char* robo_name) {
+    char buffer[1024]; // PDUデータを読み込むためのバッファ
+    HakoPduChannelIdType channel_id = 1; // 使用するチャンネルID
+
+    int bytes_read = hako_asset_pdu_read(robo_name, channel_id, buffer, sizeof(buffer));
+
+    if (bytes_read == -1) {
+        // エラーハンドリング
+        printf("Failed to read PDU data: %s\n", strerror(errno));
+        return -1;
+    }
+
+    // 読み込んだデータの処理
+    // ...
+
+    return 0;
+}
+
+int main() {
+    const char* robo_name = "example_robot";
+    int result = read_pdu_data(robo_name);
+
+    if (result != 0) {
+        // エラーハンドリングが必要な場合の処理
+    }
+
+    // その他の処理...
+    return 0;
+}
+```
 
 ### 箱庭PDUデータを書き込みする [UC-HAKO-ASSET-5]
 TODO
