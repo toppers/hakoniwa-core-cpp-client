@@ -401,7 +401,43 @@ int main() {
 ```
 
 ### スリープする [UC-HAKO-ASSET-7]
-TODO
+
+**関数名**: `hako_asset_usleep`
+
+**目的**:  
+指定された時間（マイクロ秒単位）だけプロセスをスリープ状態にします。
+
+**引数**:  
+- `sleep_time_usec`: スリープする時間の長さをマイクロ秒単位で指定します。型: `hako_time_t`
+
+**戻り値**:  
+成功時は `0` を返します。失敗時は `-1` を返し、`errno` がエラーの原因を示します。
+
+**エラーハンドリング**:  
+- `sleep_time_usec` が不正な場合、`EINVAL` エラーコードを返します。
+- システムコールが割り込まれた場合、`EINTR` エラーコードを返します。
+
+**使用例**:
+
+```c
+#include <errno.h>
+#include "hako_asset.h"
+
+int main() {
+    hako_time_t sleep_duration = 1000000; // 1秒間スリープする
+
+    int result = hako_asset_usleep(sleep_duration);
+
+    if (result == -1) {
+        // エラーハンドリング
+        printf("usleep failed: %s\n", strerror(errno));
+        // エラー処理...
+    }
+
+    // スリープ後の処理...
+    return 0;
+}
+```
 
 
 ## サンプルコード
