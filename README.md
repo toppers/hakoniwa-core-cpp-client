@@ -73,9 +73,11 @@
 #include "hako_asset.h"
 
 // コールバック関数の実装
-void my_asset_callback(hako_event_t event, void* user_data) {
-    // イベントタイプに応じた処理をここに記述する
-}
+hako_asset_callbacks_t callbacks = {
+    .on_initialize = my_initialize_callback,
+    .on_simulation_step = my_simulation_step_callback,
+    .on_reset = my_reset_callback
+};
 
 int main() {
     const char* asset_name = "my_asset";
