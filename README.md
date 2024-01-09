@@ -308,7 +308,65 @@ int main() {
 ```
 
 ### 箱庭PDUデータを書き込みする [UC-HAKO-ASSET-5]
-TODO
+
+**関数名**: `hako_asset_pdu_write`
+
+**目的**:  
+指定されたロボット名とチャンネルIDを使用して、箱庭PDUデータを書き込みます。
+
+**引数**:  
+- `robo_name`: PDUデータを書き込む対象のロボット名。型: `const char*`
+- `lchannel`: 書き込むデータのチャンネルID。型: `HakoPduChannelIdType`
+- `buffer`: 書き込むデータを格納したバッファへのポインタ。型: `const char*`
+- `buffer_len`: バッファに含まれるデータの長さを指定します。型: `size_t`
+
+**戻り値**:  
+成功時は書き込んだデータのバイト数を返します。失敗時は `-1` を返し、`errno` がエラーの原因を示します。
+
+**エラーハンドリング**:  
+- `robo_name` が NULL または空文字列の場合、`errno` に `EINVAL` を設定します。
+- `buffer` が NULL または `buffer_len` が 0 の場合、`errno` に `EINVAL` を設定します。
+- 指定された `robo_name` や `lchannel` に対応する書き込み先が存在しない場合、`errno` に `ENODEV` を設定します。
+
+**使用例**:
+
+```c
+#include <errno.h>
+#include "hako_asset.h"
+
+// PDU書き込みのサンプル実装
+int write_pdu_data(const char* robo_name, const char* data, size_t data_len) {
+    HakoPduChannelIdType channel_id = 1; // 使用するチャンネルID
+
+    int bytes_written = hako_asset_pdu_write(robo_name, channel_id, data, data_len);
+
+    if (bytes_written == -1) {
+        // エラーハンドリング
+        printf("Failed to write PDU data: %s\n", strerror(errno));
+        return -1;
+    }
+
+    // 書き込みが成功したことを確認
+    // ...
+
+    return 0;
+}
+
+int main() {
+    const char* robo_name = "example_robot";
+    const char* data = "Some PDU data";
+    size_t data_len = strlen(data);
+
+    int result = write_pdu_data(robo_name, data, data_len);
+
+    if (result != 0) {
+        // エラーハンドリングが必要な場合の処理
+    }
+
+    // その他の処理...
+    return 0;
+}
+```
 
 ### 箱庭シミュレーション時間を取得する [UC-HAKO-ASSET-6]
 TODO
