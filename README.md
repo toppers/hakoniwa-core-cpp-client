@@ -369,7 +369,36 @@ int main() {
 ```
 
 ### 箱庭シミュレーション時間を取得する [UC-HAKO-ASSET-6]
-TODO
+
+**関数名**: `hako_asset_simulation_time`
+
+**目的**:  
+現在の箱庭シミュレーションの時間を取得します。
+
+**引数**:  
+この関数は引数を取りません。
+
+**戻り値**:  
+現在の箱庭シミュレーション時間を `hako_time_t` 型で返します。この値は、シミュレーション開始時からの経過時間をマイクロ秒単位で表します。
+
+**エラーハンドリング**:  
+この関数は、時間取得の失敗を示すためにエラーコードを返すことはありません。ただし、異常な動作が検出された場合（例えば、シミュレーション時間が初期化されていないなど）の戻り値は不定です。
+
+**使用例**:
+
+```c
+#include "hako_asset.h"
+
+int main() {
+    hako_time_t sim_time = hako_asset_simulation_time();
+
+    // シミュレーション時間の表示やその他の処理...
+    printf("Current simulation time: %lld microseconds\n", (long long) sim_time);
+
+    // その他の処理...
+    return 0;
+}
+```
 
 ### スリープする [UC-HAKO-ASSET-7]
 TODO
