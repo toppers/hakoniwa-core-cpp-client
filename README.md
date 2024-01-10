@@ -212,7 +212,7 @@ typedef struct {
     int (*on_manual_timing_control)(hako_asset_context_t*);
     int (*on_reset)(hako_asset_context_t*);
 } hako_asset_callbacks_t;
-
+```
 
 **コールバック関数の引数について**:
 `hako_asset_context_t`` は、将来的な機能拡張や追加データの管理を容易にするためのプレースホルダーとして設計されています。現時点では特に情報を持っていませんが、箱庭アセットの状態や環境設定など、箱庭アセットのユースケースの拡張に伴い、必要に応じてコンテキスト設定することを想定しています。
