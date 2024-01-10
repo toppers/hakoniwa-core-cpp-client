@@ -55,7 +55,7 @@
 * [スリープする](#スリープする)
   * 注意：[箱庭アセットの手動タイミング制御処理](#箱庭アセットの手動タイミング制御処理)でしか利用できません。
 
-![スクリーンショット 2024-01-10 7 33 58](https://github.com/toppers/hakoniwa-core-cpp-client/assets/164193/d296a70f-3393-47b1-82c1-a54cf9eb7506)
+<img width="936" alt="スクリーンショット 2024-01-11 7 55 07" src="https://github.com/toppers/hakoniwa-core-cpp-client/assets/164193/3e29cacb-300b-4c97-a205-578b480bd29f">
 
 
 ## 箱庭 API 仕様
