@@ -1,6 +1,8 @@
 [![Build](https://github.com/toppers/hakoniwa-core-cpp-client/actions/workflows/build.yml/badge.svg)](https://github.com/toppers/hakoniwa-core-cpp-client/actions/workflows/build.yml)
 
-このリポジトリは、C/C++で開発された箱庭コア機能([hakoniwa-core-cpp](https://github.com/toppers/hakoniwa-core-cpp/tree/main))を以下の３つの機能分類で、C API として提供することを目的としています。
+このリポジトリは、C/C++で開発された箱庭コア機能([hakoniwa-core-cpp](https://github.com/toppers/hakoniwa-core-cpp/tree/main)) C言語の API として提供することを目的としています。
+
+APIのカテゴリとしては、その目的の応じて以下の３ケースあります。
 
 1. [箱庭アセット](https://github.com/toppers/hakoniwa-document/blob/main/architecture/README.md#%E7%AE%B1%E5%BA%AD%E3%82%A2%E3%82%BB%E3%83%83%E3%83%88)
 2. 箱庭コマンド
@@ -9,7 +11,7 @@
 ![スクリーンショット 2024-01-04 14 04 47](https://github.com/toppers/hakoniwa-core-cpp-client/assets/164193/80d2d524-c115-486a-8b99-5da2b83a6fa8)
 
 
-# 箱庭アセット向け API
+# 箱庭アセット API
 
 ## 箱庭アセットのユースケース分類
 
@@ -530,10 +532,10 @@ TODO
 
 TODO
 
-# 箱庭コマンド向け API
+# 箱庭コマンド API
 
 TODO(コントリビュート募集中)
 
-# 箱庭コンダクタ向け API 
+# 箱庭コンダクタ API 
 
 TODO(コントリビュート募集中)
