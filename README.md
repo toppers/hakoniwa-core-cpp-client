@@ -195,7 +195,7 @@ int main() {
 詳細は以下の通りです。
 
 |箱庭アセットAPI|on_initialize|on_simulation_step|on_manual_timing_control|on_reset|
-|---|---|---|---|
+|---|---|---|---|---|
 |hako_asset_register|X|X|X|X|
 |hako_asset_start|X|X|X|X|
 |hako_asset_pdu_read|O|O|O|O|
