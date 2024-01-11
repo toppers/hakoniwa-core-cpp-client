@@ -71,8 +71,21 @@ int hako_asset_pdu_read(const char *robo_name, HakoPduChannelIdType lchannel, ch
         std::cerr << "Error: not initialized." << std::endl;
         return EINVAL;
     }
-    // PDUデータの読み込みを実装
-    return 0; // 仮実装
+    if (robo_name == nullptr || *robo_name == '\0') {
+        std::cerr << "Error: robo_name is not set." << std::endl;
+        return EINVAL;
+    }
+    if (buffer == nullptr || buffer_len == 0) {
+        std::cerr << "Error: Invalid buffer or buffer_len." << std::endl;
+        return EINVAL;
+    }
+
+    bool result = hako_asset_impl_pdu_read(robo_name, lchannel, buffer, buffer_len);
+    if (!result) {
+        std::cerr << "Error: Failed to read PDU data." << std::endl;
+        return EIO;
+    }
+    return 0;
 }
 
 int hako_asset_pdu_write(const char *robo_name, HakoPduChannelIdType lchannel, const char *buffer, size_t buffer_len) {
@@ -80,16 +93,37 @@ int hako_asset_pdu_write(const char *robo_name, HakoPduChannelIdType lchannel, c
         std::cerr << "Error: not initialized." << std::endl;
         return EINVAL;
     }
-    // PDUデータの書き込みを実装
-    return 0; // 仮実装
+    if (robo_name == nullptr || *robo_name == '\0') {
+        std::cerr << "Error: robo_name is not set." << std::endl;
+        return EINVAL;
+    }
+    if (buffer == nullptr || buffer_len == 0) {
+        std::cerr << "Error: Invalid buffer or buffer_len." << std::endl;
+        return EINVAL;
+    }
+
+    bool result = hako_asset_impl_pdu_write(robo_name, lchannel, buffer, buffer_len);
+    if (!result) {
+        std::cerr << "Error: Failed to write PDU data." << std::endl;
+        return EIO;
+    }
+    return 0;
 }
 
 hako_time_t hako_asset_simulation_time(void) {
-    // 現在のシミュレーション時間を取得
-    return 0; // 仮実装
+    return hako_asset_impl_get_world_time();
 }
 
 int hako_asset_usleep(hako_time_t sleep_time_usec) {
-    // 指定された時間だけスリープ
-    return 0; // 仮実装
+    hako_time_t step;
+    if (sleep_time_usec == 0) {
+        step = 1;
+    }
+    else {
+        step = (sleep_time_usec + (hako_asset_instance.delta_usec - 1)) / hako_asset_instance.delta_usec;
+    }
+    if (hako_asset_impl_step(step)) {
+        return 0;
+    }
+    return EINTR;
 }
