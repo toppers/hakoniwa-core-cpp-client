@@ -16,7 +16,7 @@ struct hako_asset_callbacks_s {
     int (*on_manual_timing_control)(hako_asset_context_t*);
     int (*on_reset)(hako_asset_context_t*);
 };
-
+#define HAKO_ASSET_MIN_DELTA_TIME_USEC  1000
 extern int hako_asset_register(const char *asset_name, const char *config_path, hako_asset_callbacks_t *callbacks, hako_time_t delta_usec);
 extern int hako_asset_start(void);
 extern int hako_asset_pdu_read(const char *robo_name, HakoPduChannelIdType lchannel, char *buffer, size_t buffer_len);

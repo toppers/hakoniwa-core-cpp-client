@@ -19,6 +19,7 @@ FetchContent_MakeAvailable(json)
 add_library(
     assets SHARED
     src/hako_asset.cpp
+    src/hako_asset_impl.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/hako_impl.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/hako_asset_impl.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/hako_simevent_impl.cpp
