@@ -19,30 +19,48 @@ static int my_on_reset(hako_asset_context_t* context)
     printf("INFO: my_on_reset exit\n");
     return 0;
 }
-static int on_simulation_step(hako_asset_context_t* context)
+static int my_on_simulation_step(hako_asset_context_t* context)
 {
-    printf("INFO: on_simulation_step enter\n");
+    printf("INFO: on_simulation_step enter: %llu\n", hako_asset_simulation_time());
     printf("INFO: sleep 1sec\n");
     usleep(1000*1000);
     printf("INFO: on_simulation_step exit\n");
+    return 0;
+}
+static int my_on_manual_timing_control(hako_asset_context_t* context)
+{
+    printf("INFO: on_manual_timing_control enter\n");
+    while (1) {
+        printf("INFO: sleep 1sec: %llu\n", hako_asset_simulation_time());
+        hako_asset_usleep(1000);
+        usleep(1000*1000);
+    }
+    printf("INFO: on_manual_timing_control exit\n");
     return 0;
 }
 
 static hako_asset_callbacks_t my_callback = {
     .on_initialize = my_on_initialize,
     .on_manual_timing_control = NULL,
-    .on_simulation_step = on_simulation_step,
+    .on_simulation_step = NULL,
     .on_reset = my_on_reset
 };
 int main(int argc, const char* argv[])
 {
-    if (argc != 4) {
-        printf("Usage: %s <asset_name> <config_path> <delta_time_msec>\n", argv[0]);
+    if ((argc != 4) && (argc != 5)) {
+        printf("Usage: %s <asset_name> <config_path> <delta_time_msec> [manual]\n", argv[0]);
         return 1;
     }
     const char* asset_name = argv[1];
     const char* config_path = argv[2];
     hako_time_t delta_time_usec = atoi(argv[3]) * 1000;
+    if (argc == 4)
+    {
+        my_callback.on_simulation_step = my_on_simulation_step;
+    }
+    else {
+        my_callback.on_manual_timing_control = my_on_manual_timing_control;
+    }
 
     int ret = hako_asset_register(asset_name, config_path, &my_callback, delta_time_usec);
     if (ret != 0) {
