@@ -274,7 +274,7 @@ static void hako_asset_impl_pdus_write_done(void)
 {
     for (const Robot& robot : hako_asset_instance.robots) {
         for (const PduWriter& writer : robot.pdu_writers) {
-            std::cout << "Robot: " << robot.name << ", PduWriter: " << writer.name << std::endl;
+            std::cout << "INFO: hako_asset_impl_pdus_write_done() Robot: " << robot.name << ", PduWriter: " << writer.name << std::endl;
             std::cout << "channel_id: " << writer.channel_id << " pdu_size: " << writer.pdu_size << std::endl;
             bool is_called = false;
             if (is_called == false) {

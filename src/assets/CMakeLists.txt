@@ -1,6 +1,6 @@
 set(HAKO_CMAKE_VERSION ${HAKO_CMAKE_VERSION})
 
-project(hako-client
+project(hako-asset
     LANGUAGES C CXX
 )
 
@@ -38,7 +38,7 @@ add_library(
 target_include_directories(
     assets
     PRIVATE /usr/local/include
-    PRIVATE ${PROJECT_SOURCE_DIR}/../include
+    PRIVATE ${HAKO_INC_DIR}
     PRIVATE ${HAKO_CORE_SOURCE_DIR}/src/include
     PRIVATE ${HAKO_CORE_SOURCE_DIR}/src/hako
     PRIVATE ${nlohmann_json_SOURCE_DIR}/single_include
