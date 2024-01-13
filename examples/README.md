@@ -72,6 +72,8 @@ export DYLD_LIBRARY_PATH=/usr/local/lib/hakoniwa:$DYLD_LIBRARY_PATH
 export PATH=/usr/local/bin/hakoniwa:$PATH
 ```
 
+変更を反映させるために、次のコマンドを実行します。
+
 ```sh
 source ~/.bash_profile  # Bashの場合
 source ~/.zshrc         # Zshの場合
