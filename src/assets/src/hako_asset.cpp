@@ -127,15 +127,3 @@ int hako_asset_usleep(hako_time_t sleep_time_usec) {
     }
     return EINTR;
 }
-
-int hako_master_start(hako_time_t delta_usec, hako_time_t max_delay_usec)
-{
-    if (hako_master_impl_start(delta_usec, max_delay_usec)) {
-        return 0;
-    }
-    return EIO;
-}
-void hako_master_stop(void)
-{
-    hako_master_impl_stop();
-}

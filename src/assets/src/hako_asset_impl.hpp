@@ -56,7 +56,7 @@ struct HakoAssetType {
 };
 
 extern HakoAssetType hako_asset_instance;
-#define WAIT_TIME_USEC (1000 * 10)
+#define HAKO_ASSET_WAIT_TIME_USEC (1000 * 10)
 
 extern bool hako_asset_impl_register_callback(const hako_asset_callbacks_t* callback);
 extern bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_time_t delta_usec);

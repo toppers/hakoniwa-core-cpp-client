@@ -1,4 +1,5 @@
 #include "hako_asset.h"
+#include "hako_conductor.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -30,9 +31,10 @@ static int my_on_simulation_step(hako_asset_context_t* context)
 static int my_on_manual_timing_control(hako_asset_context_t* context)
 {
     printf("INFO: on_manual_timing_control enter\n");
-    while (1) {
+    int result = 0;
+    while (result == 0) {
         printf("INFO: sleep 1sec: %llu\n", hako_asset_simulation_time());
-        hako_asset_usleep(1000);
+        result = hako_asset_usleep(1000);
         usleep(1000*1000);
     }
     printf("INFO: on_manual_timing_control exit\n");
@@ -61,7 +63,7 @@ int main(int argc, const char* argv[])
     else {
         my_callback.on_manual_timing_control = my_on_manual_timing_control;
     }
-    hako_master_start(delta_time_usec, delta_time_usec);
+    hako_conductor_start(delta_time_usec, delta_time_usec);
     int ret = hako_asset_register(asset_name, config_path, &my_callback, delta_time_usec);
     if (ret != 0) {
         printf("ERORR: hako_asset_register() returns %d.", ret);
@@ -70,6 +72,6 @@ int main(int argc, const char* argv[])
     ret = hako_asset_start();
     printf("INFO: hako_asset_start() returns %d\n", ret);
 
-    hako_master_stop();
+    hako_conductor_stop();
     return 0;
 }

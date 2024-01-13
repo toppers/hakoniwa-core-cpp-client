@@ -34,6 +34,7 @@ add_subdirectory(src/proxy)
 endif(WIN32)
 add_subdirectory(src/hakoc)
 add_subdirectory(src/assets)
+add_subdirectory(src/conductor)
 add_subdirectory(examples)
 
 #if (test)

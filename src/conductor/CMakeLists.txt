@@ -1,6 +1,6 @@
 set(HAKO_CMAKE_VERSION ${HAKO_CMAKE_VERSION})
 
-project(hako-asset
+project(hako-conductor
     LANGUAGES C CXX
 )
 
@@ -12,21 +12,19 @@ if(WIN32)
 endif(WIN32)
 MESSAGE(STATUS "OS_TYPE=" ${OS_TYPE})
 
-include(FetchContent)
-FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
-FetchContent_MakeAvailable(json)
 
 add_library(
-    assets SHARED
-    src/hako_asset.cpp
-    src/hako_asset_impl.cpp
+    conductor SHARED
+    src/hako_conductor.cpp
+    src/hako_conductor_impl.cpp
 )
 target_link_libraries(
-    assets 
+    conductor 
     hako
 )
+
 target_include_directories(
-    assets
+    conductor
     PRIVATE /usr/local/include
     PRIVATE ${HAKO_INC_DIR}
     PRIVATE ${HAKO_CORE_SOURCE_DIR}/src/include

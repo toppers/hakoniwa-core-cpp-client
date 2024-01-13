@@ -26,4 +26,5 @@ target_include_directories(
 target_link_libraries(
     hello_world
     assets
+    conductor
 )
