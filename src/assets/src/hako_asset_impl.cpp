@@ -353,3 +353,56 @@ hako_time_t hako_asset_impl_get_world_time()
 {
     return hako_asset_instance.hako_asset->get_worldtime();
 }
+std::shared_ptr<hako::IHakoMasterController> hako_master = nullptr;
+static bool hako_master_cmd_stop = false;
+static void* hako_master_impl_thread_run(void* arg)
+{
+    std::cout << "INFO: hako_master thread start" << std::endl;
+    if (arg) {
+        //nothing to do
+    }
+    while (hako_master_cmd_stop == false) {
+        try {
+            hako_master->execute();
+        } catch (std::exception *e) {
+            std::cerr << "ERROR: hako_master.execute() Failed" << std::endl;
+            return nullptr;
+        }
+    }
+    hako_master = nullptr;
+    return nullptr;
+}
+
+bool hako_master_impl_start(hako_time_t delta_usec, hako_time_t max_delay_usec)
+{
+    if (hako_master != nullptr) {
+        return false;
+    }
+    pthread_t thread;
+    try {
+        hako::init();
+        hako_master = hako::create_master();
+        if (hako_master == nullptr) {
+            std::cout << "INFO: hako::create_master() Failed" << std::endl;
+            return false;
+        }
+        hako_master->set_config_simtime(max_delay_usec, delta_usec);
+    } catch (std::exception *e) {
+        std::cout << "INFO: hako::create_master() Failed" << std::endl;
+        return false;
+    }
+    
+    if (pthread_create(&thread, NULL, hako_master_impl_thread_run, nullptr) != 0) {
+        std::cerr << "ERROR: Failed to create hako_master_impl_thread_run thread!" << std::endl;
+        return false;
+    }
+    return true;
+}
+void hako_master_impl_stop(void)
+{
+    hako_master_cmd_stop = true;
+    while (hako_master != nullptr) {
+        usleep(WAIT_TIME_USEC);
+    }
+    return;
+}

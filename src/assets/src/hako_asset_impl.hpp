@@ -67,4 +67,10 @@ extern hako_time_t hako_asset_impl_get_world_time();
 extern bool hako_asset_impl_pdu_read(const char* robo_name, HakoPduChannelIdType lchannel, char* buffer, size_t buffer_len);
 extern bool hako_asset_impl_pdu_write(const char* robo_name, HakoPduChannelIdType lchannel, const char* buffer, size_t buffer_len);
 
+/*
+ * for master api for test
+ */
+extern bool hako_master_impl_start(hako_time_t delta_usec, hako_time_t max_delay_usec);
+extern void hako_master_impl_stop(void);
+
 #endif /* _HAKO_ASSET_IMPL_HPP_ */
