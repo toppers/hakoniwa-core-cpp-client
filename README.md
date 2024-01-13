@@ -10,7 +10,6 @@ APIのカテゴリとしては、その目的の応じて以下の３ケース�
 
 ![スクリーンショット 2024-01-04 14 04 47](https://github.com/toppers/hakoniwa-core-cpp-client/assets/164193/80d2d524-c115-486a-8b99-5da2b83a6fa8)
 
-
 # 箱庭アセット API
 
 ## 箱庭アセットのユースケース分類
@@ -58,7 +57,6 @@ APIのカテゴリとしては、その目的の応じて以下の３ケース�
   * 注意：[箱庭アセットの手動タイミング制御処理](#箱庭アセットの手動タイミング制御処理)でしか利用できません。
 
 <img width="936" alt="スクリーンショット 2024-01-11 7 55 07" src="https://github.com/toppers/hakoniwa-core-cpp-client/assets/164193/3e29cacb-300b-4c97-a205-578b480bd29f">
-
 
 ## 箱庭 API 仕様
 
@@ -530,6 +528,10 @@ int main() {
 }
 ```
 
+## サンプルコード
+
+箱庭アセットAPIを深く利用するための動作確認およびサンプルコードを用意しています。
+[こちら](https://github.com/toppers/hakoniwa-core-cpp-client/tree/main/examples)を参照ください。
 
 
 # 箱庭コマンド API
