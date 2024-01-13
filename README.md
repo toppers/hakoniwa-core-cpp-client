@@ -126,11 +126,11 @@ int main() {
     const char* config_path = "/path/to/config.json";
 
     // コールバック関数と時間ステップを指定してアセットを登録
-    int result = hako_asset_register(asset_name, config_path, my_asset_callback, 1000000); // 1秒ごとに更新
+    int result = hako_asset_register(asset_name, config_path, callbacks, 1000000); // 1秒ごとに更新
 
     if (result != 0) {
         // エラーハンドリング
-        printf("Error: %s\n", strerror(errno));
+        printf("Error: %d\n", result);
     }
 
     // シミュレーションの実行など、他の処理を続ける
@@ -177,7 +177,6 @@ int main() {
 **使用例**:
 
 ```c
-#include <errno.h>
 #include "hako_asset.h"
 
 // 他の初期化処理 ...
@@ -186,15 +185,13 @@ int main() {
     while (1) {
         int result = hako_asset_start();
 
-        if (result != 0) {
-            if (errno == EINTR) {
-                // シミュレーションリセットイベントが発生したための処理
-                continue; // 必要に応じてリセット処理を行い、ループを継続
-            } else {
-                // その他のエラー処理
-                printf("Error: %s\n", strerror(errno));
-                break; // 致命的なエラーの場合はループを抜ける
-            }
+        if (result == EINTR) {
+            // シミュレーションリセットイベントが発生したための処理
+            continue; // 必要に応じてリセット処理を行い、ループを継続
+        } else {
+            // その他のエラー処理
+            printf("Error: %d\n", result);
+            break; // 致命的なエラーの場合はループを抜ける
         }
 
         // 必要に応じてスリープを挿入してリアルタイム性を制御
@@ -374,7 +371,6 @@ hako_asset_callbacks_t callbacks = {
 **使用例**:
 
 ```c
-#include <errno.h>
 #include "hako_asset.h"
 
 // PDU読み込みのサンプル実装
@@ -382,11 +378,11 @@ int read_pdu_data(const char* robo_name) {
     char buffer[1024]; // PDUデータを読み込むためのバッファ
     HakoPduChannelIdType channel_id = 1; // 使用するチャンネルID
 
-    int bytes_read = hako_asset_pdu_read(robo_name, channel_id, buffer, sizeof(buffer));
+    int result = hako_asset_pdu_read(robo_name, channel_id, buffer, sizeof(buffer));
 
-    if (bytes_read == -1) {
+    if (result != 0) {
         // エラーハンドリング
-        printf("Failed to read PDU data: %s\n", strerror(errno));
+        printf("Failed to read PDU data: %d\n", result);
         return -1;
     }
 
@@ -435,18 +431,17 @@ int main() {
 **使用例**:
 
 ```c
-#include <errno.h>
 #include "hako_asset.h"
 
 // PDU書き込みのサンプル実装
 int write_pdu_data(const char* robo_name, const char* data, size_t data_len) {
     HakoPduChannelIdType channel_id = 1; // 使用するチャンネルID
 
-    int bytes_written = hako_asset_pdu_write(robo_name, channel_id, data, data_len);
+    int result = hako_asset_pdu_write(robo_name, channel_id, data, data_len);
 
-    if (bytes_written == -1) {
+    if (result != 0) {
         // エラーハンドリング
-        printf("Failed to write PDU data: %s\n", strerror(errno));
+        printf("Failed to write PDU data: %d\n", result);
         return -1;
     }
 
@@ -531,7 +526,6 @@ int main() {
 **使用例**:
 
 ```c
-#include <errno.h>
 #include "hako_asset.h"
 
 int main() {
@@ -539,9 +533,9 @@ int main() {
 
     int result = hako_asset_usleep(sleep_duration);
 
-    if (result == -1) {
+    if (result != 0) {
         // エラーハンドリング
-        printf("usleep failed: %s\n", strerror(errno));
+        printf("usleep failed: %d\n", result);
         // エラー処理...
     }
 
