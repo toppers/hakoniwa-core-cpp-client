@@ -92,7 +92,6 @@ static void hako_asset_impl_parse_robots(void)
 bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_time_t delta_usec)
 {
     hako_asset_instance.is_initialized = false;
-    hako::init();
     std::ifstream ifs(config_path);
     
     if (!ifs.is_open()) {
