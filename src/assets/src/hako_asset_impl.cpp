@@ -249,6 +249,7 @@ static bool hako_asset_impl_execute(void)
     result = hako_asset_instance.hako_asset->is_pdu_sync_mode(hako_asset_instance.asset_name_str);
     if (result == true) {
         std::cout << "SYNC MODE: true" << std::endl;
+	hako_asset_instance.hako_asset->notify_write_pdu_done(hako_asset_instance.asset_name_str);
         return false;
     }
     result = hako_asset_instance.hako_asset->is_simulation_mode();
