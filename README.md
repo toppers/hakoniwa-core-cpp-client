@@ -29,7 +29,7 @@ APIのカテゴリとしては、その目的の応じて以下の３ケース�
   - [サンプルコード](#サンプルコード)
 - [箱庭コマンド API](#箱庭コマンド-api)
 - [箱庭コンダクタ API](#箱庭コンダクタ-api)
-
+- [箱庭アセットコンフィグ](#箱庭アセットコンフィグ)
 
 
 # 箱庭アセット API
@@ -558,3 +558,77 @@ TODO(コントリビュート募集中)
 # 箱庭コンダクタ API 
 
 TODO(コントリビュート募集中)
+
+# 箱庭アセットコンフィグ
+
+箱庭アセットのコンフィグは、json形式で定義します。
+コンフィグ内容は、プラントモデルのPDUデータの読み書き情報になります。
+
+例：
+
+```json
+{
+  "robots": [
+    {
+      "name": "ROBOT",
+      "rpc_pdu_readers": [],
+      "rpc_pdu_writers": [],
+      "shm_pdu_readers": [
+        {
+          "type": "geometry_msgs/Twist",
+          "org_name": "motor",
+          "name": "ROBOT_motor",
+          "channel_id": 0,
+          "pdu_size": 48,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        }        
+      ],
+      "shm_pdu_writers": []
+    }
+  ]
+}
+```
+
+## コンフィグ項目の詳細
+
+
+### robots
+
+`プラントモデル（ロボット）のコンフィグデータ`を管理するコンテナです。複数のロボットを定義することが可能です。
+
+### プラントモデル（ロボット）コンフィグデータ
+
+プラントモデルのコンフィグデータの内容は以下のとおり。
+
+
+* name: ロボットを識別する名前。
+* rpc_pdu_readers
+* rpc_pdu_writers
+* shm_pdu_readers
+* shm_pdu_writers
+
+RPCとSHMの違い：
+
+* rpc: PDUのI/OをUDPやMQTTなどの通信で行います。
+* shm: PDUのI/Oを共有メモリで行います。
+
+pdu_readersとpdu_writers：
+
+* pdu_readers: PDUデータの読み込み用。
+* pdu_writers: PDUデータの書き込み用。
+
+### PDUデータのコンフィグ定義
+
+PDUデータに関する各設定項目の定義は以下の通りです。
+
+* type: PDUのデータ型。ROSのIDLで定義されたデータ型を指定します。
+* org_name: PDUデータ固有の名前。任意の名前を指定できます。
+* name: ロボット名を接頭辞としたPDUデータ名。（複数のロボットが同じPDUデータを使用する場合の競合を避けるため）
+* channel_id: PDUの論理チャネルID。
+* pdu_size: PDUのサイズ（バイト単位）。
+* write_cycle: PDUの書き込み周期。箱庭アセットがPDUを書き込む実行周期に対する倍数を指定します。
+* method_type: PDU通信方式の指定。設定可能な値は以下の通りです。
+  * SHM: 共有メモリ
+  * UDP: UDP通信
+  * MQTT: MQTT通信
