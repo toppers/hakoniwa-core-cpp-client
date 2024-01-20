@@ -23,8 +23,6 @@ extern int hako_asset_pdu_read(const char *robo_name, HakoPduChannelIdType lchan
 extern int hako_asset_pdu_write(const char *robo_name, HakoPduChannelIdType lchannel, const char *buffer, size_t buffer_len);
 extern hako_time_t hako_asset_simulation_time(void);
 extern int hako_asset_usleep(hako_time_t sleep_time_usec);
-extern int hako_master_start(hako_time_t delta_usec, hako_time_t max_delay_usec);
-extern void hako_master_stop(void);
 
 #ifdef __cplusplus
 }
