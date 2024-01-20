@@ -93,7 +93,7 @@ APIのカテゴリとしては、その目的の応じて以下の３ケース�
 
 **引数**:  
 - `asset_name`: 登録するアセットの名前。アセットを一意に識別するために使用されます。型: `const char*`
-- `config_path`: アセットの設定ファイルへのパス。アセットの初期化や設定に必要な情報が含まれることを想定します。型: `const char*`
+- `config_path`: [箱庭アセットコンフィグ](#箱庭アセットコンフィグ)ファイルへのパス。型: `const char*`
 - `callback`: アセットのイベント処理を行うコールバック関数へのポインタ。このコールバックは、アセットの初期化、シミュレーションステップ、リセットなどのイベントが発生したときに呼び出されます。型: `hako_asset_callbacks_t*`
 - `delta_usec`: シミュレーション時間のタイムステップをマイクロ秒単位で指定します。この値はシミュレーションが更新される頻度を決定します。型: `hako_time_t`
 - `model`: 箱庭アセットが制御プログラムの場合は `HAKO_ASSET_MODEL_CONTROLLER`。プラントモデルの場合は `HAKO_ASSET_MODEL_PLANT`。 型: `HakoAssetModelType`
@@ -601,12 +601,11 @@ TODO(コントリビュート募集中)
 
 プラントモデルのコンフィグデータの内容は以下のとおり。
 
-
 * name: ロボットを識別する名前。
-* rpc_pdu_readers
-* rpc_pdu_writers
-* shm_pdu_readers
-* shm_pdu_writers
+* rpc_pdu_readers: `PDUデータのコンフィグ定義`
+* rpc_pdu_writers: `PDUデータのコンフィグ定義`
+* shm_pdu_readers: `PDUデータのコンフィグ定義`
+* shm_pdu_writers: `PDUデータのコンフィグ定義`
 
 RPCとSHMの違い：
 
