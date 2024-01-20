@@ -59,7 +59,7 @@ extern HakoAssetType hako_asset_instance;
 #define HAKO_ASSET_WAIT_TIME_USEC (1000 * 10)
 
 extern bool hako_asset_impl_register_callback(const hako_asset_callbacks_t* callback);
-extern bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_time_t delta_usec);
+extern bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_time_t delta_usec, bool is_plant);
 extern bool hako_asset_impl_wait_running(void);
 extern HakoSimulationStateType hako_asset_impl_state();
 extern bool hako_asset_impl_step(hako_time_t increment_step);

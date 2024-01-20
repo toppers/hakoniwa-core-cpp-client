@@ -17,7 +17,11 @@ struct hako_asset_callbacks_s {
     int (*on_reset)(hako_asset_context_t*);
 };
 #define HAKO_ASSET_MIN_DELTA_TIME_USEC  1000
-extern int hako_asset_register(const char *asset_name, const char *config_path, hako_asset_callbacks_t *callbacks, hako_time_t delta_usec);
+typedef enum {
+    HAKO_ASSET_MODEL_PLANT = 0,
+    HAKO_ASSET_MODEL_CONTROLLER
+} HakoAssetModelType;
+extern int hako_asset_register(const char *asset_name, const char *config_path, hako_asset_callbacks_t *callbacks, hako_time_t delta_usec, HakoAssetModelType model);
 extern int hako_asset_start(void);
 extern int hako_asset_pdu_read(const char *robo_name, HakoPduChannelIdType lchannel, char *buffer, size_t buffer_len);
 extern int hako_asset_pdu_write(const char *robo_name, HakoPduChannelIdType lchannel, const char *buffer, size_t buffer_len);

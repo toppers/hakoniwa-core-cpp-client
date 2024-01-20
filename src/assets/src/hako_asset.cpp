@@ -9,7 +9,7 @@ static inline bool file_exists(const char* path) {
     return file.good();
 }
 
-int hako_asset_register(const char *asset_name, const char *config_path, hako_asset_callbacks_t *callbacks, hako_time_t delta_usec) {
+int hako_asset_register(const char *asset_name, const char *config_path, hako_asset_callbacks_t *callbacks, hako_time_t delta_usec, HakoAssetModelType model) {
     if (asset_name == nullptr || *asset_name == '\0') {
         std::cerr << "Error: Asset name is not set." << std::endl;
         return EINVAL;
@@ -31,7 +31,7 @@ int hako_asset_register(const char *asset_name, const char *config_path, hako_as
         return EINVAL;
     }
     hako_asset_impl_register_callback(callbacks);
-    if (!hako_asset_impl_init(asset_name, config_path, delta_usec)) {
+    if (!hako_asset_impl_init(asset_name, config_path, delta_usec, (model == HAKO_ASSET_MODEL_PLANT))) {
         return EIO;
     }
     std::cout << "INFO: asset(" << asset_name << ") is registered." << std::endl;

@@ -5,8 +5,33 @@ HakoAssetType hako_asset_instance;
 /***********************
  * simulation control
  ***********************/
-
-static void hako_asset_impl_parse_robots(void)
+static PduReader* create_reader(const nlohmann::json &reader_json)
+{
+    PduReader* reader = new PduReader{
+        reader_json["type"],
+        reader_json["org_name"],
+        reader_json["name"],
+        reader_json["channel_id"],
+        reader_json["pdu_size"]
+    };
+    HAKO_ASSET_ASSERT(reader != nullptr);
+    return reader;
+}
+static PduWriter* create_writer(const nlohmann::json &writer_json)
+{
+    PduWriter* writer = new PduWriter{
+        writer_json["type"],
+        writer_json["org_name"],
+        writer_json["name"],
+        writer_json["write_cycle"],
+        writer_json["channel_id"],
+        writer_json["pdu_size"],
+        writer_json["method_type"]
+    };
+    HAKO_ASSET_ASSERT(writer != nullptr);
+    return writer;
+}
+static void hako_asset_impl_parse_robots(bool is_plant)
 {
     const json& robots_json = hako_asset_instance.param["robots"];
     
@@ -16,20 +41,20 @@ static void hako_asset_impl_parse_robots(void)
         // name を取得
         robot->name = robot_json["name"];
         
-        // ロボット側が被制御対象のコンフィグファイルなので、READとWRITEは逆になることに注意
+        // is_plant: true  プラントモデル
+        // is_plant: false 制御プログラム
+        // is_plantが false の場合は、ロボット側が被制御対象のコンフィグファイルなので、READとWRITEは逆になることに注意
 
         // PduReaders を取得
         if (robot_json.find("shm_pdu_writers") != robot_json.end()) {
             const json& pdu_readers_json = robot_json["shm_pdu_writers"];
             for (const auto& reader_json : pdu_readers_json) {
-                PduReader* reader = new PduReader{
-                    reader_json["type"],
-                    reader_json["org_name"],
-                    reader_json["name"],
-                    reader_json["channel_id"],
-                    reader_json["pdu_size"]
-                };
-                robot->pdu_readers.push_back(*reader);
+                if (is_plant) {
+                    robot->pdu_writers.push_back(*create_writer(reader_json));
+                }
+                else {
+                    robot->pdu_readers.push_back(*create_reader(reader_json));
+                }
             }
         } else {
             // nothing to do
@@ -37,14 +62,12 @@ static void hako_asset_impl_parse_robots(void)
         if (robot_json.find("rpc_pdu_writers") != robot_json.end()) {
             const json& pdu_readers_json = robot_json["rpc_pdu_writers"];
             for (const auto& reader_json : pdu_readers_json) {
-                PduReader* reader = new PduReader{
-                    reader_json["type"],
-                    reader_json["org_name"],
-                    reader_json["name"],
-                    reader_json["channel_id"],
-                    reader_json["pdu_size"]
-                };
-                robot->pdu_readers.push_back(*reader);
+                if (is_plant) {
+                    robot->pdu_writers.push_back(*create_writer(reader_json));
+                }
+                else {
+                    robot->pdu_readers.push_back(*create_reader(reader_json));
+                }
             }
         } else {
             // nothing to do
@@ -54,16 +77,12 @@ static void hako_asset_impl_parse_robots(void)
         if (robot_json.find("shm_pdu_readers") != robot_json.end()) {
             const json& pdu_writers_json = robot_json["shm_pdu_readers"];
             for (const auto& writer_json : pdu_writers_json) {
-                PduWriter* writer = new PduWriter{
-                    writer_json["type"],
-                    writer_json["org_name"],
-                    writer_json["name"],
-                    writer_json["write_cycle"],
-                    writer_json["channel_id"],
-                    writer_json["pdu_size"],
-                    writer_json["method_type"]
-                };
-                robot->pdu_writers.push_back(*writer);
+                if (is_plant) {
+                    robot->pdu_readers.push_back(*create_reader(writer_json));
+                }
+                else {
+                    robot->pdu_writers.push_back(*create_writer(writer_json));
+                }
             }
         } else {
             // nothing to do
@@ -71,16 +90,12 @@ static void hako_asset_impl_parse_robots(void)
         if (robot_json.find("rpc_pdu_readers") != robot_json.end()) {
             const json& pdu_writers_json = robot_json["rpc_pdu_readers"];
             for (const auto& writer_json : pdu_writers_json) {
-                PduWriter* writer = new PduWriter{
-                    writer_json["type"],
-                    writer_json["org_name"],
-                    writer_json["name"],
-                    writer_json["write_cycle"],
-                    writer_json["channel_id"],
-                    writer_json["pdu_size"],
-                    writer_json["method_type"]
-                };
-                robot->pdu_writers.push_back(*writer);
+                if (is_plant) {
+                    robot->pdu_readers.push_back(*create_reader(writer_json));
+                }
+                else {
+                    robot->pdu_writers.push_back(*create_writer(writer_json));
+                }
             }
         } else {
             // nothing to do
@@ -89,7 +104,7 @@ static void hako_asset_impl_parse_robots(void)
     }
 }
 
-bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_time_t delta_usec)
+bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_time_t delta_usec, bool is_plant)
 {
     hako_asset_instance.is_initialized = false;
     std::ifstream ifs(config_path);
@@ -104,7 +119,7 @@ bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_
     hako_asset_instance.current_usec = 0;
     try {
         hako_asset_instance.param = json::parse(ifs);
-        hako_asset_impl_parse_robots();
+        hako_asset_impl_parse_robots(is_plant);
     } catch (const json::exception& e) {
         std::cerr << "JSON parsing error: " << e.what() << std::endl;
         return false;

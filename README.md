@@ -96,6 +96,7 @@ APIのカテゴリとしては、その目的の応じて以下の３ケース�
 - `config_path`: アセットの設定ファイルへのパス。アセットの初期化や設定に必要な情報が含まれることを想定します。型: `const char*`
 - `callback`: アセットのイベント処理を行うコールバック関数へのポインタ。このコールバックは、アセットの初期化、シミュレーションステップ、リセットなどのイベントが発生したときに呼び出されます。型: `hako_asset_callbacks_t*`
 - `delta_usec`: シミュレーション時間のタイムステップをマイクロ秒単位で指定します。この値はシミュレーションが更新される頻度を決定します。型: `hako_time_t`
+- `model`: 箱庭アセットが制御プログラムの場合は `HAKO_ASSET_MODEL_CONTROLLER`。プラントモデルの場合は `HAKO_ASSET_MODEL_PLANT`。 型: `HakoAssetModelType`
 
 **戻り値**:  
 成功時は `0` を返します。失敗時は非 `0` のエラーコードを返します。
@@ -126,7 +127,7 @@ int main() {
     const char* config_path = "/path/to/config.json";
 
     // コールバック関数と時間ステップを指定してアセットを登録
-    int result = hako_asset_register(asset_name, config_path, callbacks, 1000000); // 1秒ごとに更新
+    int result = hako_asset_register(asset_name, config_path, callbacks, 1000000, HAKO_ASSET_MODEL_CONTROLLER); // 1秒ごとに更新
 
     if (result != 0) {
         // エラーハンドリング
