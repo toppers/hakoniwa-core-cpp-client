@@ -13,7 +13,7 @@
 現在利用可能なサンプルプログラムには以下のものが含まれます：
 
 * [hello_world](https://github.com/toppers/hakoniwa-core-cpp-client/tree/main/examples/hello_world)
-* `pdu_communication`
+* [pdu_communication](https://github.com/toppers/hakoniwa-core-cpp-client/tree/main/examples/pdu_communication)
 
 ## サンプルプログラムを実行するための準備
 
