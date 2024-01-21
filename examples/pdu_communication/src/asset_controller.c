@@ -21,22 +21,26 @@ static int my_on_manual_timing_control(hako_asset_context_t* context)
     int result = 0;
     double count = 0;
     while (result == 0) {
-        int ret = hako_asset_pdu_read("Robot", PDU_POS_CHANNEL_ID, (char*)(&pos), sizeof(pos));
+        motor.linear.x = count + 1001;
+        motor.linear.y = count + 1002;
+        motor.linear.z = count + 1003;
+        int ret = hako_asset_pdu_write("Robot", PDU_MOTOR_CHANNEL_ID, (const char*)(&motor), sizeof(motor));
+        if (ret != 0) {
+            printf("ERROR: hako_asset_pdu_write erro: %d\n", ret);
+        }
+        result = hako_asset_usleep(1000);
+        if (result != 0) {
+            break;
+        }
+
+        ret = hako_asset_pdu_read("Robot", PDU_POS_CHANNEL_ID, (char*)(&pos), sizeof(pos));
         if (ret != 0) {
             printf("ERROR: hako_asset_pdu_read erro: %d\n", ret);
         }
         printf("%llu: pos data(%f, %f, %f)\n", hako_asset_simulation_time(), pos.linear.x, pos.linear.y, pos.linear.z);
 
-        motor.linear.x = count + 1000;
-        motor.linear.y = count + 1000;
-        motor.linear.z = count + 1000;
-        ret = hako_asset_pdu_write("Robot", PDU_MOTOR_CHANNEL_ID, (const char*)(&motor), sizeof(motor));
-        if (ret != 0) {
-            printf("ERROR: hako_asset_pdu_write erro: %d\n", ret);
-        }
-
-        usleep(1000*1000);
         result = hako_asset_usleep(1000);
+        usleep(1000*1000);
         count++;
     }
     printf("INFO: on_manual_timing_control exit\n");
