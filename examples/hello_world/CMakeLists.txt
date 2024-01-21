@@ -1,6 +1,6 @@
 set(HAKO_CMAKE_VERSION ${HAKO_CMAKE_VERSION})
 
-project(hako-exaples-hello_world
+project(hako-examples-hello_world
     LANGUAGES C CXX
 )
 
