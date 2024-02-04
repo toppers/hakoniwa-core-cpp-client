@@ -17,4 +17,5 @@ find_library(ASSETS_LIBRARY
 )
 
 add_subdirectory(python)
+#add_subdirectory(ruby)
 
