@@ -29,9 +29,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y rbenv
-          rbenv init
-          echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $GITHUB_ENV
-          echo 'eval "$(rbenv init -)"' >> $GITHUB_ENV
   
       - name: Setup rbenv (macOS)
         if: matrix.os == 'macos-latest'
