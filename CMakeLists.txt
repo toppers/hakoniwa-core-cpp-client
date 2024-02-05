@@ -35,6 +35,7 @@ endif(WIN32)
 add_subdirectory(src/hakoc)
 add_subdirectory(src/assets)
 add_subdirectory(src/conductor)
+add_subdirectory(bindings)
 add_subdirectory(examples)
 
 #if (test)

@@ -24,6 +24,34 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Setup rbenv (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rbenv
+          rbenv init
+          echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $GITHUB_ENV
+          echo 'eval "$(rbenv init -)"' >> $GITHUB_ENV
+  
+      - name: Setup rbenv (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install rbenv
+          rbenv init
+          echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $GITHUB_ENV
+          echo 'eval "$(rbenv init -)"' >> $GITHUB_ENV
+
+      - name: Install SWIG (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y swig
+  
+      - name: Install SWIG (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install swig
+
       - name: Hakoniwa-core
         run: |
           bash build.bash
