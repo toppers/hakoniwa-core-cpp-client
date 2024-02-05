@@ -34,9 +34,6 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           brew install rbenv
-          rbenv init
-          echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $GITHUB_ENV
-          echo 'eval "$(rbenv init -)"' >> $GITHUB_ENV
 
       - name: Install SWIG (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
