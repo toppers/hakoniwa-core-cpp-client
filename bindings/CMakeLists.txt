@@ -11,6 +11,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src/include)
 set(SWIG_INTERFACE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/hako_asset.i)
 set_source_files_properties(${SWIG_INTERFACE_FILE} PROPERTIES CPLUSPLUS ON)
 
+set(ASSETS_LIBRARY assets)
+
 add_subdirectory(python)
 add_subdirectory(ruby)
 
