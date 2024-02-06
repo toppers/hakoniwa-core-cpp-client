@@ -135,8 +135,96 @@ static PyObject* asset_register(PyObject*, PyObject* args) {
     }
 }
 
+// hako_asset_start関数のPythonラッパー
+static PyObject* py_hako_asset_start(PyObject*, PyObject* args) {
+    // この関数が引数を取らないことを確認
+    if (!PyArg_ParseTuple(args, "")) {
+        return NULL; // エラー時はNULLを返す
+    }
+
+    int result = hako_asset_start();
+    if (result == 0) {
+        Py_RETURN_TRUE; // 成功時はPythonのTrueを返す
+    } else {
+        Py_RETURN_FALSE; // 失敗時はPythonのFalseを返す
+    }
+}
+static PyObject* py_hako_asset_simulation_time(PyObject*, PyObject*) {
+    hako_time_t sim_time = hako_asset_simulation_time();
+
+    return PyLong_FromLongLong(sim_time);
+}
+static PyObject* py_hako_asset_usleep(PyObject*, PyObject* args) {
+    hako_time_t sleep_time_usec;
+
+    if (!PyArg_ParseTuple(args, "L", &sleep_time_usec)) {
+        return NULL;
+    }
+
+    int result = hako_asset_usleep(sleep_time_usec);
+
+    if (result == 0) {
+        Py_RETURN_NONE;
+    } else {
+        PyErr_Format(PyExc_RuntimeError, "hako_asset_usleep failed with error code: %d", result);
+        return NULL;
+    }
+}
+
+static PyObject* py_hako_asset_pdu_read(PyObject*, PyObject* args) {
+    const char* robo_name;
+    HakoPduChannelIdType lchannel;
+    Py_ssize_t buffer_len;
+
+    // 引数を解析（ロボット名、チャンネルID、バッファサイズ）
+    if (!PyArg_ParseTuple(args, "siL", &robo_name, &lchannel, &buffer_len)) {
+        return NULL; // 引数解析に失敗した場合は、NULLを返す
+    }
+
+    // バッファを動的に確保
+    char* buffer = (char*)malloc(buffer_len * sizeof(char));
+    if (buffer == NULL) {
+        PyErr_NoMemory();
+        return NULL;
+    }
+
+    // hako_asset_pdu_read関数を呼び出し
+    int result = hako_asset_pdu_read(robo_name, lchannel, buffer, (size_t)buffer_len);
+
+    if (result != 0) {
+        free(buffer); // エラーが発生したらバッファを解放
+        PyErr_Format(PyExc_RuntimeError, "hako_asset_pdu_read failed with error code: %d", result);
+        return NULL;
+    }
+
+    // 読み込んだデータをPythonのbytesオブジェクトとして返す
+    PyObject* py_data = PyBytes_FromStringAndSize(buffer, buffer_len);
+    free(buffer); // Pythonオブジェクトにデータをコピーした後はバッファを解放
+    return py_data;
+}
+
+static PyObject* py_hako_asset_pdu_write(PyObject*, PyObject* args) {
+    PyObject* py_pdu_data;
+    char *robo_name;
+    HakoPduChannelIdType lchannel;
+    size_t len;
+    if (!PyArg_ParseTuple(args, "siYL", &robo_name, &lchannel, &py_pdu_data, &len))
+    {
+        return NULL;
+    }
+    char* pdu_data = PyByteArray_AsString(py_pdu_data);
+    bool ret = hako_asset_pdu_write(robo_name, lchannel, pdu_data, len);
+    return Py_BuildValue("O", ret ? Py_True : Py_False);
+}
+
+
 static PyMethodDef hako_asset_python_methods[] = {
     {"asset_register", asset_register, METH_VARARGS, "Register asset"},
+    {"start", py_hako_asset_start, METH_VARARGS, "Start the asset."},
+    {"simulation_time", py_hako_asset_simulation_time, METH_NOARGS, "Get the current simulation time."},
+    {"usleep", py_hako_asset_usleep, METH_VARARGS, "Sleep for the specified time in microseconds."},
+    {"pdu_read", py_hako_asset_pdu_read, METH_VARARGS, "Read PDU data for the specified robot name and channel ID."},
+    {"pdu_write", py_hako_asset_pdu_write, METH_VARARGS, "Write PDU data for the specified robot name and channel ID."},
     { .ml_name = NULL, .ml_meth = NULL, .ml_flags = 0,  .ml_doc = NULL},
 };
 //module creator
