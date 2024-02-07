@@ -33,6 +33,12 @@ def my_on_manual_timing_control(context):
     print("INFO: on_manual_timing_control exit")
     return 0
 
+my_callback = {
+    'on_initialize': my_on_initialize,
+    'on_simulation_step': None,
+    'on_manual_timing_control': None,
+    'on_reset': my_on_reset
+}
 def main():
     if len(sys.argv) != 4 and len(sys.argv) != 5:
         print(f"Usage: {sys.argv[0]} <asset_name> <config_path> <delta_time_msec> [manual]")
@@ -42,16 +48,11 @@ def main():
     config_path = sys.argv[2]
     delta_time_usec = int(sys.argv[3]) * 1000
 
-    my_callback = {
-        'on_initialize': my_on_initialize,
-        'on_reset': my_on_reset,
-        'on_simulation_step': None,
-        'on_manual_timing_control': None
-    }
     if len(sys.argv) == 4:
         my_callback['on_simulation_step'] = my_on_simulation_step
     else:
         my_callback['on_manual_timing_control'] = my_on_manual_timing_control
+
 
     hakopy.conductor_start(delta_time_usec, delta_time_usec)
     ret = hakopy.asset_register(asset_name, config_path, my_callback, delta_time_usec, hakopy.HAKO_ASSET_MODEL_CONTROLLER)
