@@ -22,7 +22,8 @@ add_library(
     src/hako_asset_impl.cpp
 )
 target_link_libraries(
-    assets 
+    assets
+    conductor
     hako
 )
 target_include_directories(

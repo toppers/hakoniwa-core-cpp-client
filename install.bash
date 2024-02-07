@@ -15,6 +15,7 @@ sudo cp cmake-build/src/hakoc/libhakoarun.* /usr/local/lib/hakoniwa/
 sudo cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/
 sudo cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/hakoc.so
 sudo cp cmake-build/src/assets/libassets.* /usr/local/lib/hakoniwa/
+sudo cp cmake-build/src/conductor/libconductor.* /usr/local/lib/hakoniwa/
 
 sudo cp -rp py /usr/local/lib/hakoniwa/
 bash bindings/python/install.bash

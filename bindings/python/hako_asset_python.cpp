@@ -1,6 +1,7 @@
 #include "Python.h"
 #include <stdio.h>
 #include "hako_asset.h"
+#include "hako_conductor.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,11 +14,17 @@ PyObject* py_on_reset_callback = NULL;
 
 static int callback_wrapper(PyObject* callback, hako_asset_context_t* context) {
     if (callback != NULL) {
-        PyObject* context_capsule = PyCapsule_New(context, NULL, NULL);
-        if (!context_capsule) {
-            // PyCapsule_Newが失敗した場合
-            PyErr_Print();
-            return -1; // エラーを示す
+        PyObject* context_capsule;
+        if (context != NULL) {
+            context_capsule = PyCapsule_New(context, NULL, NULL);
+            if (!context_capsule) {
+                // PyCapsule_Newが失敗した場合
+                PyErr_Print();
+                return -1; // エラーを示す
+            }
+        }
+        else {
+            context_capsule = Py_None;
         }
 
         PyObject* arglist = Py_BuildValue("(O)", context_capsule);
@@ -216,7 +223,26 @@ static PyObject* py_hako_asset_pdu_write(PyObject*, PyObject* args) {
     bool ret = hako_asset_pdu_write(robo_name, lchannel, pdu_data, len);
     return Py_BuildValue("O", ret ? Py_True : Py_False);
 }
+static PyObject* py_hako_conductor_start(PyObject*, PyObject* args) {
+    hako_time_t delta_usec, max_delay_usec;
 
+    if (!PyArg_ParseTuple(args, "LL", &delta_usec, &max_delay_usec)) {
+        return NULL; // 引数解析に失敗した場合はNULLを返す
+    }
+
+    int result = hako_conductor_start(delta_usec, max_delay_usec);
+    if (result == 0) {
+        Py_RETURN_TRUE; // 成功時はPythonのTrueを返す
+    } else {
+        Py_RETURN_FALSE; // 失敗時はPythonのFalseを返す
+    }
+}
+
+// hako_conductor_stop関数のPythonラッパー
+static PyObject* py_hako_conductor_stop(PyObject*, PyObject*) {
+    hako_conductor_stop();
+    Py_RETURN_NONE; // 戻り値がない関数ではNoneを返す
+}
 
 static PyMethodDef hako_asset_python_methods[] = {
     {"asset_register", asset_register, METH_VARARGS, "Register asset"},
@@ -225,10 +251,12 @@ static PyMethodDef hako_asset_python_methods[] = {
     {"usleep", py_hako_asset_usleep, METH_VARARGS, "Sleep for the specified time in microseconds."},
     {"pdu_read", py_hako_asset_pdu_read, METH_VARARGS, "Read PDU data for the specified robot name and channel ID."},
     {"pdu_write", py_hako_asset_pdu_write, METH_VARARGS, "Write PDU data for the specified robot name and channel ID."},
+    {"conductor_start", py_hako_conductor_start, METH_VARARGS, "Start the conductor with specified delta and max delay usec."},
+    {"conductor_stop", py_hako_conductor_stop, METH_NOARGS, "Stop the conductor."},
     { .ml_name = NULL, .ml_meth = NULL, .ml_flags = 0,  .ml_doc = NULL},
 };
 //module creator
-PyMODINIT_FUNC PyInit_hako_asset(void)
+PyMODINIT_FUNC PyInit_hakopy(void)
 {
     static struct PyModuleDef hako_obj;
     hako_obj.m_base = PyModuleDef_HEAD_INIT;
@@ -236,7 +264,15 @@ PyMODINIT_FUNC PyInit_hako_asset(void)
     hako_obj.m_doc = "Python3 C API Module(Hakoniwa)";
     hako_obj.m_methods = hako_asset_python_methods;
     hako_obj.m_slots = NULL;
-    return PyModule_Create(&hako_obj);
+    PyObject* m = PyModule_Create(&hako_obj);
+    if (m == NULL)
+        return NULL;
+
+    // HakoAssetModelTypeの定数をPythonに公開
+    PyModule_AddIntConstant(m, "HAKO_ASSET_MODEL_PLANT", HAKO_ASSET_MODEL_PLANT);
+    PyModule_AddIntConstant(m, "HAKO_ASSET_MODEL_CONTROLLER", HAKO_ASSET_MODEL_CONTROLLER);
+
+    return m;
 }
 #ifdef __cplusplus
 }
