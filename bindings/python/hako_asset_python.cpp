@@ -171,10 +171,9 @@ static PyObject* py_hako_asset_usleep(PyObject*, PyObject* args) {
     int result = hako_asset_usleep(sleep_time_usec);
 
     if (result == 0) {
-        Py_RETURN_NONE;
+        Py_RETURN_TRUE; // 成功時はPythonのTrueを返す
     } else {
-        PyErr_Format(PyExc_RuntimeError, "hako_asset_usleep failed with error code: %d", result);
-        return NULL;
+        Py_RETURN_FALSE; // 失敗時はPythonのFalseを返す
     }
 }
 
@@ -205,7 +204,7 @@ static PyObject* py_hako_asset_pdu_read(PyObject*, PyObject* args) {
     }
 
     // 読み込んだデータをPythonのbytesオブジェクトとして返す
-    PyObject* py_data = PyBytes_FromStringAndSize(buffer, buffer_len);
+    PyObject* py_data = PyByteArray_FromStringAndSize(buffer, buffer_len);
     free(buffer); // Pythonオブジェクトにデータをコピーした後はバッファを解放
     return py_data;
 }
@@ -221,7 +220,12 @@ static PyObject* py_hako_asset_pdu_write(PyObject*, PyObject* args) {
     }
     char* pdu_data = PyByteArray_AsString(py_pdu_data);
     bool ret = hako_asset_pdu_write(robo_name, lchannel, pdu_data, len);
-    return Py_BuildValue("O", ret ? Py_True : Py_False);
+    if (ret == 0) {
+        return Py_BuildValue("O", Py_True);
+    }
+    else {
+        return Py_BuildValue("O", Py_False);
+    }
 }
 static PyObject* py_hako_conductor_start(PyObject*, PyObject* args) {
     hako_time_t delta_usec, max_delay_usec;

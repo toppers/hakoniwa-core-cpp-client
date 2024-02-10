@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 import sys
+import hakopy
 from hako_binary import offset_map
 from hako_binary import binary_writer
 from hako_binary import binary_reader
@@ -73,6 +74,59 @@ class PduBinaryConvertor:
         binary_data = bytearray(pdu['pdu_size'])
         binary_writer.binary_write(self.offmap, binary_data, json_data, pdu['type'])
         return binary_data
+
+    def pdu_size(self, robo_name, channel_id):
+        pdu = self._find_pdu(robo_name, channel_id)
+        if pdu == None:
+            print(f"ERROR: can not find robo_name={robo_name} channel_id={channel_id}")
+            return None
+        return pdu['pdu_size']
+
+    def create_pdu_bin_zero(self, robo_name, channel_id):
+        pdu = self._find_pdu(robo_name, channel_id)
+        if pdu == None:
+            print(f"ERROR: can not find robo_name={robo_name} channel_id={channel_id}")
+            return None
+        return bytearray(pdu['pdu_size'])
+
+    def create_pdu_json_zero(self, robo_name, channel_id):
+        pdu = self._find_pdu(robo_name, channel_id)
+        if pdu == None:
+            print(f"ERROR: can not find robo_name={robo_name} channel_id={channel_id}")
+            return None
+        binary_data = bytearray(pdu['pdu_size'])
+        value = binary_reader.binary_read(self.offmap, pdu['type'], binary_data)
+        return value
+
+class HakoPdu:
+    def __init__(self, conv, robot_name, channel_id):
+        self.conv = conv
+        self.robot_name = robot_name
+        self.channel_id = channel_id
+        self.pdu_size = self.conv.pdu_size(robot_name, channel_id)
+        self.obj = self.conv.create_pdu_json_zero(robot_name, channel_id)
+
+    def get(self):
+        return self.obj
+
+    def write(self):
+        data = self.conv.json2bin(self.robot_name, self.channel_id, self.obj)
+        return hakopy.pdu_write(self.robot_name, self.channel_id, data, len(data))
+
+    def read(self):
+        data = hakopy.pdu_read(self.robot_name, self.channel_id, self.pdu_size)
+        if data == None:
+            print('ERROR: hako_asset_pdu_read')
+            return None
+        self.obj = self.conv.bin2json(self.robot_name, self.channel_id, data)
+        return self.obj
+
+class HakoPduManager:
+    def __init__(self, offset_path, pdudef_path):
+        self.conv = PduBinaryConvertor(offset_path, pdudef_path)
+
+    def get_pdu(self, robot_name, channel_id):
+        return HakoPdu(self.conv, robot_name, channel_id)
 
 def main():
     if len(sys.argv) != 7:
