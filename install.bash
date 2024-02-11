@@ -53,3 +53,9 @@ then
 	${SUDO} cp cmake-build/src/proxy/hako-proxy /usr/local/bin/hakoniwa/
 	bash bindings/python/install.bash
 fi
+
+# ディレクトリの所有者をインストールユーザーに変更
+${SUDO} chown -R $USER /var/lib/hakoniwa
+
+# ディレクトリのパーミッションを適切に設定
+${SUDO} chmod -R 755 /var/lib/hakoniwa

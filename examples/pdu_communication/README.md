@@ -46,7 +46,7 @@
 hakoniwa-core-cpp-clientでビルドおよびインストール完了後、以下のコマンドを実行します。
 
 ```sh
-hakoniwa-core-cpp-client % ./cmake-build/examples/pdu_communication/asset_plant  examples/pdu_communication/custom.json
+./cmake-build/examples/pdu_communication/asset_plant  examples/pdu_communication/custom.json
 ```
 
 成功すると、以下のログが出力され、待機状態になります。
@@ -66,7 +66,7 @@ WAIT START
 以下のコマンドを実行します。
 
 ```sh
-hakoniwa-core-cpp-client % ./cmake-build/examples/pdu_communication/asset_controller examples/pdu_communication/custom.json 
+./cmake-build/examples/pdu_communication/asset_controller examples/pdu_communication/custom.json 
 ```
 
 成功すると、以下のログが出力され、待機状態になります。
