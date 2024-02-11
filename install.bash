@@ -26,6 +26,19 @@ if [ ! -d /usr/local/lib/hakoniwa ]
 then
 	${SUDO} mkdir /usr/local/lib/hakoniwa
 fi
+if [ ! -d /etc/hakoniwa ]
+then
+	${SUDO} mkdir /etc/hakoniwa
+fi
+if [ ! -d /var/lib/hakoniwa ]
+then
+	${SUDO} mkdir /var/lib/hakoniwa
+fi
+if [ ! -d /var/lib/hakoniwa/mmap ]
+then
+	${SUDO} mkdir /var/lib/hakoniwa/mmap
+fi
+${SUDO} cp core/cpp_core_config.json /etc/hakoniwa/
 
 ${SUDO} cp cmake-build/core/sample/base-procs/hako-cmd/hako-cmd /usr/local/bin/hakoniwa/
 ${SUDO} cp cmake-build/src/hakoc/libhakoarun.* /usr/local/lib/hakoniwa/
