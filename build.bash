@@ -16,7 +16,7 @@ then
     then
         cmake ..
     else
-        cmake .. -G "MSYS Makefiles"
+        cmake .. -G "Unix Makefiles" -D WIN32=true
     fi
 	make
 else

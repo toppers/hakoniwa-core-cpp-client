@@ -1,4 +1,5 @@
 #include "hako_conductor_impl.hpp"
+#include <unistd.h>
 
 std::shared_ptr<hako::IHakoMasterController> hako_conductor = nullptr;
 static bool hako_conductor_cmd_stop = false;

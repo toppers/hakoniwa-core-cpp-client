@@ -3,6 +3,7 @@
 #include "nlohmann/json.hpp"
 #include <fstream>
 #include <iostream>
+#include <unistd.h>
 
 #define HAKO_ASSERT_RUNNER_ASSERT(expr)	\
 do {	\

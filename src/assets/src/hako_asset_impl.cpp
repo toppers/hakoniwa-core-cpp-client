@@ -1,4 +1,5 @@
 #include "hako_asset_impl.hpp"
+#include <unistd.h>
 
 HakoAssetType hako_asset_instance;
 
