@@ -1,21 +1,42 @@
 #!/bin/bash
+OS_TYPE="posix"
+OS=`uname`
+if [ "$OS" = "Linux" -o "$OS" = "Darwin"  ]
+then
+	:
+	SUDO=sudo
+else
+    OS_TYPE="win"
+	SUDO=
+fi
+if [ ! -d /usr/local/bin ]
+then
+	${SUDO} mkdir /usr/local/bin
+fi
+if [ ! -d /usr/local/lib ]
+then
+	${SUDO} mkdir /usr/local/lib
+fi
 
 if [ ! -d /usr/local/bin/hakoniwa ]
 then
-	sudo mkdir /usr/local/bin/hakoniwa
+	${SUDO} mkdir /usr/local/bin/hakoniwa
 fi
 if [ ! -d /usr/local/lib/hakoniwa ]
 then
-	sudo mkdir /usr/local/lib/hakoniwa
+	${SUDO} mkdir /usr/local/lib/hakoniwa
 fi
 
-sudo cp cmake-build/core/sample/base-procs/hako-cmd/hako-cmd /usr/local/bin/hakoniwa/
-sudo cp cmake-build/src/proxy/hako-proxy /usr/local/bin/hakoniwa/
-sudo cp cmake-build/src/hakoc/libhakoarun.* /usr/local/lib/hakoniwa/
-sudo cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/
-sudo cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/hakoc.so
-sudo cp cmake-build/src/assets/libassets.* /usr/local/lib/hakoniwa/
-sudo cp cmake-build/src/conductor/libconductor.* /usr/local/lib/hakoniwa/
+${SUDO} cp cmake-build/core/sample/base-procs/hako-cmd/hako-cmd /usr/local/bin/hakoniwa/
+${SUDO} cp cmake-build/src/hakoc/libhakoarun.* /usr/local/lib/hakoniwa/
+${SUDO} cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/
+${SUDO} cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/hakoc.so
+${SUDO} cp cmake-build/src/assets/libassets.* /usr/local/lib/hakoniwa/
+${SUDO} cp cmake-build/src/conductor/libconductor.* /usr/local/lib/hakoniwa/
 
-sudo cp -rp py /usr/local/lib/hakoniwa/
-bash bindings/python/install.bash
+${SUDO} cp -rp py /usr/local/lib/hakoniwa/
+if [ ${OS_TYPE} = "posix" ]
+then
+	${SUDO} cp cmake-build/src/proxy/hako-proxy /usr/local/bin/hakoniwa/
+	bash bindings/python/install.bash
+fi
