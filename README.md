@@ -653,11 +653,70 @@ source ~/.zshrc         # Zshの場合
 
 共有メモリ方式として、以下の２方式を選択できます。
 
-* Shared Memory
-* Memory Mapped File
-そのため、代替の通信方式として、外部ファイルを MMAP でメモリ共有できるようにしました。
-MMAPファイルは
+* Shared Memory(SHM)※ Windows は未サポートでうs
+* Memory Mapped File(MMAP)
 
+インストール直後は、デフォルトとして、SHM に設定されています。
+
+**MMAP の特徴：**
+* ファイルベースのデータ共有:
+  * MMAPはファイルベースで動作します。つまり、ディスク上のファイルを直接メモリにマッピングします。これにより、ファイルの内容を直接メモリ上で読み書きできるため、ディスクI/O操作を効率的に行うことができます。共有メモリと比べて、データの永続化が必要な場合に特に有利です。
+* 自動的なデータの同期:
+  * メモリマップドファイルはオペレーティングシステムによって管理されるため、変更された内容は自動的にファイルに書き戻されます。これにより、プロセスがクラッシュした場合でも、マッピングされたファイルの内容は保持されるため、データの安全性が向上します。
+* 大きなデータセットの扱いやすさ:
+  * MMAPは大きなファイルを扱う際に有利です。ファイル全体を一度にメモリにロードする代わりに、必要な部分だけをメモリにマッピングすることができるため、メモリ使用量を節約し、大きなデータセットの処理を効率化できます。
+* 柔軟性:
+  * MMAPを使用すると、ファイルの特定の部分を異なるアドレス空間にマッピングすることができます。これにより、アプリケーションにとって都合の良い方法でデータにアクセスすることが可能になります。
+* ポータビリティ:
+  * 多くのオペレーティングシステムがMMAPをサポートしているため、異なるプラットフォーム間でのアプリケーションの移植性が向上します。
+
+インストール完了後、以下の方法で MMAP に設定変更できます。
+
+```
+sudo bash hako-mmap-set.bash -p /var/lib/hakoniwa/mmap
+```
+
+成功すると、`/etc/hakoniwa/cpp_core_config.json` が以下のように変更されます。
+
+```
+{
+  "shm_type": "mmap",
+  "core_mmap_path": "/var/lib/hakoniwa/mmap"
+}
+```
+
+MMAPファイルは、`core_mmap_path`  配下に自動作成されます。
+
+また、MMAPファイルを `ramdisk` に配置するこで、処理性能を向上させることができます。
+
+MacOSとLinuxの場合は、`hako-ramdisk.bash` を利用して `ramdisk` を作成できます。
+
+作成した `ramdisk` パスを `hako-mmap-set.bash` で再設定することで反映されます。
+
+**仕様：**
+```
+Usage:
+  hako-ramdisk.bash -c /path/to -s size   # Create a RAM disk with size in MB
+  hako-ramdisk.bash -d /path/to           # Delete a RAM disk
+  hako-ramdisk.bash -l                    # List created RAM disks
+```
+
+**例：64MBの `ramdisk` を `/Volumes/hakoniwa-ramdisk` に作成します。**
+```
+sudo bash hako-ramdisk.bash -c /Volumes/hakoniwa-ramdisk -s 64
+```
+
+```
+% sudo bash hako-ramdisk.bash -l                                
+Listing RAM disks...
+/dev/disk4 is mounted at /Volumes/hakoniwa-ramdisk
+Operation completed.
+```
+
+**`ramdisk` を削除したい場合：**
+```
+sudo bash hako-ramdisk.bash -d /Volumes/hakoniwa-ramdisk 
+```
 
 # 箱庭コマンド API
 
