@@ -27,7 +27,6 @@ create_ramdisk() {
     case "$OS" in
         "macOS")
             diskutil erasevolume HFS+ "$volume_name" `hdiutil attach -nomount ram://$size_in_blocks`
-            ln -s /Volumes/"$volume_name" "$path"
             ;;
         "Linux")
             mkdir -p "$path"
