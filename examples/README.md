@@ -15,5 +15,5 @@
 * [hello_world](https://github.com/toppers/hakoniwa-core-cpp-client/tree/main/examples/hello_world)
 * [pdu_communication](https://github.com/toppers/hakoniwa-core-cpp-client/tree/main/examples/pdu_communication)
 
-サンプルプログラムを実行するには、事前に箱庭のインストールを実施してください。
+サンプルプログラムを実行するには、事前に[箱庭のインストール](https://github.com/toppers/hakoniwa-core-cpp-client?tab=readme-ov-file#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%89%8B%E9%A0%86)を実施してください。
 
