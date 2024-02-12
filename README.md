@@ -27,6 +27,8 @@ APIのカテゴリとしては、その目的の応じて以下の３ケース�
     - [箱庭シミュレーション時間を取得する](#箱庭シミュレーション時間を取得する)
     - [スリープする](#スリープする)
   - [サンプルコード](#サンプルコード)
+- [インストール手順](#インストール手順)
+- [MMAPファイルの設定](#MMAPファイルの設定)
 - [箱庭コマンド API](#箱庭コマンド-api)
 - [箱庭コンダクタ API](#箱庭コンダクタ-api)
 - [箱庭アセットコンフィグ](#箱庭アセットコンフィグ)
@@ -549,6 +551,112 @@ int main() {
 
 箱庭アセットAPIを深く利用するための動作確認およびサンプルコードを用意しています。
 [こちら](https://github.com/toppers/hakoniwa-core-cpp-client/tree/main/examples)を参照ください。
+
+
+# インストール手順
+
+**リポジトリのクローン:**
+
+```
+git clone --recursive https://github.com/toppers/hakoniwa-core-cpp-client.git
+```
+
+**ビルド:**
+
+```
+cd hakoniwa-core-cpp-client
+```
+
+```
+bash build.bash
+```
+
+**インストール:**
+
+```
+bash install.bash
+```
+
+インストール時に、以下へのアクセス許可が必要になることがあります。この許可を与えると、箱庭のライブラリやコマンドがこれらのディレクトリに配置されます。
+
+* /etc/hakoniwa
+* /var/lib/hakoniwa
+* /usr/local/lib/hakoniwa
+* /usr/local/bin/hakoniwa 
+
+インストールが成功している場合は、以下のコマンドでチェックできます。
+
+```
+bash hako-setup-check.bash
+```
+
+成功している場合は、以下のログが出力されます。
+
+```
+OK Directory exists: /usr/local/bin
+OK Directory exists: /usr/local/bin/hakoniwa
+OK Directory exists: /usr/local/lib
+OK Directory exists: /usr/local/lib/hakoniwa
+OK Directory exists: /etc/hakoniwa
+OK Directory exists: /var/lib/hakoniwa
+OK Directory exists: /var/lib/hakoniwa/mmap
+OK File exists: /etc/hakoniwa/cpp_core_config.json
+OK File exists: /usr/local/bin/hakoniwa/hako-cmd
+OK File exists: /usr/local/lib/hakoniwa/libhakoarun.a
+OK File exists: /usr/local/lib/hakoniwa/libshakoc.dylib
+OK File exists: /usr/local/lib/hakoniwa/hakoc.so
+OK File exists: /usr/local/lib/hakoniwa/libassets.dylib
+OK File exists: /usr/local/lib/hakoniwa/libconductor.dylib
+OK File exists: /usr/local/lib/hakoniwa/py
+OK File exists: /usr/local/bin/hakoniwa/hako-proxy
+Check complete.
+```
+
+**環境変数の設定:**
+
+インストールが成功した後、これらのパスを環境変数に設定してください。
+
+Ubuntuの場合:
+
+~/.bashrc ファイルに以下の行を追加してください。
+
+```sh
+export LD_LIBRARY_PATH=/usr/local/lib/hakoniwa:$LD_LIBRARY_PATH
+export PATH=/usr/local/bin/hakoniwa:$PATH
+```
+
+変更を反映させるために、次のコマンドを実行します。
+
+```sh
+source ~/.bashrc
+```
+
+macOSの場合：
+
+使用しているシェルに応じて ~/.bash_profile または ~/.zshrc に以下の行を追加します。
+
+```sh
+export DYLD_LIBRARY_PATH=/usr/local/lib/hakoniwa:$DYLD_LIBRARY_PATH
+export PATH=/usr/local/bin/hakoniwa:$PATH
+```
+
+変更を反映させるために、次のコマンドを実行します。
+
+```sh
+source ~/.bash_profile  # Bashの場合
+source ~/.zshrc         # Zshの場合
+```
+
+# MMAPファイルの設定
+
+箱庭アセット間のPDU通信は、は共有メモリベースで行います。
+
+共有メモリ方式として、以下の２方式を選択できます。
+
+* Shared Memory
+* Memory Mapped File
+そのため、代替の通信方式として、外部ファイルを MMAP でメモリ共有できるようにしました。
+MMAPファイルは
 
 
 # 箱庭コマンド API
