@@ -3,7 +3,10 @@
 #include "nlohmann/json.hpp"
 #include <fstream>
 #include <iostream>
+#ifdef WIN32
+#else
 #include <unistd.h>
+#endif
 
 #define HAKO_ASSERT_RUNNER_ASSERT(expr)	\
 do {	\
@@ -60,16 +63,10 @@ static bool hako_asset_runner_wait_running(void);
 static void hako_asset_runner_parse_robots(void)
 {
     const json& robots_json = hako_asset_runner_ctrl.param["robots"];
-    
+
     for (const auto& robot_json : robots_json) {
         Robot* robot = new Robot;
-        
-        // name を取得
         robot->name = robot_json["name"];
-        
-        // ロボット側が被制御対象のコンフィグファイルなので、READとWRITEは逆になることに注意
-
-        // PduReaders を取得
         if (robot_json.find("shm_pdu_writers") != robot_json.end()) {
             const json& pdu_readers_json = robot_json["shm_pdu_writers"];
             for (const auto& reader_json : pdu_readers_json) {
@@ -82,7 +79,8 @@ static void hako_asset_runner_parse_robots(void)
                 };
                 robot->pdu_readers.push_back(*reader);
             }
-        } else {
+        }
+        else {
             // nothing to do
         }
         if (robot_json.find("rpc_pdu_writers") != robot_json.end()) {
@@ -97,11 +95,10 @@ static void hako_asset_runner_parse_robots(void)
                 };
                 robot->pdu_readers.push_back(*reader);
             }
-        } else {
+        }
+        else {
             // nothing to do
         }
-        
-        // PduWriters を取得
         if (robot_json.find("shm_pdu_readers") != robot_json.end()) {
             const json& pdu_writers_json = robot_json["shm_pdu_readers"];
             for (const auto& writer_json : pdu_writers_json) {
@@ -116,7 +113,8 @@ static void hako_asset_runner_parse_robots(void)
                 };
                 robot->pdu_writers.push_back(*writer);
             }
-        } else {
+        }
+        else {
             // nothing to do
         }
         if (robot_json.find("rpc_pdu_readers") != robot_json.end()) {
@@ -133,9 +131,10 @@ static void hako_asset_runner_parse_robots(void)
                 };
                 robot->pdu_writers.push_back(*writer);
             }
-        } else {
+        }
+        else {
             // nothing to do
-        }        
+        }
         hako_asset_runner_ctrl.robots.push_back(*robot);
     }
 }

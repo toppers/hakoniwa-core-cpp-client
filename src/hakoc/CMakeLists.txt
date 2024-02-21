@@ -50,7 +50,8 @@ if(NOT WIN32)
         ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/posix/hako_sem.cpp
     )
 endif()
-if(WIN32)
+if(MSVC)
+elseif(WIN32)
     target_link_libraries(shakoc stdc++)
 endif()
 add_library(

@@ -2,7 +2,13 @@
 #include "pdu_info.h"
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _WIN32
+static inline void usleep(long microseconds) {
+    Sleep(microseconds / 1000);
+}
+#else
 #include <unistd.h>
+#endif
 
 static int my_on_initialize(hako_asset_context_t* context)
 {

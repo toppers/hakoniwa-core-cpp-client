@@ -1,5 +1,8 @@
 #include "hako_asset_impl.hpp"
+#ifdef WIN32
+#else
 #include <unistd.h>
+#endif
 
 HakoAssetType hako_asset_instance;
 
@@ -38,15 +41,7 @@ static void hako_asset_impl_parse_robots(bool is_plant)
     
     for (const auto& robot_json : robots_json) {
         Robot* robot = new Robot;
-        
-        // name を取得
         robot->name = robot_json["name"];
-        
-        // is_plant: true  プラントモデル
-        // is_plant: false 制御プログラム
-        // is_plantが false の場合は、ロボット側が被制御対象のコンフィグファイルなので、READとWRITEは逆になることに注意
-
-        // PduReaders を取得
         if (robot_json.find("shm_pdu_writers") != robot_json.end()) {
             const json& pdu_readers_json = robot_json["shm_pdu_writers"];
             for (const auto& reader_json : pdu_readers_json) {
@@ -73,8 +68,6 @@ static void hako_asset_impl_parse_robots(bool is_plant)
         } else {
             // nothing to do
         }
-        
-        // PduWriters を取得
         if (robot_json.find("shm_pdu_readers") != robot_json.end()) {
             const json& pdu_writers_json = robot_json["shm_pdu_readers"];
             for (const auto& writer_json : pdu_writers_json) {

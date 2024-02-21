@@ -13,11 +13,19 @@ endif(WIN32)
 MESSAGE(STATUS "OS_TYPE=" ${OS_TYPE})
 
 
+if(WIN32)
+add_library(
+    conductor STATIC
+    src/hako_conductor.cpp
+    src/hako_conductor_impl.cpp
+)
+else()
 add_library(
     conductor SHARED
     src/hako_conductor.cpp
     src/hako_conductor_impl.cpp
 )
+endif()
 target_link_libraries(
     conductor 
     hako

@@ -38,7 +38,7 @@ int hako_client_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_s
         else {
             return -1;
         }
-    } catch (std::exception *e) {
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return -1;
     }
@@ -47,14 +47,14 @@ int hako_client_create_pdu_channel(HakoPduChannelIdType channel_id, size_t pdu_s
 int hako_client_create_pdu_lchannel(const char* robo_name, HakoPduChannelIdType channel_id, size_t pdu_size)
 {
     try {
-        std::string hako_client_name(robo_name);
-        if (hako_asset->create_pdu_lchannel(hako_client_name, channel_id, pdu_size) == true) {
+        std::string _hako_client_name(robo_name);
+        if (hako_asset->create_pdu_lchannel(_hako_client_name, channel_id, pdu_size) == true) {
             return 0;
         }
         else {
             return -1;
         }
-    } catch (std::exception *e) {
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return -1;
     }
@@ -68,7 +68,7 @@ int hako_client_start_feedback()
         else {
             return -1;
         }
-    } catch (std::exception *e) {
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return -1;
     }
@@ -78,14 +78,14 @@ int hako_client_pdu_is_dirty(const char* asset_name, const char* robo_name, Hako
 {
     try {
         std::string hako_asset_name(asset_name);
-        std::string hako_client_name(robo_name);
-        if (hako_asset->is_pdu_dirty(hako_asset_name, hako_client_name, channel_id) == true) {
+        std::string _hako_client_name(robo_name);
+        if (hako_asset->is_pdu_dirty(hako_asset_name, _hako_client_name, channel_id) == true) {
             return 0;
         }
         else {
             return -1;
         }
-    } catch (std::exception *e) {
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return -1;
     }
@@ -94,14 +94,14 @@ int hako_client_write_pdu(const char* asset_name, const char* robo_name, HakoPdu
 {
     try {
         std::string hako_asset_name(asset_name);
-        std::string hako_client_name(robo_name);
-        if (hako_asset->write_pdu(hako_asset_name, hako_client_name, channel_id, pdu_data, len) == true) {
+        std::string _hako_client_name(robo_name);
+        if (hako_asset->write_pdu(hako_asset_name, _hako_client_name, channel_id, pdu_data, len) == true) {
             return 0;
         }
         else {
             return -1;
         }
-    } catch (std::exception *e) {
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return -1;
     }
@@ -111,14 +111,14 @@ int hako_client_read_pdu(const char* asset_name, const char* robo_name, HakoPduC
 {
     try {
         std::string hako_asset_name(asset_name);
-        std::string hako_client_name(robo_name);
-        if (hako_asset->read_pdu(hako_asset_name, hako_client_name, channel_id, pdu_data, len) == true) {
+        std::string _hako_client_name(robo_name);
+        if (hako_asset->read_pdu(hako_asset_name, _hako_client_name, channel_id, pdu_data, len) == true) {
             return 0;
         }
         else {
             return -1;
         }
-    } catch (std::exception *e) {
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return -1;
     }
@@ -127,9 +127,9 @@ int hako_client_read_pdu(const char* asset_name, const char* robo_name, HakoPduC
 void hako_client_notify_read_pdu_done(const char* asset_name)
 {
     try {
-        std::string hako_client_name(asset_name);
-        hako_asset->notify_read_pdu_done(hako_client_name);
-    } catch (std::exception *e) {
+        std::string _hako_client_name(asset_name);
+        hako_asset->notify_read_pdu_done(_hako_client_name);
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return;
     }
@@ -138,9 +138,9 @@ void hako_client_notify_read_pdu_done(const char* asset_name)
 void hako_client_notify_write_pdu_done(const char* asset_name)
 {
     try {
-        std::string hako_client_name(asset_name);
-        hako_asset->notify_write_pdu_done(hako_client_name);
-    } catch (std::exception *e) {
+        std::string _hako_client_name(asset_name);
+        hako_asset->notify_write_pdu_done(_hako_client_name);
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return;
     }
@@ -149,14 +149,14 @@ void hako_client_notify_write_pdu_done(const char* asset_name)
 int hako_client_is_pdu_sync_mode(const char* asset_name)
 {
     try {
-        std::string hako_client_name(asset_name);
-        if (hako_asset->is_pdu_sync_mode(hako_client_name) == true) {
+        std::string _hako_client_name(asset_name);
+        if (hako_asset->is_pdu_sync_mode(_hako_client_name) == true) {
             return 0;
         }
         else {
             return -1;
         }
-    } catch (std::exception *e) {
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return -1;
     }
@@ -171,7 +171,7 @@ int hako_client_is_simulation_mode()
         else {
             return -1;
         }
-    } catch (std::exception *e) {
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return -1;
     }
@@ -186,7 +186,7 @@ int hako_client_is_pdu_created()
         else {
             return -1;
         }
-    } catch (std::exception *e) {
+    } catch (std::exception *) {
         //hako::logger::get("core")->error(e->what());
         return -1;
     }

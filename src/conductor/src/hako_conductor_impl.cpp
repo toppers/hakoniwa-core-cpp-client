@@ -1,24 +1,25 @@
 #include "hako_conductor_impl.hpp"
+#include <thread>
+#ifdef WIN32
+#else
 #include <unistd.h>
+#endif
 
 std::shared_ptr<hako::IHakoMasterController> hako_conductor = nullptr;
 static bool hako_conductor_cmd_stop = false;
-static void* hako_conductor_impl_thread_run(void* arg)
+void hako_conductor_impl_thread_run()
 {
     std::cout << "INFO: hako_conductor thread start" << std::endl;
-    if (arg) {
-        //nothing to do
-    }
-    while (hako_conductor_cmd_stop == false) {
+    while (!hako_conductor_cmd_stop) {
         try {
             hako_conductor->execute();
-        } catch (std::exception *e) {
-            std::cerr << "ERROR: hako_conductor.execute() Failed" << std::endl;
-            return nullptr;
+        }
+        catch (const std::exception& e) {
+            std::cerr << "ERROR: hako_conductor.execute() Failed: " << e.what() << std::endl;
+            return;
         }
     }
     hako_conductor = nullptr;
-    return nullptr;
 }
 
 bool hako_conductor_impl_start(hako_time_t delta_usec, hako_time_t max_delay_usec)
@@ -26,7 +27,7 @@ bool hako_conductor_impl_start(hako_time_t delta_usec, hako_time_t max_delay_use
     if (hako_conductor != nullptr) {
         return false;
     }
-    pthread_t thread;
+
     try {
         hako::init();
         hako_conductor = hako::create_master();
@@ -35,15 +36,15 @@ bool hako_conductor_impl_start(hako_time_t delta_usec, hako_time_t max_delay_use
             return false;
         }
         hako_conductor->set_config_simtime(max_delay_usec, delta_usec);
-    } catch (std::exception *e) {
+    } catch (std::exception *) {
         std::cout << "INFO: hako::create_master() Failed" << std::endl;
         return false;
     }
     
-    if (pthread_create(&thread, NULL, hako_conductor_impl_thread_run, nullptr) != 0) {
-        std::cerr << "ERROR: Failed to create hako_conductor_impl_thread_run thread!" << std::endl;
-        return false;
-    }
+    // std::threadを使用してスレッドを作成
+    std::thread thread(hako_conductor_impl_thread_run);
+    // デタッチして独立実行させる（必要に応じてjoinを使用する）
+    thread.detach();
     return true;
 }
 void hako_conductor_impl_stop(void)
