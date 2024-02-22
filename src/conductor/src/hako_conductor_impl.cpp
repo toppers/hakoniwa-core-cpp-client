@@ -41,9 +41,7 @@ bool hako_conductor_impl_start(hako_time_t delta_usec, hako_time_t max_delay_use
         return false;
     }
     
-    // std::threadを使用してスレッドを作成
     std::thread thread(hako_conductor_impl_thread_run);
-    // デタッチして独立実行させる（必要に応じてjoinを使用する）
     thread.detach();
     return true;
 }
