@@ -28,6 +28,7 @@ APIのカテゴリとしては、その目的の応じて以下の３ケース�
     - [スリープする](#スリープする)
   - [サンプルコード](#サンプルコード)
 - [インストール手順](#インストール手順)
+- [Windows向けインストール手順](#Windows向けインストール手順)
 - [MMAPファイルの設定](#MMAPファイルの設定)
 - [箱庭コマンド API](#箱庭コマンド-api)
 - [箱庭コンダクタ API](#箱庭コンダクタ-api)
@@ -717,6 +718,72 @@ Operation completed.
 ```
 sudo bash hako-ramdisk.bash -d /Volumes/hakoniwa-ramdisk 
 ```
+
+
+# Windows向けインストール手順
+
+Windows 向けに箱庭コア機能をインストールする場合、以下のツールを利用します。
+
+* Visual Studio(C++)
+* Power shell
+* WSL2
+
+**リポジトリのクローン:**
+
+WSL2 を利用して、クローンします。
+
+```
+git clone --recursive https://github.com/toppers/hakoniwa-core-cpp-client.git
+```
+
+**ビルド:**
+
+1. Visual Stuido　を起動し、「ローカルフォルダーを開く」を選択します。
+2. hakoniwa-core-cpp-client を選択します。
+3. 「ビルド」→「すべてビルド」を選択するとビルドが始まります。
+
+
+**インストール:**
+
+Windowsコンソールを開き、`hakoniwa-core-cpp-client` に移動し、インストールコマンドを実行します。
+
+```
+ .\install.bat
+```
+
+成功すると、以下の環境変数が設定されます。
+
+* HAKO_CONFIG_PATH
+  * <path/to>\hakoniwa-core-cpp-client\cpp_core_config.json
+* PATH
+  * <path/to>\hakoniwa-core-cpp-client\out\build\x64-Debug\core\sample\base-procs\hako-cmd
+
+もし、設定されていない場合は、手動で設定してください。
+
+
+# MMAPファイルの設定
+
+Windows版の箱庭コア機能は、MMAP通信が前提となります。
+
+
+```
+.\hako-mmap-set.bat -p Z:\\mmap
+```
+
+成功すると、`cpp_core_config.json` が以下のように変更されます。
+
+```
+{
+    "shm_type":  "mmap",
+    "core_mmap_path":  "Z:\\mmap"
+}
+```
+
+MMAPファイルは、`core_mmap_path`  配下に自動作成されます。
+
+また、MMAPファイルを `ramdisk` に配置するこで、処理性能を向上させることができます。
+
+作成した `ramdisk` パスを `hako-mmap-set.bat` で再設定することで反映されます。
 
 # 箱庭コマンド API
 
