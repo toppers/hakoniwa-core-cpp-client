@@ -725,8 +725,10 @@ sudo bash hako-ramdisk.bash -d /Volumes/hakoniwa-ramdisk
 Windows 向けに箱庭コア機能をインストールする場合、以下のツールを利用します。
 
 * Visual Studio(C++)
+  * ビルドモードは、x64-Release としてください
 * Power shell
 * WSL2
+* [Python 3.12](https://www.python.org/)
 
 **リポジトリのクローン:**
 
