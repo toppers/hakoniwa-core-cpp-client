@@ -240,7 +240,7 @@ static PyObject* py_init_for_external(PyObject*, PyObject*) {
 
 static PyMethodDef hako_asset_python_methods[] = {
     {"asset_register", asset_register, METH_VARARGS, "Register asset"},
-    {"init_for_external", py_init_for_external, METH_VARARGS, "Initialize for external"},
+    {"init_for_external", py_init_for_external, METH_NOARGS, "Initialize for external"},
     {"start", py_hako_asset_start, METH_VARARGS, "Start the asset."},
     {"simulation_time", py_hako_asset_simulation_time, METH_NOARGS, "Get the current simulation time."},
     {"usleep", py_hako_asset_usleep, METH_VARARGS, "Sleep for the specified time in microseconds."},
