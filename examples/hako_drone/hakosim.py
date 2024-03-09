@@ -57,6 +57,7 @@ class MultirotorClient:
         command, pdu_cmd = self.get_packet(pdu_info.HAKO_AVATOR_CHANNEL_ID_CMD_MOVE)
         pdu_cmd['x'] = x
         pdu_cmd['y'] = y
+        pdu_cmd['z'] = z
         pdu_cmd['speed'] = speed
         return self.reply_and_wait_res(command)
 
