@@ -1,6 +1,13 @@
 {
   "robots": [
     {
+      "name": "EnvironmentEffector",
+      "rpc_pdu_readers": [],
+      "rpc_pdu_writers": [],
+      "shm_pdu_readers": [],
+      "shm_pdu_writers": []
+    },
+    {
       "name": "DroneFlightController",
       "rpc_pdu_readers": [],
       "rpc_pdu_writers": [],
@@ -56,7 +63,7 @@
           "class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriter",
           "conv_class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriterConverter",
           "channel_id": 6,
-          "pdu_size": 40,
+          "pdu_size": 48,
           "write_cycle": 1,
           "method_type": "SHM"
         },
@@ -96,13 +103,6 @@
           "method_type": "SHM"
         }
       ]
-    },
-    {
-      "name": "EnvironmentEffector",
-      "rpc_pdu_readers": [],
-      "rpc_pdu_writers": [],
-      "shm_pdu_readers": [],
-      "shm_pdu_writers": []
     }
   ]
 }
