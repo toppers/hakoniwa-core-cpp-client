@@ -43,7 +43,12 @@ ${SUDO} cp core/cpp_core_config.json /etc/hakoniwa/
 ${SUDO} cp cmake-build/core/sample/base-procs/hako-cmd/hako-cmd /usr/local/bin/hakoniwa/
 ${SUDO} cp cmake-build/src/hakoc/libhakoarun.* /usr/local/lib/hakoniwa/
 ${SUDO} cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/
-${SUDO} cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/hakoc.so
+if [ "$OS" = "Darwin"  ]
+then
+	${SUDO} cp cmake-build/src/hakoc/libshakoc.dylib /usr/local/lib/hakoniwa/hakoc.so
+else
+	${SUDO} cp cmake-build/src/hakoc/libshakoc.* /usr/local/lib/hakoniwa/hakoc.so
+fi
 ${SUDO} cp cmake-build/src/assets/libassets.* /usr/local/lib/hakoniwa/
 ${SUDO} cp cmake-build/src/conductor/libconductor.* /usr/local/lib/hakoniwa/
 
