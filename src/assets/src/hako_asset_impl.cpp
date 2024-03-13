@@ -101,6 +101,7 @@ static void hako_asset_impl_parse_robots(bool is_plant)
 bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_time_t delta_usec, bool is_plant)
 {
     hako_asset_instance.is_initialized = false;
+    hako_asset_instance.external_use = false;
     std::ifstream ifs(config_path);
     
     if (!ifs.is_open()) {
@@ -152,8 +153,37 @@ bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_
     hako_asset_instance.is_initialized = true;
     return true;
 }
+bool hako_asset_impl_initialize_for_external()
+{
+    if (hako_asset_instance.is_initialized) {
+        return false;
+    }
+    hako_asset_instance.is_initialized = false;
+    hako_asset_instance.external_use = true;
+    hako_asset_instance.asset_name_str = "None";
+    hako_asset_instance.delta_usec = 0;
+    hako_asset_instance.current_usec = 0;
+
+    hako_asset_instance.hako_asset = hako::create_asset_controller();
+    if (hako_asset_instance.hako_asset == nullptr) {
+        std::cerr << "ERROR: Not found hako-master on this PC" << std::endl;
+        return false;
+    }
+    hako_asset_instance.hako_sim = hako::get_simevent_controller();
+    if (hako_asset_instance.hako_sim == nullptr) {
+        std::cerr << "ERROR: Not found hako-master on this PC" << std::endl;
+        return false;
+    }
+
+    hako_asset_instance.is_initialized = true;
+    return true;
+}
+
 bool hako_asset_impl_register_callback(const hako_asset_callbacks_t* callback)
 {
+    if (hako_asset_instance.external_use) {
+        return false;
+    }
     hako_asset_instance.callback = callback;
     return true;
 }
@@ -341,6 +371,9 @@ bool hako_asset_impl_step(hako_time_t increment_step)
 
 bool hako_asset_impl_pdu_read(const char* robo_name, HakoPduChannelIdType lchannel, char* buffer, size_t buffer_len)
 {
+    if (hako_asset_instance.external_use) {
+        return hako_asset_instance.hako_asset->read_pdu_nolock(robo_name, lchannel, buffer, buffer_len);
+    }
     bool ret = hako_asset_instance.hako_asset->read_pdu(hako_asset_instance.asset_name_str, robo_name, lchannel, buffer, buffer_len);
     if (ret == false) {
         return false;
@@ -350,6 +383,9 @@ bool hako_asset_impl_pdu_read(const char* robo_name, HakoPduChannelIdType lchann
 
 bool hako_asset_impl_pdu_write(const char* robo_name, HakoPduChannelIdType lchannel, const char* buffer, size_t buffer_len)
 {
+    if (hako_asset_instance.external_use) {
+        return hako_asset_instance.hako_asset->write_pdu_nolock(robo_name, lchannel, buffer, buffer_len);
+    }
     bool ret = hako_asset_instance.hako_asset->write_pdu(hako_asset_instance.asset_name_str, robo_name, lchannel, buffer, buffer_len);
     if (ret == false) {
         return false;

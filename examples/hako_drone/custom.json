@@ -1,0 +1,108 @@
+{
+  "robots": [
+    {
+      "name": "EnvironmentEffector",
+      "rpc_pdu_readers": [],
+      "rpc_pdu_writers": [],
+      "shm_pdu_readers": [],
+      "shm_pdu_writers": []
+    },
+    {
+      "name": "DroneFlightController",
+      "rpc_pdu_readers": [],
+      "rpc_pdu_writers": [],
+      "shm_pdu_readers": [
+        {
+          "type": "hako_mavlink_msgs/HakoHilActuatorControls",
+          "org_name": "drone_motor",
+          "name": "DroneFlightController_drone_motor",
+          "class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduReader",
+          "conv_class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduReaderConverter",
+          "channel_id": 0,
+          "pdu_size": 88,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        },
+        {
+          "type": "geometry_msgs/Twist",
+          "org_name": "drone_pos",
+          "name": "DroneFlightController_drone_pos",
+          "class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduReader",
+          "conv_class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduReaderConverter",
+          "channel_id": 1,
+          "pdu_size": 48,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        },
+        {
+          "type": "hako_msgs/ManualPosAttControl",
+          "org_name": "drone_manual_pos_att_control",
+          "name": "DroneFlightController_drone_manual_pos_att_control",
+          "class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriter",
+          "conv_class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriterConverter",
+          "channel_id": 3,
+          "pdu_size": 56,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        },
+        {
+          "type": "hako_msgs/HakoDroneCmdTakeoff",
+          "org_name": "drone_cmd_takeoff",
+          "name": "DroneFlightController_drone_cmd_takeoff",
+          "class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriter",
+          "conv_class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriterConverter",
+          "channel_id": 5,
+          "pdu_size": 32,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        },
+        {
+          "type": "hako_msgs/HakoDroneCmdMove",
+          "org_name": "drone_cmd_move",
+          "name": "DroneFlightController_drone_cmd_move",
+          "class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriter",
+          "conv_class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriterConverter",
+          "channel_id": 6,
+          "pdu_size": 48,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        },
+        {
+          "type": "hako_msgs/HakoDroneCmdLand",
+          "org_name": "drone_cmd_land",
+          "name": "DroneFlightController_drone_cmd_land",
+          "class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriter",
+          "conv_class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriterConverter",
+          "channel_id": 7,
+          "pdu_size": 32,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        }
+      ],
+      "shm_pdu_writers": [
+        {
+          "type": "hako_msgs/Collision",
+          "org_name": "drone_collision",
+          "name": "DroneFlightController_drone_collision",
+          "class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriter",
+          "conv_class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriterConverter",
+          "channel_id": 2,
+          "pdu_size": 280,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        },
+        {
+          "type": "hako_msgs/Disturbance",
+          "org_name": "drone_disturbance",
+          "name": "DroneFlightController_drone_disturbance",
+          "class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriter",
+          "conv_class_name": "Hakoniwa.PluggableAsset.Communication.Pdu.Raw.RawPduWriterConverter",
+          "channel_id": 4,
+          "pdu_size": 8,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        }
+      ]
+    }
+  ]
+}

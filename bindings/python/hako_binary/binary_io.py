@@ -16,6 +16,9 @@ def binToint16(binary):
 def binToint32(binary):
     return struct.unpack('i', binary)[0]
 
+def binTobool(binary):
+    return struct.unpack('i', binary)[0]
+
 def binToint64(binary):
     return struct.unpack('q', binary)[0]
 
@@ -49,6 +52,9 @@ def int16Tobin(arg):
     return struct.pack('h', arg)
 
 def int32Tobin(arg):
+    return struct.pack('i', arg)
+
+def boolTobin(arg):
     return struct.pack('i', arg)
 
 def int64Tobin(arg):
@@ -86,6 +92,8 @@ def typeTobin(type, arg):
         return uint16Tobin(arg)
     elif (type == "int32"):
         return int32Tobin(arg)
+    elif (type == "bool"):
+        return boolTobin(arg)
     elif (type == "uint32"):
         return uint32Tobin(arg)
     elif (type == "int64"):
@@ -112,6 +120,8 @@ def binTovalue(type, arg):
         return binTouint16(arg)
     elif (type == "int32"):
         return binToint32(arg)
+    elif (type == "bool"):
+        return binTobool(arg)
     elif (type == "uint32"):
         return binTouint32(arg)
     elif (type == "int64"):
@@ -137,6 +147,8 @@ def binToArrayValues(type, arg):
     elif (type == "uint16"):
         return struct.unpack(f'<{len(arg)//2}H', arg)
     elif (type == "int32"):
+        return struct.unpack(f'<{len(arg)//4}i', arg)
+    elif (type == "bool"):
         return struct.unpack(f'<{len(arg)//4}i', arg)
     elif (type == "uint32"):
         return struct.unpack(f'<{len(arg)//4}I', arg)

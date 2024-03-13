@@ -37,7 +37,14 @@ int hako_asset_register(const char *asset_name, const char *config_path, hako_as
     std::cout << "INFO: asset(" << asset_name << ") is registered." << std::endl;
     return 0;
 }
-
+int hako_initialize_for_external(void)
+{
+    if (!hako_asset_impl_initialize_for_external()) {
+        return EIO;
+    }
+    std::cout << "INFO: Success for external initialization." << std::endl;
+    return 0;
+}
 int hako_asset_start(void) {
     if (hako_asset_instance.is_initialized == false) {
         std::cerr << "Error: not initialized." << std::endl;

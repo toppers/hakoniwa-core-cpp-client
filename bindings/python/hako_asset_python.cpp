@@ -229,9 +229,18 @@ static PyObject* py_hako_conductor_stop(PyObject*, PyObject*) {
     hako_conductor_stop();
     Py_RETURN_NONE;
 }
+static PyObject* py_init_for_external(PyObject*, PyObject*) {
+    int result = hako_initialize_for_external();
+    if (result == 0) {
+        Py_RETURN_TRUE;
+    } else {
+        Py_RETURN_FALSE;
+    }
+}
 
 static PyMethodDef hako_asset_python_methods[] = {
     {"asset_register", asset_register, METH_VARARGS, "Register asset"},
+    {"init_for_external", py_init_for_external, METH_NOARGS, "Initialize for external"},
     {"start", py_hako_asset_start, METH_VARARGS, "Start the asset."},
     {"simulation_time", py_hako_asset_simulation_time, METH_NOARGS, "Get the current simulation time."},
     {"usleep", py_hako_asset_usleep, METH_VARARGS, "Sleep for the specified time in microseconds."},

@@ -725,8 +725,10 @@ sudo bash hako-ramdisk.bash -d /Volumes/hakoniwa-ramdisk
 Windows 向けに箱庭コア機能をインストールする場合、以下のツールを利用します。
 
 * Visual Studio(C++)
+  * ビルドモードは、x64-Release としてください
 * Power shell
 * WSL2
+* [Python 3.12](https://www.python.org/)
 
 **リポジトリのクローン:**
 
@@ -756,7 +758,7 @@ Windowsコンソールを開き、`hakoniwa-core-cpp-client` に移動し、イ�
 * HAKO_CONFIG_PATH
   * <path/to>\hakoniwa-core-cpp-client\cpp_core_config.json
 * PATH
-  * <path/to>\hakoniwa-core-cpp-client\out\build\x64-Debug\core\sample\base-procs\hako-cmd
+  * <path/to>\hakoniwa-core-cpp-client\out\build\x64-Release\core\sample\base-procs\hako-cmd
 
 もし、設定されていない場合は、手動で設定してください。
 

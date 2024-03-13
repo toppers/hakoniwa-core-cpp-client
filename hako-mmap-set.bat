@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 
 set "default_shm_type=mmap"
 set "default_core_mmap_path=%CD%\mmap"
-set "config_file=%CD%\cpp_core_config.json"
+set "config_file=%CD%\core\cpp_core_config.json"
 set "reset="
 set "path_to="
 
@@ -23,7 +23,6 @@ if not exist "%config_file%" (
     exit /b 1
 )
 
-rem PowerShellがインストールされているか確認
 powershell -command "Get-Command jq" >nul 2>&1
 if %errorlevel% neq 0 (
     echo Error: jq is not installed.
@@ -37,7 +36,6 @@ if defined reset (
     goto end
 )
 
-rem カスタムパスで更新
 powershell -command "(Get-Content '%config_file%' | ConvertFrom-Json | ForEach-Object { $_.shm_type = 'mmap'; $_.core_mmap_path = '%path_to%'; $_ } | ConvertTo-Json) | Set-Content '%config_file%'"
 echo Configuration updated with custom path.
 
