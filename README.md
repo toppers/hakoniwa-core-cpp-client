@@ -758,7 +758,7 @@ Windowsコンソールを開き、`hakoniwa-core-cpp-client` に移動し、イ�
 * HAKO_CONFIG_PATH
   * <path/to>\hakoniwa-core-cpp-client\cpp_core_config.json
 * PATH
-  * <path/to>\hakoniwa-core-cpp-client\out\build\x64-Debug\core\sample\base-procs\hako-cmd
+  * <path/to>\hakoniwa-core-cpp-client\out\build\x64-Release\core\sample\base-procs\hako-cmd
 
 もし、設定されていない場合は、手動で設定してください。
 
