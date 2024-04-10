@@ -9,9 +9,9 @@ HakoAssetType hako_asset_instance;
 /***********************
  * simulation control
  ***********************/
-static PduReader* create_reader(const nlohmann::json &reader_json)
+static hako::asset::PduReader* create_reader(const nlohmann::json &reader_json)
 {
-    PduReader* reader = new PduReader{
+    hako::asset::PduReader* reader = new hako::asset::PduReader{
         reader_json["type"],
         reader_json["org_name"],
         reader_json["name"],
@@ -21,9 +21,9 @@ static PduReader* create_reader(const nlohmann::json &reader_json)
     HAKO_ASSET_ASSERT(reader != nullptr);
     return reader;
 }
-static PduWriter* create_writer(const nlohmann::json &writer_json)
+static hako::asset::PduWriter* create_writer(const nlohmann::json &writer_json)
 {
-    PduWriter* writer = new PduWriter{
+    hako::asset::PduWriter* writer = new hako::asset::PduWriter{
         writer_json["type"],
         writer_json["org_name"],
         writer_json["name"],
@@ -40,7 +40,7 @@ static void hako_asset_impl_parse_robots(bool is_plant)
     const json& robots_json = hako_asset_instance.param["robots"];
     
     for (const auto& robot_json : robots_json) {
-        Robot* robot = new Robot;
+        hako::asset::Robot* robot = new hako::asset::Robot;
         robot->name = robot_json["name"];
         if (robot_json.find("shm_pdu_writers") != robot_json.end()) {
             const json& pdu_readers_json = robot_json["shm_pdu_writers"];
@@ -135,8 +135,8 @@ bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_
         return false;
     }
     // PDUのチャネルを作成する
-    for (const Robot& robot : hako_asset_instance.robots) {
-        for (const PduWriter& writer : robot.pdu_writers) {
+    for (const hako::asset::Robot& robot : hako_asset_instance.robots) {
+        for (const hako::asset::PduWriter& writer : robot.pdu_writers) {
             std::cout << "Robot: " << robot.name << ", PduWriter: " << writer.name << std::endl;
             std::cout << "channel_id: " << writer.channel_id << " pdu_size: " << writer.pdu_size << std::endl;
             bool err = hako_asset_instance.hako_asset->create_pdu_lchannel(
@@ -153,6 +153,17 @@ bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_
     hako_asset_instance.is_initialized = true;
     return true;
 }
+bool hako::asset::hako_asset_get_pdus(std::vector<hako::asset::Robot> &robots)
+{
+    if (!hako_asset_instance.is_initialized) {
+        std::cerr << "ERROR: hako_asset_instance is not initialized." << std::endl;
+        return false;
+    }
+
+    robots = hako_asset_instance.robots;
+    return true;
+}
+
 bool hako_asset_impl_initialize_for_external()
 {
     if (hako_asset_instance.is_initialized) {
@@ -311,8 +322,8 @@ static bool hako_asset_impl_execute(void)
 }
 static void hako_asset_impl_pdus_write_done(void)
 {
-    for (const Robot& robot : hako_asset_instance.robots) {
-        for (const PduWriter& writer : robot.pdu_writers) {
+    for (const hako::asset::Robot& robot : hako_asset_instance.robots) {
+        for (const hako::asset::PduWriter& writer : robot.pdu_writers) {
             std::cout << "INFO: hako_asset_impl_pdus_write_done() Robot: " << robot.name << ", PduWriter: " << writer.name << std::endl;
             std::cout << "channel_id: " << writer.channel_id << " pdu_size: " << writer.pdu_size << std::endl;
             bool is_called = false;

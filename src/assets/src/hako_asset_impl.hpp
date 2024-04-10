@@ -8,6 +8,7 @@
 #include <iostream>
 #include "stdio.h"
 #include "assert.h"
+#include "hako_asset_pdu.hpp"
 
 #define HAKO_ASSET_ASSERT(expr)	\
 do {	\
@@ -19,30 +20,6 @@ do {	\
 
 using json = nlohmann::json;
 
-
-struct PduReader {
-    std::string type;
-    std::string org_name;
-    std::string name;
-    int channel_id;
-    int pdu_size;
-};
-
-struct PduWriter {
-    std::string type;
-    std::string org_name;
-    std::string name;
-    int write_cycle;
-    int channel_id;
-    int pdu_size;
-    std::string method_type;
-};
-struct Robot {
-    std::string name;
-    std::vector<PduReader> pdu_readers;
-    std::vector<PduWriter> pdu_writers;
-};
-
 struct HakoAssetType {
     bool is_initialized;
     bool external_use;
@@ -53,7 +30,7 @@ struct HakoAssetType {
     const hako_asset_callbacks_t *callback;
     std::shared_ptr<hako::IHakoAssetController> hako_asset;
     std::shared_ptr<hako::IHakoSimulationEventController> hako_sim;
-    std::vector<Robot> robots;
+    std::vector<hako::asset::Robot> robots;
 };
 
 extern HakoAssetType hako_asset_instance;
