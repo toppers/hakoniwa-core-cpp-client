@@ -16,7 +16,8 @@ static hako::asset::PduReader* create_reader(const nlohmann::json &reader_json)
         reader_json["org_name"],
         reader_json["name"],
         reader_json["channel_id"],
-        reader_json["pdu_size"]
+        reader_json["pdu_size"],
+        reader_json["write_cycle"],
     };
     HAKO_ASSET_ASSERT(reader != nullptr);
     return reader;

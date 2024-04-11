@@ -13,6 +13,7 @@ struct PduReader {
     std::string name;
     int channel_id;
     int pdu_size;
+    int write_cycle;
 };
 
 struct PduWriter {
