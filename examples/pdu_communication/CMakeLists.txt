@@ -44,3 +44,14 @@ target_link_libraries(
     asset_controller
     assets
 )
+if(NOT WIN32)
+    find_package(Threads REQUIRED)
+    target_link_libraries(
+        asset_plant
+        Threads::Threads
+    )
+    target_link_libraries(
+        asset_controller
+        Threads::Threads
+    )
+endif()

@@ -28,3 +28,10 @@ target_link_libraries(
     assets
     conductor
 )
+if(NOT WIN32)
+    find_package(Threads REQUIRED)
+    target_link_libraries(
+        hello_world
+        Threads::Threads
+    )
+endif()
