@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set "BUILD_REL_PATH=out\build\x64-Debug\core\sample\base-procs\hako-cmd"
+set "BUILD_REL_PATH=out\build\x64-Release\core\sample\base-procs\hako-cmd"
 set "BIN_DIR=%CD%\bin"
 set "MY_CONFIG_PATH=%CD%\core\cpp_core_config.json"
 
