@@ -26,7 +26,16 @@ jobs:
 
       - name: Hakoniwa-core
         run: |
+          echo "OS_NAME=$(uname -s)" >> $GITHUB_ENV
+          echo "OS_ARCH=$(uname -m)" >> $GITHUB_ENV
           bash build.bash
+
+      - name: Hakoniwa-core archive
+        run: |
+          bash install.bash
+          tar -czf hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz /usr/local/bin/hakoniwa /usr/local/lib/hakoniwa /var/lib/hakoniwa /etc/hakoniwa
+          ls -la
+          echo "ARTIFACT_ARCHIVE_PATH=hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz" >> $GITHUB_ENV
 
       - name: Artifact Name for ubuntu
         if: matrix.os == 'ubuntu-latest'
@@ -45,7 +54,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{env.ARTIFACT_NAME}}
-          path: ${{env.ARTIFACT_PATH}}
+          path: |
+            ${{env.ARTIFACT_PATH}}
+            ${{env.ARTIFACT_ARCHIVE_PATH}}
 
       - name: Publish archives and packages
         if: startsWith(github.ref, 'refs/tags/v')
@@ -53,3 +64,4 @@ jobs:
         with:
           files: |
             ${{ env.ARTIFACT_PATH }}
+            ${{ env.ARTIFACT_ARCHIVE_PATH }}
