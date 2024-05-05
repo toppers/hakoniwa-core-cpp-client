@@ -52,6 +52,7 @@ jobs:
       - name: upload Artifact
         uses: actions/upload-artifact@v4
         with:
+          name: hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}
           path: |
             ${{env.ARTIFACT_PATH}}
             ${{env.ARTIFACT_ARCHIVE_PATH}}
