@@ -13,35 +13,13 @@ else
     OS_TYPE="win"
 	SUDO=
 fi
-if [ ! -d /usr/local/bin ]
-then
-	${SUDO} mkdir /usr/local/bin
-fi
-if [ ! -d /usr/local/lib ]
-then
-	${SUDO} mkdir /usr/local/lib
-fi
 
-if [ ! -d /usr/local/bin/hakoniwa ]
-then
-	${SUDO} mkdir /usr/local/bin/hakoniwa
-fi
-if [ ! -d /usr/local/lib/hakoniwa ]
-then
-	${SUDO} mkdir /usr/local/lib/hakoniwa
-fi
-if [ ! -d /etc/hakoniwa ]
-then
-	${SUDO} mkdir /etc/hakoniwa
-fi
-if [ ! -d /var/lib/hakoniwa ]
-then
-	${SUDO} mkdir /var/lib/hakoniwa
-fi
-if [ ! -d /var/lib/hakoniwa/mmap ]
-then
-	${SUDO} mkdir /var/lib/hakoniwa/mmap
-fi
+${SUDO} mkdir -p /usr/local/bin/hakoniwa
+${SUDO} mkdir -p /usr/local/lib/hakoniwa
+${SUDO} mkdir -p /usr/local/include/hakoniwa
+${SUDO} mkdir -p /etc/hakoniwa
+${SUDO} mkdir -p /var/lib/hakoniwa/mmap
+
 ${SUDO} cp core/cpp_core_config.json /etc/hakoniwa/
 
 ${SUDO} cp cmake-build/core/sample/base-procs/hako-cmd/hako-cmd /usr/local/bin/hakoniwa/
@@ -55,8 +33,8 @@ else
 fi
 ${SUDO} cp cmake-build/src/assets/libassets.* /usr/local/lib/hakoniwa/
 ${SUDO} cp cmake-build/src/conductor/libconductor.* /usr/local/lib/hakoniwa/
-${SUDO} cp -rp src/include /usr/local/include/hakoniwa/
 
+${SUDO} cp -rp src/include /usr/local/include/hakoniwa/
 ${SUDO} cp -rp py /usr/local/lib/hakoniwa/
 if [ ${OS_TYPE} = "posix" ]
 then
