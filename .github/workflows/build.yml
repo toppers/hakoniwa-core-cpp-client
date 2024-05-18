@@ -7,8 +7,9 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-13]
+        os: [ubuntu-latest, ubuntu-20.04, macos-latest, macos-13]
 
     steps:
       - name: Setup cmake
@@ -33,7 +34,7 @@ jobs:
       - name: Hakoniwa-core archive
         run: |
           bash install.bash
-          tar -czf hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz /usr/local/bin/hakoniwa /usr/local/lib/hakoniwa /var/lib/hakoniwa /etc/hakoniwa
+          tar -czf hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz /usr/local/bin/hakoniwa /usr/local/lib/hakoniwa /usr/local/include/hakoniwa /var/lib/hakoniwa /etc/hakoniwa
           ls -la
           echo "ARTIFACT_ARCHIVE_PATH=hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz" >> $GITHUB_ENV
 
@@ -52,7 +53,7 @@ jobs:
       - name: upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}
+          name: hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}_${{ matrix.os }}
           path: |
             ${{env.ARTIFACT_PATH}}
             ${{env.ARTIFACT_ARCHIVE_PATH}}
