@@ -34,7 +34,7 @@ fi
 ${SUDO} cp cmake-build/src/assets/libassets.* /usr/local/lib/hakoniwa/
 ${SUDO} cp cmake-build/src/conductor/libconductor.* /usr/local/lib/hakoniwa/
 
-${SUDO} cp -rp src/include /usr/local/include/hakoniwa/
+${SUDO} cp src/include/*.h /usr/local/include/hakoniwa/
 ${SUDO} cp -rp py /usr/local/lib/hakoniwa/
 if [ ${OS_TYPE} = "posix" ]
 then
