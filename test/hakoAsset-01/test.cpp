@@ -1,4 +1,6 @@
 #include "gtest/gtest.h"
+#include <thread>
+#include <chrono>
 // ここにはテスト対象のヘッダーファイルをインクルードします。
 #include "hako_asset.h"
 #include "hako_conductor.h"
@@ -33,6 +35,15 @@ hako_asset_callbacks_t callbacks = {
 
 hako_time_t delta_time_usec = 1000 * 1000 * 100;
 
+void run_hako_cmd_sequence() {
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::system("/usr/local/bin/hakoniwa/hako-cmd start");
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::system("/usr/local/bin/hakoniwa/hako-cmd stop");
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::system("/usr/local/bin/hakoniwa/hako-cmd reset");
+}
+
 TEST(HakoCApiTest, AssetRegist) {
     hako_conductor_start(delta_time_usec, delta_time_usec);
     int result = hako_asset_register("AssetDumy", "../../config.json", &callbacks,  1000, HAKO_ASSET_MODEL_CONTROLLER);
@@ -40,6 +51,10 @@ TEST(HakoCApiTest, AssetRegist) {
 }
 
 TEST(HakoCApiTest, AssetStart) {
+    // Execute the external command to launch the sandbox in a separate thread
+    std::thread t(run_hako_cmd_sequence);
+    t.detach();
+
     int result = hako_asset_start();
     ASSERT_EQ(result, EINTR);   // Resetで終了するのでEINTRが返る
 }
