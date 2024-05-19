@@ -130,7 +130,7 @@ int main() {
     const char* config_path = "/path/to/config.json";
 
     // コールバック関数と時間ステップを指定してアセットを登録
-    int result = hako_asset_register(asset_name, config_path, callbacks, 1000000, HAKO_ASSET_MODEL_CONTROLLER); // 1秒ごとに更新
+    int result = hako_asset_register(asset_name, config_path, &callbacks, 1000000, HAKO_ASSET_MODEL_CONTROLLER); // 1秒ごとに更新
 
     if (result != 0) {
         // エラーハンドリング
