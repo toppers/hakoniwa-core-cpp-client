@@ -6,22 +6,24 @@ import base64
 
 from hako_binary import binary_io
 from hako_binary import offset_parser
-from hako_binary import offset_map
-from binary_io import PduMetaDataParser, PduMetaData
 
 def decode_base64(data):
     return base64.b64decode(data)
 
 def binary_read(offmap, typename, binary_data):
     json_data = {}
-    meta_parser = PduMetaDataParser()
+    meta_parser = binary_io.PduMetaDataParser()
     meta = meta_parser.load_pdu_meta(binary_data)
     if meta is None:
-        return None
-    binary_read_recursive(meta, offmap, binary_data, json_data, PduMetaData.PDU_META_DATA_SIZE, typename)
+        meta = binary_io.PduMetaData()
+        meta.set_empty()
+        #print("binary_data: size", len(binary_data))
+        #print("meta.to_bytes(): size", len(meta.to_bytes()))
+        binary_io.writeBinary(binary_data, 0, meta.to_bytes())
+    binary_read_recursive(meta, offmap, binary_data, json_data, binary_io.PduMetaData.PDU_META_DATA_SIZE, typename)
     return json_data
 
-def binary_read_recursive(meta: PduMetaData, offmap, binary_data, json_data, base_off, typename):
+def binary_read_recursive(meta: binary_io.PduMetaData, offmap, binary_data, json_data, base_off, typename):
     #lines = offmap[typename]
     lines = offmap.get(typename)
     for line in lines:

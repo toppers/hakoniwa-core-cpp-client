@@ -5,8 +5,6 @@ import sys
 
 from hako_binary import binary_io
 from hako_binary import offset_parser
-from hako_binary import offset_map
-from binary_io import PduMetaData
 
 class DynamicAllocator:
     def __init__(self):
@@ -32,7 +30,7 @@ class DynamicAllocator:
 class BinaryWriterContainer:
     def __init__(self):
         self.heap_allocator = DynamicAllocator()
-        self.meta = PduMetaData()
+        self.meta = binary_io.PduMetaData()
         self.meta.set_empty()
 
 def binary_write(offmap, binary_data, json_data, typename):
@@ -41,9 +39,9 @@ def binary_write(offmap, binary_data, json_data, typename):
     binary_write_recursive(bw_container, offmap, base_allocator, json_data, typename)
 
     # メタデータの設定
-    total_size = base_allocator.size() + bw_container.heap_allocator.size() + PduMetaData.size()
+    total_size = base_allocator.size() + bw_container.heap_allocator.size() + binary_io.PduMetaData.PDU_META_DATA_SIZE
     bw_container.meta.total_size = total_size
-    bw_container.meta.heap_off = PduMetaData.size() + base_allocator.size()
+    bw_container.meta.heap_off = binary_io.PduMetaData.PDU_META_DATA_SIZE + base_allocator.size()
 
     # binary_data のサイズを total_size に調整
     if len(binary_data) < total_size:
