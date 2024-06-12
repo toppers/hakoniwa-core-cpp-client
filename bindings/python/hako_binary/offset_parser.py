@@ -45,7 +45,4 @@ def member_off(data):
     return int(data.split(":")[4])
 
 def member_size(data):
-    if (is_varray(data)):
-        return int(data.split(":")[6])
-    else:
-        return int(data.split(":")[5])
+    return int(data.split(":")[5])

@@ -80,10 +80,13 @@ def binary_write_recursive(bw_container: BinaryWriterContainer, offmap, allocato
                 bin = get_binary(type, bin, offset_parser.member_size(line))
                 allocator.add(bin)
             elif (offset_parser.is_array(line)):
+                elm_size = offset_parser.member_size(line)
+                array_size = offset_parser.array_size(line)
+                one_elm_size = int(elm_size / array_size)                
                 i = 0
                 for elm in json_data[key]:
                     bin = binary_io.typeTobin(type, elm)
-                    bin = get_binary(type, bin, offset_parser.member_size(line))
+                    bin = get_binary(type, bin, one_elm_size)
                     allocator.add(bin)
                     i = i + 1
             else: #varray

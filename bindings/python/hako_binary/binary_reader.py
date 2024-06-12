@@ -37,7 +37,6 @@ def binary_read_recursive(meta: binary_io.PduMetaData, offmap, binary_data, json
                 value = binary_io.binTovalue(type, bin)
                 json_data[name] = value
             elif (offset_parser.is_array(line)):
-                array_size = offset_parser.array_size(line)
                 array_value = binary_io.readBinary(binary_data, off, size)
                 json_data[name + '__raw' ] = array_value
                 json_data[name] = binary_io.binToArrayValues(type, array_value)
