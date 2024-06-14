@@ -47,7 +47,7 @@ def binary_write(offmap, binary_data, json_data, typename):
     if len(binary_data) < total_size:
         binary_data.extend(bytearray(total_size - len(binary_data)))
     elif len(binary_data) > total_size:
-        binary_data = binary_data[:total_size]
+        del binary_data[total_size:]
 
     # メタデータをバッファにコピー
     binary_io.writeBinary(binary_data, 0, bw_container.meta.to_bytes())
