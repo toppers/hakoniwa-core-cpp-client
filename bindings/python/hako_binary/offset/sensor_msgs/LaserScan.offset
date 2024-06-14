@@ -6,5 +6,5 @@ single:primitive:time_increment:float32:148:4
 single:primitive:scan_time:float32:152:4
 single:primitive:range_min:float32:156:4
 single:primitive:range_max:float32:160:4
-array:primitive:ranges:float32:164:1440:360
-array:primitive:intensities:float32:1604:1440:360
+varray:primitive:ranges:float32:164:4:8
+varray:primitive:intensities:float32:172:4:8

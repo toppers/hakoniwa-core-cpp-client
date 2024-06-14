@@ -6,6 +6,7 @@ import hakopy
 from hako_binary import offset_map
 from hako_binary import binary_writer
 from hako_binary import binary_reader
+from hako_binary import binary_io
 
 class PduBinaryConvertor:
     def __init__(self, offset_path, pdudef_path):

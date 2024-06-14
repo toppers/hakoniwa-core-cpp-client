@@ -28,9 +28,17 @@ def is_primitive(data):
 def is_single(data):
     return data.split(":")[0] == "single"
 
+def is_array(data):
+    return data.split(":")[0] == "array"
+
+def is_varray(data):
+    return data.split(":")[0] == "varray"
+
 def array_size(data):
     if (is_single(data)):
         return 0
+    if (is_varray(data)):
+        return -1
     return int(data.split(":")[6])
 
 def member_off(data):

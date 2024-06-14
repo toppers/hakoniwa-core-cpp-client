@@ -172,3 +172,44 @@ def writeBinary(binary_data, off, bin):
 def readBinary(binary_data, off, size):
     return binary_data[off:off+size]
 
+class PduMetaData:
+    PDU_META_DATA_SIZE = 24
+    PDU_META_DATA_MAGICNO = 0x12345678
+    PDU_META_DATA_VERSION = 1
+    def __init__(self):
+        self.magicno = 0
+        self.version = 0
+        self.base_off = 0
+        self.heap_off = 0
+        self.total_size = 0
+    def set_empty(self):
+        self.magicno = PduMetaData.PDU_META_DATA_MAGICNO
+        self.version = PduMetaData.PDU_META_DATA_VERSION
+        self.base_off = PduMetaData.PDU_META_DATA_SIZE
+    def to_bytes(self):
+        data = bytearray()
+        data.extend(self.magicno.to_bytes(4, byteorder='little'))
+        data.extend(self.version.to_bytes(4, byteorder='little'))
+        data.extend(self.base_off.to_bytes(4, byteorder='little'))
+        data.extend(self.heap_off.to_bytes(4, byteorder='little'))
+        data.extend(self.total_size.to_bytes(4, byteorder='little'))
+        return data
+
+
+class PduMetaDataParser:
+    def __init__(self):
+        self.meta = PduMetaData()
+
+    def load_pdu_meta(self, binary_data):
+        if len(binary_data) < PduMetaData.PDU_META_DATA_SIZE:
+            return None
+        magicno = binTovalue("uint32", readBinary(binary_data, 0, 4))
+        version = binTovalue("uint32", readBinary(binary_data, 4, 4))
+        if magicno != PduMetaData.PDU_META_DATA_MAGICNO or version != PduMetaData.PDU_META_DATA_VERSION:
+            return None
+        self.meta.magicno    = magicno
+        self.meta.version    = version
+        self.meta.base_off   = binTovalue("uint32", readBinary(binary_data, 8, 4))
+        self.meta.heap_off   = binTovalue("uint32", readBinary(binary_data, 12, 4))
+        self.meta.total_size = binTovalue("uint32", readBinary(binary_data, 16, 4))
+        return self.meta
