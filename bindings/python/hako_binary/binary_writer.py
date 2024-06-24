@@ -7,16 +7,18 @@ from hako_binary import binary_io
 from hako_binary import offset_parser
 
 class DynamicAllocator:
-    def __init__(self):
+    def __init__(self, is_heap: bool):
         self.data = bytearray()
         self.offset_map = {}
+        self.is_heap = is_heap
 
     def add(self, bytes_data, expected_offset=None, key=None):
-        if expected_offset is not None:
-            current_size = len(self.data)
-            if current_size < expected_offset:
-                padding = bytearray(expected_offset - current_size)
-                self.data.extend(padding)
+        if self.is_heap == False:
+            if expected_offset is not None:
+                current_size = len(self.data)
+                if current_size < expected_offset:
+                    padding = bytearray(expected_offset - current_size)
+                    self.data.extend(padding)
         
         offset = len(self.data)
         self.data.extend(bytes_data)
@@ -37,12 +39,12 @@ class DynamicAllocator:
 
 class BinaryWriterContainer:
     def __init__(self):
-        self.heap_allocator = DynamicAllocator()
+        self.heap_allocator = DynamicAllocator(True)
         self.meta = binary_io.PduMetaData()
         self.meta.set_empty()
 
 def binary_write(offmap, binary_data, json_data, typename):
-    base_allocator = DynamicAllocator()
+    base_allocator = DynamicAllocator(False)
     bw_container = BinaryWriterContainer()
     binary_write_recursive(0, bw_container, offmap, base_allocator, json_data, typename)
 
