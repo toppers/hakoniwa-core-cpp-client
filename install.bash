@@ -28,8 +28,6 @@ ${SUDO} mkdir -p ${HAKONIWA_DIR}
 if [ "$OS" = "Linux" -o "$OS" = "Darwin"  ]
 then
 	${SUDO} mkdir -p /var/lib/hakoniwa/mmap
-else
-	${SUDO} mkdir -p /c/mmap
 fi
 
 ${SUDO} cp core/cpp_core_config.json ${HAKONIWA_DIR}
