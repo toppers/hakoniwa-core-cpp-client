@@ -15,10 +15,11 @@ then
     if [ ${OS_TYPE} = "posix" ]
     then
         cmake ..
+        make
     else
-        cmake .. -G "Unix Makefiles" -D WIN32=true
+        cmake ..
+        cmake --build . --target ALL_BUILD --config Release
     fi
-	make
 else
 	rm -rf ./cmake-build/*
 fi
