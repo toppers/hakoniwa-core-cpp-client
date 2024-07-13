@@ -16,7 +16,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "git submodule update --init --recursive",
+	"postCreateCommand": "git config --global --add safe.directory /workspaces/hakoniwa-core-cpp-client && git submodule update --init --recursive",
 
 	// Configure tool-specific properties.
 	// "customizations": {},
