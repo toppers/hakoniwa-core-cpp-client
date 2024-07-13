@@ -4,7 +4,7 @@
 	"name": "C++",
 	"build": {
 		"dockerfile": "Dockerfile"
-	}
+	},
 
 	// "features": {
 	// }
@@ -16,11 +16,15 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "gcc -v",
+	"postCreateCommand": "git submodule update --init --recursive",
 
 	// Configure tool-specific properties.
 	// "customizations": {},
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
+	"remoteEnv": {
+		"LD_LIBRARY_PATH": "${containerEnv:LD_LIBRARY_PATH}:/usr/local/lib/hakoniwa",
+		"PATH": "${containerEnv:PATH}:/usr/local/bin/hakoniwa"
+	}
 }
