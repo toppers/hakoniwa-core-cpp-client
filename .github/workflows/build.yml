@@ -37,6 +37,7 @@ jobs:
           bash build.bash
 
       - name: Hakoniwa-core archive
+        if: matrix.os != 'windows-latest'
         shell: bash
         run: |
           bash install.bash
@@ -44,6 +45,15 @@ jobs:
           ls -la
           echo "ARTIFACT_ARCHIVE_PATH=hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz" >> $GITHUB_ENV
 
+      - name: Hakoniwa-core archive
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          bash install.bash
+          tar -czf hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz ../local/bin/hakoniwa ../local/lib/hakoniwa ../local/include/hakoniwa ../hakoniwa
+          ls -la
+          echo "ARTIFACT_ARCHIVE_PATH=hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz" >> $GITHUB_ENV
+  
       - name: Artifact Name for ubuntu
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -56,6 +66,12 @@ jobs:
           echo "ARTIFACT_NAME=libshakoc.dylib" >> $GITHUB_ENV
           echo "ARTIFACT_PATH=cmake-build/src/hakoc/libshakoc.dylib" >> $GITHUB_ENV
 
+      - name: Artifact Name for Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          echo "ARTIFACT_NAME=hakoc.lib" >> $GITHUB_ENV
+          echo "ARTIFACT_PATH=cmake-build/src/hakoc/Release/hakoc.lib" >> $GITHUB_ENV
+  
       - name: upload Artifact
         uses: actions/upload-artifact@v4
         with:
