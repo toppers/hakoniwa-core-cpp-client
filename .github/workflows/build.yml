@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ubuntu-20.04, macos-latest, macos-13]
+        os: [ubuntu-latest, ubuntu-20.04, macos-latest, macos-13, windows-latest]
 
     steps:
       - name: Setup cmake
@@ -20,18 +20,24 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Setup Visual Studio environment
+        if: matrix.os == 'windows-latest'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
       - name: Hakoniwa-core
+        shell: bash
         run: |
           echo "OS_NAME=$(uname -s)" >> $GITHUB_ENV
           echo "OS_ARCH=$(uname -m)" >> $GITHUB_ENV
           bash build.bash
 
       - name: Hakoniwa-core archive
+        shell: bash
         run: |
           bash install.bash
           tar -czf hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz /usr/local/bin/hakoniwa /usr/local/lib/hakoniwa /usr/local/include/hakoniwa /var/lib/hakoniwa /etc/hakoniwa
