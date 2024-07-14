@@ -594,6 +594,14 @@ bash hako-setup-check.bash
 成功している場合は、以下のログが出力されます。
 
 ```
+=== HAKO ENV ===
+OS=Linux , OS_TYPE=posix
+HAKO_CORE_PREFIX=/usr/local
+HAKO_CONFIG_PREFIX=/etc/hakoniwa
+HAKO_CORE_MMAP_PREFIX=/var/lib/hakoniwa
+HAKO_CONFIGNFIG_PATH=/etc/hakoniwa/cpp_core_config.json
+HAKO_CORE_MMAP_PATH=/var/lib/hakoniwa/mmap
+
 OK Directory exists: /usr/local/bin
 OK Directory exists: /usr/local/bin/hakoniwa
 OK Directory exists: /usr/local/lib
@@ -786,6 +794,68 @@ MMAPファイルは、`core_mmap_path`  配下に自動作成されます。
 また、MMAPファイルを `ramdisk` に配置するこで、処理性能を向上させることができます。
 
 作成した `ramdisk` パスを `hako-mmap-set.bat` で再設定することで反映されます。
+
+# Windows向け(gitbash)インストール手順
+
+Windows 向けに箱庭コア機能をインストールする場合、以下のツールを利用します。
+
+* Visual Studio Build Tools
+* Git for Windows
+* CMake
+* [Python 3.12](https://www.python.org/)
+* jq
+
+## wingetコマンドでのツールのインストール
+コマンドプロンプトもしくはPowerShellからwingetコマンドを用いてツールをインストールします。
+
+**Visual Studio Build Tools:**
+```
+winget install Microsoft.VisualStudio.2022.BuildTools --override "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+```
+
+**Git for Windows**
+```
+winget install --id Git.Git -e --source winget
+```
+
+**CMake:**
+```
+winget install Kitware.CMake
+```
+
+**Python**
+```
+winget install Python.Python.3.12
+```
+
+**jq**
+```
+winget install jqlang.jq
+```
+## クローンとビルド
+Git for WindowsのGit Bashを使用します。
+VSCodeを起動するとTerminalの選択で「Git Bash」を選びます
+
+**ビルド:**
+
+```
+cd hakoniwa-core-cpp-client
+```
+
+```
+bash build.bash
+```
+
+**インストール:**
+
+```
+bash install.bash
+```
+**設定の確認:**
+
+```
+bash ./hako-setup-check.bash 
+```
 
 # 箱庭コマンド API
 
