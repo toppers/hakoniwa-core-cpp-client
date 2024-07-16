@@ -41,7 +41,7 @@ APIのカテゴリとしては、その目的の応じて以下の３ケース�
 
 箱庭アセットのユースケースは、大別して以下の３つのカテゴリがあります。
 
-<img width="567" alt="スクリーンショット 2024-01-10 7 03 25" src="https://github.com/toppers/hakoniwa-core-cpp-client/assets/164193/7b10d4a4-f0cb-4175-80c5-901c9359bd31">
+![image](https://github.com/toppers/hakoniwa-core-cpp-client/assets/164193/7b10d4a4-f0cb-4175-80c5-901c9359bd31)
 
 * **アプリケーション固有のユースケース** は、シミュレーションしたい処理内容そのものであり、**箱庭ユーザが作成する機能**です。例えば、ロボットのシミュレーションの場合は、ロボットの制御プログラム等です。
 
