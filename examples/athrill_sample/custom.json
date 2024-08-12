@@ -1,0 +1,31 @@
+{
+  "robots": [
+    {
+      "name": "Robot",
+      "rpc_pdu_readers": [],
+      "rpc_pdu_writers": [],
+      "shm_pdu_readers": [
+        {
+          "type": "std_msgs/Uint32",
+          "org_name": "rx",
+          "name": "Robot_rx",
+          "channel_id": 0,
+          "pdu_size": 4,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        }        
+      ],
+      "shm_pdu_writers": [
+        {
+          "type": "std_msgs/Uint32",
+          "org_name": "tx",
+          "name": "Robot_tx",
+          "channel_id": 1,
+          "pdu_size": 4,
+          "write_cycle": 1,
+          "method_type": "SHM"
+        }
+      ]
+    }
+  ]
+}
