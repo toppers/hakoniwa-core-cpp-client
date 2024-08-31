@@ -207,10 +207,6 @@ static ERL_NIF_TERM nif_hako_asset_reset_feedback(ErlNifEnv* env, int argc, cons
     bool result = hako_asset_reset_feedback(asset_name, isOk);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
-#include "erl_nif.h"
-#include <stdbool.h>
-#include <string.h>
-#include "hako_capi.h"
 
 // Notify Read PDU Done NIF
 static ERL_NIF_TERM nif_hako_asset_notify_read_pdu_done(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
