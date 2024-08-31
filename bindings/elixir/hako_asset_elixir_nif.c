@@ -15,25 +15,50 @@ ERL_NIF_TERM on_initialize_callback;
 ERL_NIF_TERM on_simulation_step_callback;
 ERL_NIF_TERM on_manual_timing_control_callback;
 ERL_NIF_TERM on_reset_callback;
-
+static hako_asset_callbacks_t hako_asset_callback_elixir = {0};
 static int callback_wrapper(ErlNifPid pid, ERL_NIF_TERM callback, hako_asset_context_t* context) {
-    if (!enif_is_identical(callback, enif_make_atom(nif_env, "undefined"))) {
-        ErlNifEnv* msg_env = enif_alloc_env();
-        ERL_NIF_TERM context_term = enif_make_resource(msg_env, context);
-        ERL_NIF_TERM msg = enif_make_tuple2(msg_env, callback, context_term);
+    //printf("DEBUG: Entered callback_wrapper\n");
 
-        if (enif_send(NULL, &pid, msg_env, msg)) {
-            enif_free_env(msg_env);
-            return 0; // success
-        } else {
-            enif_free_env(msg_env);
-            return -1; // send failed
+    if (callback != enif_make_atom(nif_env, "undefined")) {
+        //printf("DEBUG: Valid callback and PID received\n");
+
+        // 確認用デバッグ
+        //printf("DEBUG: Before creating environment\n");
+
+        ErlNifEnv* msg_env = enif_alloc_env();
+        if (msg_env == NULL) {
+            printf("ERROR: Failed to allocate msg_env\n");
+            return -1;
         }
+
+        // 'context_unused' の代わりに `nil` を渡す
+        // 'nil' と callback を含むタプルを作成
+        ERL_NIF_TERM nil_atom = enif_make_atom(msg_env, "nil");
+        ERL_NIF_TERM msg = enif_make_tuple2(msg_env, callback, nil_atom);
+
+        //printf("DEBUG: Simple atom message created\n");
+
+        //fflush(stdout);
+
+        if (!enif_send(NULL, &pid, nif_env, msg)) {
+            printf("ERROR: Failed to send message\n");
+            enif_free_env(msg_env);
+            return -1;
+        }
+
+        //printf("DEBUG: Message sent successfully\n");
+
+        enif_free_env(msg_env);
+        return 0;
+    } else {
+        printf("DEBUG: Callback is undefined\n");
     }
-    return 0; // callback is undefined, treat as success
+    return 0;
 }
 
 static int on_initialize_wrapper(hako_asset_context_t* context) {
+    printf("INFO: on_initialize_wrapper called\n");
+    fflush(stdout);
     return callback_wrapper(on_initialize_pid, on_initialize_callback, context);
 }
 
@@ -48,18 +73,38 @@ static int on_simulation_step_wrapper(hako_asset_context_t* context) {
 static int on_manual_timing_control_wrapper(hako_asset_context_t* context) {
     return callback_wrapper(on_manual_timing_control_pid, on_manual_timing_control_callback, context);
 }
-
 static ERL_NIF_TERM nif_asset_register(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
     char asset_name[256];
     char config_path[256];
-    long delta_usec;
-    int model;
+    ErlNifSInt64 delta_usec;
+    HakoAssetModelType model_type;
+    ErlNifBinary binary;
 
-    if (!enif_get_string(env, argv[0], asset_name, sizeof(asset_name), ERL_NIF_LATIN1) ||
-        !enif_get_string(env, argv[1], config_path, sizeof(config_path), ERL_NIF_LATIN1) ||
-        !enif_get_long(env, argv[3], &delta_usec) ||
-        !enif_get_int(env, argv[4], &model)) {
+    if (enif_is_binary(env, argv[0])) {
+        if (!enif_inspect_binary(env, argv[0], &binary)) {
+            printf("Failed to inspect binary for asset_name\n");
+            return enif_make_badarg(env);
+        }
+        snprintf(asset_name, sizeof(asset_name), "%.*s", (int)binary.size, (char *)binary.data);
+    }
+    if (!enif_inspect_binary(env, argv[1], &binary)) {
+        printf("Failed to inspect binary for config_path\n");
         return enif_make_badarg(env);
+    }
+    snprintf(config_path, sizeof(config_path), "%.*s", (int)binary.size, (char *)binary.data);
+
+    if (!enif_get_int64(env, argv[3], &delta_usec)) {
+        printf("Failed to get delta_usec\n");
+        return enif_make_badarg(env);
+    }
+
+    // アトムを HakoAssetModelType に変換
+    if (enif_is_identical(argv[4], enif_make_atom(env, "controller"))) {
+        model_type = HAKO_ASSET_MODEL_CONTROLLER;
+    } else if (enif_is_identical(argv[4], enif_make_atom(env, "plant"))) {
+        model_type = HAKO_ASSET_MODEL_PLANT;
+    } else {
+        return enif_make_badarg(env);  // 不正なモデルタイプ
     }
 
     ERL_NIF_TERM callbacks = argv[2];
@@ -68,8 +113,8 @@ static ERL_NIF_TERM nif_asset_register(ErlNifEnv* env, int argc, const ERL_NIF_T
         return enif_make_badarg(env);
     }
 
-    hako_asset_callbacks_t hako_asset_callback_elixir = {0};
 
+    // コールバックの設定
     enif_get_map_value(env, callbacks, enif_make_atom(env, "on_initialize"), &on_initialize_callback);
     enif_self(env, &on_initialize_pid);
     hako_asset_callback_elixir.on_initialize = on_initialize_wrapper;
@@ -79,29 +124,37 @@ static ERL_NIF_TERM nif_asset_register(ErlNifEnv* env, int argc, const ERL_NIF_T
     hako_asset_callback_elixir.on_reset = on_reset_wrapper;
 
     ERL_NIF_TERM temp;
+
+    // on_simulation_step の処理
     enif_get_map_value(env, callbacks, enif_make_atom(env, "on_simulation_step"), &temp);
-    if (enif_is_identical(temp, enif_make_atom(env, "undefined"))) {
+    if (enif_is_identical(temp, enif_make_atom(env, "nil"))) {
         hako_asset_callback_elixir.on_simulation_step = NULL;
+        printf("on_simulation_step: nil\n");
     } else {
+        printf("on_simulation_step: not nil\n");
         on_simulation_step_callback = temp;
         enif_self(env, &on_simulation_step_pid);
         hako_asset_callback_elixir.on_simulation_step = on_simulation_step_wrapper;
     }
 
+    // on_manual_timing_control の処理
     enif_get_map_value(env, callbacks, enif_make_atom(env, "on_manual_timing_control"), &temp);
-    if (enif_is_identical(temp, enif_make_atom(env, "undefined"))) {
+    if (enif_is_identical(temp, enif_make_atom(env, "nil"))) {
         hako_asset_callback_elixir.on_manual_timing_control = NULL;
+        printf("on_manual_timing_control: nil\n");
     } else {
+        printf("on_manual_timing_control: not nil\n");
         on_manual_timing_control_callback = temp;
         enif_self(env, &on_manual_timing_control_pid);
         hako_asset_callback_elixir.on_manual_timing_control = on_manual_timing_control_wrapper;
     }
 
-    int result = hako_asset_register(asset_name, config_path, &hako_asset_callback_elixir, (hako_time_t)delta_usec, (HakoAssetModelType)model);
+
+    // hako_asset_register 関数を呼び出す
+    int result = hako_asset_register(asset_name, config_path, &hako_asset_callback_elixir, (hako_time_t)delta_usec, model_type);
 
     return result == 0 ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
-
 
 static ERL_NIF_TERM nif_hako_asset_start(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
     int result = hako_asset_start();

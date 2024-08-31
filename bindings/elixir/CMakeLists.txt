@@ -42,7 +42,7 @@ add_library(
 target_link_libraries(
     hako_asset_nif
     ei
-    shakoc
+    assets
 )
 # リンク設定
 if(APPLE)
