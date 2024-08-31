@@ -6,7 +6,7 @@ project(hakoniwa_elixir_project
 
 # Erlangのインクルードディレクトリとライブラリディレクトリを手動で設定
 set(ERLANG_INCLUDE_DIR "/opt/homebrew/opt/erlang/lib/erlang/usr/include")
-set(ERLANG_LIBRARY_DIR "/opt/homebrew/opt/erlang/lib")
+set(ERLANG_LIBRARY_DIR "/opt/homebrew/opt/erlang/lib/erlang/usr/lib")
 
 # インクルードディレクトリを指定
 include_directories(${ERLANG_INCLUDE_DIR})
@@ -27,6 +27,6 @@ add_library(
 # Erlangのライブラリとリンク
 target_link_libraries(
     hako_asset_nif
-    erl_interface
     ei
+    shakoc
 )

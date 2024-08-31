@@ -3,6 +3,7 @@ project(hakoniwa_multi_language_project)
 
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src/hakoc/src)
 set(ASSETS_LIBRARY assets)
 
 add_subdirectory(python)
