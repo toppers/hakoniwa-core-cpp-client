@@ -442,4 +442,4 @@ static ErlNifFunc nif_funcs[] = {
 };
 
 // NIFモジュールの初期化
-ERL_NIF_INIT(Elixir.HakoAsset, nif_funcs, NULL, NULL, NULL, NULL)
+ERL_NIF_INIT(Elixir.HakoApi, nif_funcs, NULL, NULL, NULL, NULL)

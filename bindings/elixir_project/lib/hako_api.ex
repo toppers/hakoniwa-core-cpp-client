@@ -1,4 +1,4 @@
-defmodule HakoAsset do
+defmodule HakoApi do
   @on_load :load_nif
 
   def load_nif do

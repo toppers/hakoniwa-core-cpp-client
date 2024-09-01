@@ -1,4 +1,4 @@
-defmodule HakoAsset.MixProject do
+defmodule HakoApi.MixProject do
   use Mix.Project
 
   def project do

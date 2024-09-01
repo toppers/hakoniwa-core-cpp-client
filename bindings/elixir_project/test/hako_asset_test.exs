@@ -1,8 +1,8 @@
-defmodule HakoAssetTest do
+defmodule HakoApiTest do
   use ExUnit.Case
-  doctest HakoAsset
+  doctest HakoApiTest
 
   test "initializes the asset" do
-    assert HakoAsset.init_asset() == :true
+    assert HakoApi.init_asset() == :true
   end
 end
