@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include "hako_capi.h"
+extern int hako_conductor_start(hako_time_t delta_usec, hako_time_t max_delay_usec);
+extern void hako_conductor_stop(void);
 
 static ERL_NIF_TERM nif_hako_asset_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
     bool result = hako_asset_init();
@@ -11,44 +13,57 @@ static ERL_NIF_TERM nif_hako_asset_init(ErlNifEnv* env, int argc, const ERL_NIF_
 }
 
 static ERL_NIF_TERM nif_hako_asset_register(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char name[256];
+    ErlNifBinary name_bin;
 
-    if (!enif_get_string(env, argv[0], name, sizeof(name), ERL_NIF_LATIN1)) {
+    if (!enif_inspect_binary(env, argv[0], &name_bin)) {
         return enif_make_badarg(env);
     }
+
+    char name[256];
+    snprintf(name, sizeof(name), "%.*s", (int)name_bin.size, (char *)name_bin.data);
 
     bool result = hako_asset_register_polling(name);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
 static ERL_NIF_TERM nif_hako_asset_get_event(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char name[256];
-    if (!enif_get_string(env, argv[0], name, sizeof(name), ERL_NIF_LATIN1)) {
+    ErlNifBinary name_bin;
+
+    if (!enif_inspect_binary(env, argv[0], &name_bin)) {
         return enif_make_badarg(env);
     }
+
+    char name[256];
+    snprintf(name, sizeof(name), "%.*s", (int)name_bin.size, (char *)name_bin.data);
 
     int event = hako_asset_get_event(name);
     return enif_make_int(env, event);
 }
 
 static ERL_NIF_TERM nif_hako_asset_unregister(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char name[256];
-    if (!enif_get_string(env, argv[0], name, sizeof(name), ERL_NIF_LATIN1)) {
+    ErlNifBinary name_bin;
+
+    if (!enif_inspect_binary(env, argv[0], &name_bin)) {
         return enif_make_badarg(env);
     }
+
+    char name[256];
+    snprintf(name, sizeof(name), "%.*s", (int)name_bin.size, (char *)name_bin.data);
 
     bool result = hako_asset_unregister(name);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
 static ERL_NIF_TERM nif_hako_asset_notify_simtime(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char name[256];
+    ErlNifBinary name_bin;
     ErlNifSInt64 simtime;
 
-    if (!enif_get_string(env, argv[0], name, sizeof(name), ERL_NIF_LATIN1) ||
-        !enif_get_int64(env, argv[1], &simtime)) {
+    if (!enif_inspect_binary(env, argv[0], &name_bin) || !enif_get_int64(env, argv[1], &simtime)) {
         return enif_make_badarg(env);
     }
+
+    char name[256];
+    snprintf(name, sizeof(name), "%.*s", (int)name_bin.size, (char *)name_bin.data);
 
     hako_asset_notify_simtime(name, simtime);
     return enif_make_atom(env, "ok");
@@ -72,92 +87,115 @@ static ERL_NIF_TERM nif_hako_asset_create_pdu_channel(ErlNifEnv* env, int argc, 
 }
 
 static ERL_NIF_TERM nif_hako_asset_create_pdu_lchannel(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char robo_name[256];
+    ErlNifBinary robo_name_bin;
     int channel_id;
     size_t pdu_size;
 
-    if (!enif_get_string(env, argv[0], robo_name, sizeof(robo_name), ERL_NIF_LATIN1) ||
+    if (!enif_inspect_binary(env, argv[0], &robo_name_bin) ||
         !enif_get_int(env, argv[1], &channel_id) ||
         !enif_get_ulong(env, argv[2], &pdu_size)) {
         return enif_make_badarg(env);
     }
+
+    char robo_name[256];
+    snprintf(robo_name, sizeof(robo_name), "%.*s", (int)robo_name_bin.size, (char *)robo_name_bin.data);
 
     bool result = hako_asset_create_pdu_lchannel(robo_name, channel_id, pdu_size);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
 static ERL_NIF_TERM nif_hako_asset_get_pdu_channel(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char robo_name[256];
+    ErlNifBinary robo_name_bin;
     int channel_id;
 
-    if (!enif_get_string(env, argv[0], robo_name, sizeof(robo_name), ERL_NIF_LATIN1) ||
-        !enif_get_int(env, argv[1], &channel_id)) {
+    if (!enif_inspect_binary(env, argv[0], &robo_name_bin) || !enif_get_int(env, argv[1], &channel_id)) {
         return enif_make_badarg(env);
     }
+
+    char robo_name[256];
+    snprintf(robo_name, sizeof(robo_name), "%.*s", (int)robo_name_bin.size, (char *)robo_name_bin.data);
 
     HakoPduChannelIdType result = hako_asset_get_pdu_channel(robo_name, channel_id);
     return enif_make_int(env, result);
 }
 
 static ERL_NIF_TERM nif_hako_asset_is_pdu_dirty(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char asset_name[256];
-    char robo_name[256];
+    ErlNifBinary asset_name_bin;
+    ErlNifBinary robo_name_bin;
     int channel_id;
 
-    if (!enif_get_string(env, argv[0], asset_name, sizeof(asset_name), ERL_NIF_LATIN1) ||
-        !enif_get_string(env, argv[1], robo_name, sizeof(robo_name), ERL_NIF_LATIN1) ||
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) ||
+        !enif_inspect_binary(env, argv[1], &robo_name_bin) ||
         !enif_get_int(env, argv[2], &channel_id)) {
         return enif_make_badarg(env);
     }
+
+    char asset_name[256];
+    char robo_name[256];
+    snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
+    snprintf(robo_name, sizeof(robo_name), "%.*s", (int)robo_name_bin.size, (char *)robo_name_bin.data);
 
     bool result = hako_asset_is_pdu_dirty(asset_name, robo_name, channel_id);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
 static ERL_NIF_TERM nif_hako_asset_write_pdu(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char asset_name[256];
-    char robo_name[256];
+    ErlNifBinary asset_name_bin;
+    ErlNifBinary robo_name_bin;
     int channel_id;
     ErlNifBinary pdu_data;
 
-    if (!enif_get_string(env, argv[0], asset_name, sizeof(asset_name), ERL_NIF_LATIN1) ||
-        !enif_get_string(env, argv[1], robo_name, sizeof(robo_name), ERL_NIF_LATIN1) ||
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) ||
+        !enif_inspect_binary(env, argv[1], &robo_name_bin) ||
         !enif_get_int(env, argv[2], &channel_id) ||
         !enif_inspect_binary(env, argv[3], &pdu_data)) {
         return enif_make_badarg(env);
     }
+
+    char asset_name[256];
+    char robo_name[256];
+    snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
+    snprintf(robo_name, sizeof(robo_name), "%.*s", (int)robo_name_bin.size, (char *)robo_name_bin.data);
 
     bool result = hako_asset_write_pdu(asset_name, robo_name, channel_id, (const char *)pdu_data.data, pdu_data.size);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
 static ERL_NIF_TERM nif_hako_asset_write_pdu_nolock(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char robo_name[256];
+    ErlNifBinary robo_name_bin;
     int channel_id;
     ErlNifBinary pdu_data;
 
-    if (!enif_get_string(env, argv[0], robo_name, sizeof(robo_name), ERL_NIF_LATIN1) ||
+    if (!enif_inspect_binary(env, argv[0], &robo_name_bin) ||
         !enif_get_int(env, argv[1], &channel_id) ||
         !enif_inspect_binary(env, argv[2], &pdu_data)) {
         return enif_make_badarg(env);
     }
+
+    char robo_name[256];
+    snprintf(robo_name, sizeof(robo_name), "%.*s", (int)robo_name_bin.size, (char *)robo_name_bin.data);
 
     bool result = hako_asset_write_pdu_nolock(robo_name, channel_id, (const char *)pdu_data.data, pdu_data.size);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
 static ERL_NIF_TERM nif_hako_asset_read_pdu(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char asset_name[256];
-    char robo_name[256];
+    ErlNifBinary asset_name_bin;
+    ErlNifBinary robo_name_bin;
     int channel_id;
     size_t pdu_size;
 
-    if (!enif_get_string(env, argv[0], asset_name, sizeof(asset_name), ERL_NIF_LATIN1) ||
-        !enif_get_string(env, argv[1], robo_name, sizeof(robo_name), ERL_NIF_LATIN1) ||
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) ||
+        !enif_inspect_binary(env, argv[1], &robo_name_bin) ||
         !enif_get_int(env, argv[2], &channel_id) ||
         !enif_get_ulong(env, argv[3], &pdu_size)) {
         return enif_make_badarg(env);
     }
+
+    char asset_name[256];
+    char robo_name[256];
+    snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
+    snprintf(robo_name, sizeof(robo_name), "%.*s", (int)robo_name_bin.size, (char *)robo_name_bin.data);
 
     char *pdu_data = (char *)enif_alloc(pdu_size);
     if (pdu_data == NULL) {
@@ -182,15 +220,18 @@ static ERL_NIF_TERM nif_hako_asset_read_pdu(ErlNifEnv* env, int argc, const ERL_
 }
 
 static ERL_NIF_TERM nif_hako_asset_read_pdu_nolock(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char robo_name[256];
+    ErlNifBinary robo_name_bin;
     int channel_id;
     size_t pdu_size;
 
-    if (!enif_get_string(env, argv[0], robo_name, sizeof(robo_name), ERL_NIF_LATIN1) ||
+    if (!enif_inspect_binary(env, argv[0], &robo_name_bin) ||
         !enif_get_int(env, argv[1], &channel_id) ||
         !enif_get_ulong(env, argv[2], &pdu_size)) {
         return enif_make_badarg(env);
     }
+
+    char robo_name[256];
+    snprintf(robo_name, sizeof(robo_name), "%.*s", (int)robo_name_bin.size, (char *)robo_name_bin.data);
 
     char *pdu_data = (char *)enif_alloc(pdu_size);
     if (pdu_data == NULL) {
@@ -216,13 +257,15 @@ static ERL_NIF_TERM nif_hako_asset_read_pdu_nolock(ErlNifEnv* env, int argc, con
 
 // Start Feedback NIF
 static ERL_NIF_TERM nif_hako_asset_start_feedback(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char asset_name[256];
+    ErlNifBinary asset_name_bin;
     int isOk;
 
-    if (!enif_get_string(env, argv[0], asset_name, sizeof(asset_name), ERL_NIF_LATIN1) ||
-        !enif_get_int(env, argv[1], &isOk)) {
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) || !enif_get_int(env, argv[1], &isOk)) {
         return enif_make_badarg(env);
     }
+
+    char asset_name[256];
+    snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
 
     bool result = hako_asset_start_feedback(asset_name, isOk);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
@@ -230,13 +273,15 @@ static ERL_NIF_TERM nif_hako_asset_start_feedback(ErlNifEnv* env, int argc, cons
 
 // Stop Feedback NIF
 static ERL_NIF_TERM nif_hako_asset_stop_feedback(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char asset_name[256];
+    ErlNifBinary asset_name_bin;
     int isOk;
 
-    if (!enif_get_string(env, argv[0], asset_name, sizeof(asset_name), ERL_NIF_LATIN1) ||
-        !enif_get_int(env, argv[1], &isOk)) {
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) || !enif_get_int(env, argv[1], &isOk)) {
         return enif_make_badarg(env);
     }
+
+    char asset_name[256];
+    snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
 
     bool result = hako_asset_stop_feedback(asset_name, isOk);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
@@ -244,13 +289,15 @@ static ERL_NIF_TERM nif_hako_asset_stop_feedback(ErlNifEnv* env, int argc, const
 
 // Reset Feedback NIF
 static ERL_NIF_TERM nif_hako_asset_reset_feedback(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char asset_name[256];
+    ErlNifBinary asset_name_bin;
     int isOk;
 
-    if (!enif_get_string(env, argv[0], asset_name, sizeof(asset_name), ERL_NIF_LATIN1) ||
-        !enif_get_int(env, argv[1], &isOk)) {
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) || !enif_get_int(env, argv[1], &isOk)) {
         return enif_make_badarg(env);
     }
+
+    char asset_name[256];
+    snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
 
     bool result = hako_asset_reset_feedback(asset_name, isOk);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
@@ -258,11 +305,14 @@ static ERL_NIF_TERM nif_hako_asset_reset_feedback(ErlNifEnv* env, int argc, cons
 
 // Notify Read PDU Done NIF
 static ERL_NIF_TERM nif_hako_asset_notify_read_pdu_done(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char asset_name[256];
+    ErlNifBinary asset_name_bin;
 
-    if (!enif_get_string(env, argv[0], asset_name, sizeof(asset_name), ERL_NIF_LATIN1)) {
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin)) {
         return enif_make_badarg(env);
     }
+
+    char asset_name[256];
+    snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
 
     hako_asset_notify_read_pdu_done(asset_name);
     return enif_make_atom(env, "ok");
@@ -270,11 +320,14 @@ static ERL_NIF_TERM nif_hako_asset_notify_read_pdu_done(ErlNifEnv* env, int argc
 
 // Notify Write PDU Done NIF
 static ERL_NIF_TERM nif_hako_asset_notify_write_pdu_done(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char asset_name[256];
+    ErlNifBinary asset_name_bin;
 
-    if (!enif_get_string(env, argv[0], asset_name, sizeof(asset_name), ERL_NIF_LATIN1)) {
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin)) {
         return enif_make_badarg(env);
     }
+
+    char asset_name[256];
+    snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
 
     hako_asset_notify_write_pdu_done(asset_name);
     return enif_make_atom(env, "ok");
@@ -282,11 +335,14 @@ static ERL_NIF_TERM nif_hako_asset_notify_write_pdu_done(ErlNifEnv* env, int arg
 
 // Is PDU Sync Mode NIF
 static ERL_NIF_TERM nif_hako_asset_is_pdu_sync_mode(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-    char asset_name[256];
+    ErlNifBinary asset_name_bin;
 
-    if (!enif_get_string(env, argv[0], asset_name, sizeof(asset_name), ERL_NIF_LATIN1)) {
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin)) {
         return enif_make_badarg(env);
     }
+
+    char asset_name[256];
+    snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
 
     bool result = hako_asset_is_pdu_sync_mode(asset_name);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
@@ -303,8 +359,8 @@ static ERL_NIF_TERM nif_hako_asset_is_pdu_created(ErlNifEnv* env, int argc, cons
     bool result = hako_asset_is_pdu_created();
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
-extern int hako_conductor_start(hako_time_t delta_usec, hako_time_t max_delay_usec);
-extern void hako_conductor_stop(void);
+
+// Conductor Start NIF
 static ERL_NIF_TERM nif_hako_conductor_start(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
     ErlNifSInt64 delta_usec, max_delay_usec;
 
@@ -317,6 +373,7 @@ static ERL_NIF_TERM nif_hako_conductor_start(ErlNifEnv* env, int argc, const ERL
     return result == 0 ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
+// Conductor Stop NIF
 static ERL_NIF_TERM nif_hako_conductor_stop(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
     hako_conductor_stop();
     return enif_make_atom(env, "ok");
@@ -336,8 +393,8 @@ static ErlNifFunc nif_funcs[] = {
     {"is_pdu_dirty", 3, nif_hako_asset_is_pdu_dirty},
     {"write_pdu", 4, nif_hako_asset_write_pdu},
     {"read_pdu", 4, nif_hako_asset_read_pdu},
-    {"write_pdu_nolock", 4, nif_hako_asset_write_pdu_nolock},
-    {"read_pdu_nolock", 4, nif_hako_asset_read_pdu_nolock},
+    {"write_pdu_nolock", 3, nif_hako_asset_write_pdu_nolock},
+    {"read_pdu_nolock", 3, nif_hako_asset_read_pdu_nolock},
     {"start_feedback", 2, nif_hako_asset_start_feedback},
     {"stop_feedback", 2, nif_hako_asset_stop_feedback},
     {"reset_feedback", 2, nif_hako_asset_reset_feedback},
