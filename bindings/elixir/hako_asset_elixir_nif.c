@@ -131,6 +131,21 @@ static ERL_NIF_TERM nif_hako_asset_write_pdu(ErlNifEnv* env, int argc, const ERL
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
+static ERL_NIF_TERM nif_hako_asset_write_pdu_nolock(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    char robo_name[256];
+    int channel_id;
+    ErlNifBinary pdu_data;
+
+    if (!enif_get_string(env, argv[0], robo_name, sizeof(robo_name), ERL_NIF_LATIN1) ||
+        !enif_get_int(env, argv[1], &channel_id) ||
+        !enif_inspect_binary(env, argv[2], &pdu_data)) {
+        return enif_make_badarg(env);
+    }
+
+    bool result = hako_asset_write_pdu_nolock(robo_name, channel_id, (const char *)pdu_data.data, pdu_data.size);
+    return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
+}
+
 static ERL_NIF_TERM nif_hako_asset_read_pdu(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
     char asset_name[256];
     char robo_name[256];
@@ -150,6 +165,39 @@ static ERL_NIF_TERM nif_hako_asset_read_pdu(ErlNifEnv* env, int argc, const ERL_
     }
 
     bool result = hako_asset_read_pdu(asset_name, robo_name, channel_id, pdu_data, pdu_size);
+    ERL_NIF_TERM pdu_binary;
+
+    if (result) {
+        ErlNifBinary binary;
+        if (!enif_alloc_binary(pdu_size, &binary)) {
+            enif_free(pdu_data);
+            return enif_make_atom(env, "error");
+        }
+        memcpy(binary.data, pdu_data, pdu_size);
+        pdu_binary = enif_make_binary(env, &binary);
+    }
+
+    enif_free(pdu_data);
+    return result ? pdu_binary : enif_make_atom(env, "error");
+}
+
+static ERL_NIF_TERM nif_hako_asset_read_pdu_nolock(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    char robo_name[256];
+    int channel_id;
+    size_t pdu_size;
+
+    if (!enif_get_string(env, argv[0], robo_name, sizeof(robo_name), ERL_NIF_LATIN1) ||
+        !enif_get_int(env, argv[1], &channel_id) ||
+        !enif_get_ulong(env, argv[2], &pdu_size)) {
+        return enif_make_badarg(env);
+    }
+
+    char *pdu_data = (char *)enif_alloc(pdu_size);
+    if (pdu_data == NULL) {
+        return enif_make_atom(env, "error");
+    }
+
+    bool result = hako_asset_read_pdu_nolock(robo_name, channel_id, pdu_data, pdu_size);
     ERL_NIF_TERM pdu_binary;
 
     if (result) {
@@ -207,10 +255,6 @@ static ERL_NIF_TERM nif_hako_asset_reset_feedback(ErlNifEnv* env, int argc, cons
     bool result = hako_asset_reset_feedback(asset_name, isOk);
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
-#include "erl_nif.h"
-#include <stdbool.h>
-#include <string.h>
-#include "hako_capi.h"
 
 // Notify Read PDU Done NIF
 static ERL_NIF_TERM nif_hako_asset_notify_read_pdu_done(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
@@ -259,6 +303,24 @@ static ERL_NIF_TERM nif_hako_asset_is_pdu_created(ErlNifEnv* env, int argc, cons
     bool result = hako_asset_is_pdu_created();
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
+extern int hako_conductor_start(hako_time_t delta_usec, hako_time_t max_delay_usec);
+extern void hako_conductor_stop(void);
+static ERL_NIF_TERM nif_hako_conductor_start(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    ErlNifSInt64 delta_usec, max_delay_usec;
+
+    if (!enif_get_long(env, argv[0], &delta_usec) ||
+        !enif_get_long(env, argv[1], &max_delay_usec)) {
+        return enif_make_badarg(env);
+    }
+
+    int result = hako_conductor_start(delta_usec, max_delay_usec);
+    return result == 0 ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
+}
+
+static ERL_NIF_TERM nif_hako_conductor_stop(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    hako_conductor_stop();
+    return enif_make_atom(env, "ok");
+}
 
 // NIF関数のマッピング
 static ErlNifFunc nif_funcs[] = {
@@ -274,6 +336,8 @@ static ErlNifFunc nif_funcs[] = {
     {"is_pdu_dirty", 3, nif_hako_asset_is_pdu_dirty},
     {"write_pdu", 4, nif_hako_asset_write_pdu},
     {"read_pdu", 4, nif_hako_asset_read_pdu},
+    {"write_pdu_nolock", 4, nif_hako_asset_write_pdu_nolock},
+    {"read_pdu_nolock", 4, nif_hako_asset_read_pdu_nolock},
     {"start_feedback", 2, nif_hako_asset_start_feedback},
     {"stop_feedback", 2, nif_hako_asset_stop_feedback},
     {"reset_feedback", 2, nif_hako_asset_reset_feedback},
@@ -282,6 +346,8 @@ static ErlNifFunc nif_funcs[] = {
     {"is_pdu_sync_mode", 1, nif_hako_asset_is_pdu_sync_mode},
     {"is_simulation_mode", 0, nif_hako_asset_is_simulation_mode},
     {"is_pdu_created", 0, nif_hako_asset_is_pdu_created},     
+    {"conductor_start", 2, nif_hako_conductor_start},
+    {"conductor_stop", 0, nif_hako_conductor_stop}
 };
 
 // NIFモジュールの初期化
