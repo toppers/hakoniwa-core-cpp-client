@@ -364,13 +364,13 @@ static ERL_NIF_TERM nif_hako_asset_is_pdu_created(ErlNifEnv* env, int argc, cons
 static ERL_NIF_TERM nif_hako_conductor_start(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
     ErlNifSInt64 delta_usec, max_delay_usec;
 
-    if (!enif_get_long(env, argv[0], &delta_usec) ||
-        !enif_get_long(env, argv[1], &max_delay_usec)) {
+    if (!enif_get_int64(env, argv[0], &delta_usec) ||
+        !enif_get_int64(env, argv[1], &max_delay_usec)) {
         return enif_make_badarg(env);
     }
 
     int result = hako_conductor_start(delta_usec, max_delay_usec);
-    return result == 0 ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
+    return result != 0 ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
 // Conductor Stop NIF
