@@ -378,6 +378,35 @@ static ERL_NIF_TERM nif_hako_conductor_stop(ErlNifEnv* env, int argc, const ERL_
     hako_conductor_stop();
     return enif_make_atom(env, "ok");
 }
+// hako_simevent_init のNIFラッパー
+static ERL_NIF_TERM nif_hako_simevent_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    bool result = hako_simevent_init();
+    return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
+}
+
+// hako_simevent_get_state のNIFラッパー
+static ERL_NIF_TERM nif_hako_simevent_get_state(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    int state = hako_simevent_get_state();
+    return enif_make_int(env, state);
+}
+
+// hako_simevent_start のNIFラッパー
+static ERL_NIF_TERM nif_hako_simevent_start(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    bool result = hako_simevent_start();
+    return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
+}
+
+// hako_simevent_stop のNIFラッパー
+static ERL_NIF_TERM nif_hako_simevent_stop(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    bool result = hako_simevent_stop();
+    return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
+}
+
+// hako_simevent_reset のNIFラッパー
+static ERL_NIF_TERM nif_hako_simevent_reset(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    bool result = hako_simevent_reset();
+    return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
+}
 
 // NIF関数のマッピング
 static ErlNifFunc nif_funcs[] = {
@@ -403,6 +432,11 @@ static ErlNifFunc nif_funcs[] = {
     {"is_pdu_sync_mode", 1, nif_hako_asset_is_pdu_sync_mode},
     {"is_simulation_mode", 0, nif_hako_asset_is_simulation_mode},
     {"is_pdu_created", 0, nif_hako_asset_is_pdu_created},     
+    {"simevent_init", 0, nif_hako_simevent_init},
+    {"simevent_get_state", 0, nif_hako_simevent_get_state},
+    {"simevent_start", 0, nif_hako_simevent_start},
+    {"simevent_stop", 0, nif_hako_simevent_stop},
+    {"simevent_reset", 0, nif_hako_simevent_reset},
     {"conductor_start", 2, nif_hako_conductor_start},
     {"conductor_stop", 0, nif_hako_conductor_stop}
 };
