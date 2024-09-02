@@ -134,7 +134,7 @@ defmodule HakoAsset do
   Reads PDU data from the specified robot and channel.
   """
   def pdu_read(robo_name, lchannel, buffer_len) when is_binary(robo_name) and is_integer(lchannel) and is_integer(buffer_len) do
-    if !HakoAssetImpl.is_initialized?() do
+    if !HakoAssetImpl.is_initialized() do
       {:error, "Error: not initialized."}
     else
       cond do
@@ -158,7 +158,7 @@ defmodule HakoAsset do
   Writes PDU data to the specified robot and channel.
   """
   def pdu_write(robo_name, lchannel, buffer) when is_binary(robo_name) and is_integer(lchannel) and is_binary(buffer) do
-    if !HakoAssetImpl.is_initialized?() do
+    if !HakoAssetImpl.is_initialized() do
       {:error, "Error: not initialized."}
     else
       cond do

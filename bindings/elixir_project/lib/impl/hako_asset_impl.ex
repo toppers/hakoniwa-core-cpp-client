@@ -4,7 +4,7 @@ defmodule HakoAssetImpl do
   alias HakoAssetImpl
   alias HakoApi
   alias HakoSimevent
-  import Jason
+
   @hako_asset_wait_time_usec 10000  # 1000 * 10 microseconds
 
   # HakoAssetインスタンスの初期化
@@ -32,6 +32,13 @@ defmodule HakoAssetImpl do
 
   def get_external_use() do
     Agent.get(__MODULE__, & &1.external_use)
+  end
+
+  def get_delta_usec() do
+    Agent.get(__MODULE__, & &1.delta_usec)
+  end
+  def is_initialized() do
+    Agent.get(__MODULE__, & &1.is_initialized)
   end
 
   # asset_instanceの設定と取得
@@ -98,32 +105,45 @@ defmodule HakoAssetImpl do
   end
 
   defp parse_pdu_writers(is_plant, robot_json) do
-    pdu_writers = []
+    initial_pdu_writers = []
 
-    if Map.has_key?(robot_json, "shm_pdu_writers") do
-      pdu_writers = pdu_writers ++ parse_writer_or_reader(is_plant, robot_json["shm_pdu_writers"])
-    end
+    updated_pdu_writers =
+      if Map.has_key?(robot_json, "shm_pdu_writers") do
+        initial_pdu_writers ++ parse_writer_or_reader(is_plant, robot_json["shm_pdu_writers"])
+      else
+        initial_pdu_writers
+      end
 
-    if Map.has_key?(robot_json, "rpc_pdu_writers") do
-      pdu_writers = pdu_writers ++ parse_writer_or_reader(is_plant, robot_json["rpc_pdu_writers"])
-    end
+    final_pdu_writers =
+      if Map.has_key?(robot_json, "rpc_pdu_writers") do
+        updated_pdu_writers ++ parse_writer_or_reader(is_plant, robot_json["rpc_pdu_writers"])
+      else
+        updated_pdu_writers
+      end
 
-    pdu_writers
+    final_pdu_writers
   end
 
   defp parse_pdu_readers(is_plant, robot_json) do
-    pdu_readers = []
+    initial_pdu_readers = []
 
-    if Map.has_key?(robot_json, "shm_pdu_readers") do
-      pdu_readers = pdu_readers ++ parse_writer_or_reader(is_plant, robot_json["shm_pdu_readers"], false)
-    end
+    updated_pdu_readers =
+      if Map.has_key?(robot_json, "shm_pdu_readers") do
+        initial_pdu_readers ++ parse_writer_or_reader(is_plant, robot_json["shm_pdu_readers"], false)
+      else
+        initial_pdu_readers
+      end
 
-    if Map.has_key?(robot_json, "rpc_pdu_readers") do
-      pdu_readers = pdu_readers ++ parse_writer_or_reader(is_plant, robot_json["rpc_pdu_readers"], false)
-    end
+    final_pdu_readers =
+      if Map.has_key?(robot_json, "rpc_pdu_readers") do
+        updated_pdu_readers ++ parse_writer_or_reader(is_plant, robot_json["rpc_pdu_readers"], false)
+      else
+        updated_pdu_readers
+      end
 
-    pdu_readers
+    final_pdu_readers
   end
+
 
   defp parse_writer_or_reader(is_plant, json_array, is_writer \\ true) do
     Enum.map(json_array, fn entry_json ->
@@ -243,58 +263,66 @@ defmodule HakoAssetImpl do
   # 指定された状態まで待機
   defp wait_state(target_state) do
     Stream.repeatedly(fn -> :ok end)
-    |> Enum.each_while(fn _ ->
+    |> Enum.reduce_while(:ok, fn _, acc ->
       curr_state = HakoSimevent.get_state()
       if curr_state == target_state do
-        {:halt, :ok}
+        {:halt, acc}
       else
         Process.sleep(@hako_asset_wait_time_usec / 1000)
-        {:cont, :ok}
+        {:cont, acc}
       end
     end)
   end
+
   # 指定されたイベントまで待機
   defp wait_event(target_event) do
     Stream.repeatedly(fn -> :ok end)
-    |> Enum.each_while(fn _ ->
+    |> Enum.reduce_while(:ok, fn _, acc ->
       asset_name = get_asset_instance().asset_name
       event = HakoApi.get_event(asset_name)
 
       cond do
-        event == target_event -> {:halt, :ok}
+        event == target_event ->
+          {:halt, acc}
+
         event == :start ->
           HakoApi.start_feedback(asset_name, true)
-          {:cont, :ok}
+          {:cont, acc}
+
         event == :stop ->
           HakoApi.stop_feedback(asset_name, true)
-          {:cont, :ok}
+          {:cont, acc}
+
         event == :reset ->
           callback = get_asset_instance().callback
           if callback && callback.on_reset do
             callback.on_reset(nil)
           end
           HakoApi.reset_feedback(asset_name, true)
-          {:cont, :ok}
+          {:cont, acc}
+
         true ->
           Process.sleep(@hako_asset_wait_time_usec / 1000)
-          {:cont, :ok}
+          {:cont, acc}
       end
     end)
   end
 
-  # PDU作成まで待機
+
   defp wait_pdu_created() do
     Stream.repeatedly(fn -> :ok end)
-    |> Enum.each_while(fn _ ->
+    |> Enum.reduce_while(:ok, fn _, acc ->
       if HakoApi.is_pdu_created() do
-        {:halt, :ok}
+        {:halt, acc}
       else
         Process.sleep(@hako_asset_wait_time_usec / 1000)
-        {:cont, :ok}
+        {:cont, acc}
       end
     end)
   end
-  defp wait_running() do
+
+
+  def wait_running() do
     IO.puts("WAIT START")
 
     # イベントが Start になるのを待機
@@ -370,7 +398,7 @@ defmodule HakoAssetImpl do
         buffer = :binary.copy(<<0>>, writer.pdu_size)
 
         # PDU書き込みの実行
-        case HakoApi.pdu_write(robot.name, writer.channel_id, buffer) do
+        case HakoApi.write_pdu(robot.name, writer.channel_id, buffer, writer.pdu_size) do
           :ok -> :ok
           _ -> raise "PDU write failed"
         end
