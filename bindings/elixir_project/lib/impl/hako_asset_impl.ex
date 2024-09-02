@@ -349,9 +349,9 @@ defmodule HakoAssetImpl do
     end
     true
   end
-
   defp execute_simulation() do
     asset_instance = get_asset_instance()
+    callback = asset_instance.callback
     HakoApi.notify_simtime(asset_instance.asset_name, asset_instance.current_usec)
 
     cond do
@@ -371,18 +371,22 @@ defmodule HakoAssetImpl do
       asset_instance.current_usec >= HakoApi.get_worldtime() ->
         false
 
-      # コールバック on_simulation_step を呼び出す
-      callback = get_asset_instance().callback
-
-      if callback && callback.on_simulation_step do
-        IO.puts("Calling on_simulation_step callback")
+      callback && callback.on_simulation_step ->
         callback.on_simulation_step.(nil)
-      end
+
+        # 最後の条件が true の場合だけ時間を進める
+        updated_instance = %{asset_instance | current_usec: asset_instance.current_usec + asset_instance.delta_usec}
+        set_asset_instance(updated_instance)
+        true
 
       true ->
-        false
+        # ここに到達する場合も時間を進める
+        updated_instance = %{asset_instance | current_usec: asset_instance.current_usec + asset_instance.delta_usec}
+        set_asset_instance(updated_instance)
+        true
     end
   end
+
   defp pdus_write_done() do
     asset_instance = get_asset_instance()
 
