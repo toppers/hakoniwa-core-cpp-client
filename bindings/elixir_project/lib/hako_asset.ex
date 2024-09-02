@@ -201,6 +201,9 @@ defmodule HakoAsset do
     case HakoAssetImpl.step(step) do
       :ok -> :ok
       :error -> :eintr
+      true -> :ok  # true の場合も :ok を返す
+      false -> :eintr  # false の場合は :eintr を返す
+      _ -> :unknown  # その他の予期しない値の場合は :unknown を返す
     end
   end
 

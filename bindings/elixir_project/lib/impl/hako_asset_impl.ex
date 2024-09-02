@@ -36,7 +36,7 @@ defmodule HakoAssetImpl do
   end
 
   def get_delta_usec() do
-    Agent.get(__MODULE__, & &1.delta_usec)
+    get_asset_instance().delta_usec
   end
   def is_initialized() do
     Agent.get(__MODULE__, & &1.is_initialized)
