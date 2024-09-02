@@ -1,6 +1,6 @@
 alias HakoAsset
 alias HakoConductor
-Code.append_path("../../../bindings/elixir_project/_build/dev/lib/elixir_project/ebin")
+Code.append_path("../../bindings/elixir_project/_build/dev/lib/elixir_project/ebin")
 
 defmodule HelloWorld do
   require Logger
