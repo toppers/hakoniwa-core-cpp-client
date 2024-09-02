@@ -88,6 +88,8 @@ defmodule PduBinaryConverter do
 end
 
 defmodule HakoPdu do
+  alias HakoAsset
+
   defstruct conv: nil, robot_name: nil, channel_id: nil, pdu_size: nil, obj: nil
 
   def new(conv, robot_name, channel_id) do
@@ -100,11 +102,11 @@ defmodule HakoPdu do
 
   def write(pdu) do
     data = PduBinaryConverter.json2bin(pdu.conv, pdu.robot_name, pdu.channel_id, pdu.obj)
-    Hakopy.pdu_write(pdu.robot_name, pdu.channel_id, data, byte_size(data))
+    HakoAsset.pdu_write(pdu.robot_name, pdu.channel_id, data, byte_size(data))
   end
 
   def read(pdu) do
-    data = Hakopy.pdu_read(pdu.robot_name, pdu.channel_id, pdu.pdu_size)
+    data = HakoAsset.pdu_read(pdu.robot_name, pdu.channel_id, pdu.pdu_size)
 
     if data == nil do
       IO.puts("ERROR: hako_asset_pdu_read")
