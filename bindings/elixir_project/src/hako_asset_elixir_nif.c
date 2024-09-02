@@ -16,7 +16,6 @@ static ERL_NIF_TERM nif_hako_asset_register(ErlNifEnv* env, int argc, const ERL_
     ErlNifBinary name_bin;
 
     if (!enif_inspect_binary(env, argv[0], &name_bin)) {
-        printf("error register arguments\n");
         return enif_make_badarg(env);
     }
 
@@ -24,7 +23,6 @@ static ERL_NIF_TERM nif_hako_asset_register(ErlNifEnv* env, int argc, const ERL_
     snprintf(name, sizeof(name), "%.*s", (int)name_bin.size, (char *)name_bin.data);
 
     bool result = hako_asset_register_polling(name);
-    printf("register(%s) error: %d\n", name, result);
 
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
@@ -258,51 +256,58 @@ static ERL_NIF_TERM nif_hako_asset_read_pdu_nolock(ErlNifEnv* env, int argc, con
     return result ? pdu_binary : enif_make_atom(env, "error");
 }
 
-// Start Feedback NIF
 static ERL_NIF_TERM nif_hako_asset_start_feedback(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
     ErlNifBinary asset_name_bin;
-    int isOk;
+    char atom_name[6]; // "true" または "false" のいずれか
 
-    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) || !enif_get_int(env, argv[1], &isOk)) {
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) || 
+        !enif_get_atom(env, argv[1], atom_name, sizeof(atom_name), ERL_NIF_LATIN1)) {
         return enif_make_badarg(env);
     }
 
     char asset_name[256];
     snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
 
+    bool isOk = strcmp(atom_name, "true") == 0;
     bool result = hako_asset_start_feedback(asset_name, isOk);
+
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
-
 // Stop Feedback NIF
 static ERL_NIF_TERM nif_hako_asset_stop_feedback(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
     ErlNifBinary asset_name_bin;
-    int isOk;
+    char atom_name[6]; // "true" または "false" のいずれか
 
-    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) || !enif_get_int(env, argv[1], &isOk)) {
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) || 
+        !enif_get_atom(env, argv[1], atom_name, sizeof(atom_name), ERL_NIF_LATIN1)) {
         return enif_make_badarg(env);
     }
 
     char asset_name[256];
     snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
 
+    bool isOk = strcmp(atom_name, "true") == 0;
     bool result = hako_asset_stop_feedback(asset_name, isOk);
+
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
 // Reset Feedback NIF
 static ERL_NIF_TERM nif_hako_asset_reset_feedback(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
     ErlNifBinary asset_name_bin;
-    int isOk;
+    char atom_name[6]; // "true" または "false" のいずれか
 
-    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) || !enif_get_int(env, argv[1], &isOk)) {
+    if (!enif_inspect_binary(env, argv[0], &asset_name_bin) || 
+        !enif_get_atom(env, argv[1], atom_name, sizeof(atom_name), ERL_NIF_LATIN1)) {
         return enif_make_badarg(env);
     }
 
     char asset_name[256];
     snprintf(asset_name, sizeof(asset_name), "%.*s", (int)asset_name_bin.size, (char *)asset_name_bin.data);
 
+    bool isOk = strcmp(atom_name, "true") == 0;
     bool result = hako_asset_reset_feedback(asset_name, isOk);
+
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 

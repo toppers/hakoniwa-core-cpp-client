@@ -1,11 +1,12 @@
 defmodule HakoAssetImpl do
   use Agent
 
+  require Logger
   alias HakoAssetImpl
   alias HakoApi
   alias HakoSimevent
 
-  @hako_asset_wait_time_usec 10000  # 1000 * 10 microseconds
+  @hako_asset_wait_time_msec 10
 
   # HakoAssetインスタンスの初期化
   def start_link(_) do
@@ -50,23 +51,6 @@ defmodule HakoAssetImpl do
     Agent.get(__MODULE__, & &1.asset_instance)
   end
 
-  # asset_instanceの初期化
-  def reset_asset_instance() do
-    Agent.update(__MODULE__, fn instance ->
-      %{instance |
-        asset_instance: %{
-          asset_name: nil,
-          config_path: nil,
-          delta_usec: 0,
-          current_usec: 0,
-          callback: nil,
-          robots: [],
-          param: %{}
-        },
-        is_initialized: false
-      }
-    end)
-  end
 
   # ロボットのPDUリーダーを作成
   defp create_reader(reader_json) do
@@ -181,8 +165,6 @@ defmodule HakoAssetImpl do
 
   # Assetの初期化
   def init(asset_name, config_path, delta_usec, is_plant) do
-    reset_asset_instance()
-
     asset_instance = get_asset_instance()
 
     if File.exists?(config_path) do
@@ -199,6 +181,7 @@ defmodule HakoAssetImpl do
         current_usec: 0,
         param: parsed_json,
         robots: robots,
+        callback: asset_instance.callback
       }
 
       if HakoApi.init_asset() == false or HakoApi.simevent_init() == false do
@@ -211,6 +194,9 @@ defmodule HakoAssetImpl do
           true ->
             # PDUチャネルの作成
             create_pdu_channels(updated_instance.robots)
+            Agent.update(__MODULE__, fn instance ->
+              %{instance | is_initialized: true}
+            end)
             :ok
           false ->
             {:error, "Failed to register asset"}
@@ -230,9 +216,15 @@ defmodule HakoAssetImpl do
     else
       updated_instance = %{asset_instance | callback: callbacks}
       set_asset_instance(updated_instance)
+
+      # デバッグ出力を追加
+      #IO.inspect(get_asset_instance().callback, label: "Registered Callback")
+      #IO.inspect(get_asset_instance(), label: "Asset instance after setting callback")
+
       :ok
     end
   end
+
 
   # 外部使用用の初期化
   def initialize_for_external() do
@@ -268,7 +260,7 @@ defmodule HakoAssetImpl do
       if curr_state == target_state do
         {:halt, acc}
       else
-        Process.sleep(@hako_asset_wait_time_usec / 1000)
+        Process.sleep(@hako_asset_wait_time_msec)
         {:cont, acc}
       end
     end)
@@ -276,33 +268,32 @@ defmodule HakoAssetImpl do
 
   # 指定されたイベントまで待機
   defp wait_event(target_event) do
+    IO.puts("wait_event: #{target_event}")
     Stream.repeatedly(fn -> :ok end)
     |> Enum.reduce_while(:ok, fn _, acc ->
       asset_name = get_asset_instance().asset_name
-      event = HakoApi.get_event(asset_name)
+      event = get_event(asset_name)
 
       cond do
-        event == target_event ->
-          {:halt, acc}
-
         event == :start ->
+          IO.puts("event: #{event}")
           HakoApi.start_feedback(asset_name, true)
-          {:cont, acc}
+          {:halt, acc}
 
         event == :stop ->
           HakoApi.stop_feedback(asset_name, true)
-          {:cont, acc}
+          {:halt, acc}
 
         event == :reset ->
           callback = get_asset_instance().callback
           if callback && callback.on_reset do
-            callback.on_reset(nil)
+            callback.on_reset.(nil)
           end
           HakoApi.reset_feedback(asset_name, true)
-          {:cont, acc}
+          {:halt, acc}
 
         true ->
-          Process.sleep(@hako_asset_wait_time_usec / 1000)
+          Process.sleep(@hako_asset_wait_time_msec)
           {:cont, acc}
       end
     end)
@@ -315,7 +306,7 @@ defmodule HakoAssetImpl do
       if HakoApi.is_pdu_created() do
         {:halt, acc}
       else
-        Process.sleep(@hako_asset_wait_time_usec / 1000)
+        Process.sleep(@hako_asset_wait_time_msec)
         {:cont, acc}
       end
     end)
@@ -351,9 +342,11 @@ defmodule HakoAssetImpl do
     callback = get_asset_instance().callback
 
     if callback && callback.on_initialize do
-      callback.on_initialize(nil)
+      Logger.info("Calling on_initialize callback")
+      callback.on_initialize.(nil)
+    else
+      Logger.info("on_initialize callback not set or callback is nil")
     end
-
     true
   end
 
@@ -378,9 +371,13 @@ defmodule HakoAssetImpl do
       asset_instance.current_usec >= HakoApi.get_worldtime() ->
         false
 
-      asset_instance.callback && asset_instance.callback.on_simulation_step ->
-        asset_instance.callback.on_simulation_step(nil)
-        true
+      # コールバック on_simulation_step を呼び出す
+      callback = get_asset_instance().callback
+
+      if callback && callback.on_simulation_step do
+        IO.puts("Calling on_simulation_step callback")
+        callback.on_simulation_step.(nil)
+      end
 
       true ->
         false
@@ -491,6 +488,23 @@ defmodule HakoAssetImpl do
 
   def get_world_time() do
     HakoApi.get_worldtime()
+  end
+
+  # Define asset event mappings
+  @asset_events %{
+    0 => :none,
+    1 => :start,
+    2 => :stop,
+    3 => :reset,
+    4 => :error,
+    5 => :count
+  }
+  @doc """
+  Get the current asset event.
+  """
+  def get_event(asset_name) do
+    event_code = HakoApi.get_event(asset_name)
+    Map.get(@asset_events, event_code, :unknown)
   end
 
 end

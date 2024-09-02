@@ -87,7 +87,7 @@ defmodule HakoAsset do
     asset_instance = HakoAssetImpl.get_asset_instance()
 
     # 初期化がされていない場合はエラー
-    unless asset_instance.is_initialized do
+    if !HakoAssetImpl.is_initialized() do
       IO.puts("Error: not initialized.")
       {:error, :not_initialized}
     else
@@ -103,7 +103,7 @@ defmodule HakoAsset do
 
             # manual_timing_controlが設定されていれば実行
             if asset_instance.callback && asset_instance.callback.on_manual_timing_control do
-              asset_instance.callback.on_manual_timing_control(nil)
+              asset_instance.callback.on_manual_timing_control.(nil)
             else
               # シミュレーションステップを実行し続ける
               loop_simulation()
