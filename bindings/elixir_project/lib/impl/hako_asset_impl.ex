@@ -5,6 +5,7 @@ defmodule HakoAssetImpl do
   alias HakoApi
   alias HakoSimevent
   import Jason
+  @hako_asset_wait_time_usec 10000  # 1000 * 10 microseconds
 
   # HakoAssetインスタンスの初期化
   def start_link(_) do
@@ -233,4 +234,202 @@ defmodule HakoAssetImpl do
       :ok
     end
   end
+
+  # Assetの状態を取得
+  def get_state() do
+    HakoSimevent.get_state()
+  end
+
+  # 指定された状態まで待機
+  defp wait_state(target_state) do
+    Stream.repeatedly(fn -> :ok end)
+    |> Enum.each_while(fn _ ->
+      curr_state = HakoSimevent.get_state()
+      if curr_state == target_state do
+        {:halt, :ok}
+      else
+        Process.sleep(@hako_asset_wait_time_usec / 1000)
+        {:cont, :ok}
+      end
+    end)
+  end
+  # 指定されたイベントまで待機
+  defp wait_event(target_event) do
+    Stream.repeatedly(fn -> :ok end)
+    |> Enum.each_while(fn _ ->
+      asset_name = get_asset_instance().asset_name
+      event = HakoApi.get_event(asset_name)
+
+      cond do
+        event == target_event -> {:halt, :ok}
+        event == :start ->
+          HakoApi.start_feedback(asset_name, true)
+          {:cont, :ok}
+        event == :stop ->
+          HakoApi.stop_feedback(asset_name, true)
+          {:cont, :ok}
+        event == :reset ->
+          callback = get_asset_instance().callback
+          if callback && callback.on_reset do
+            callback.on_reset(nil)
+          end
+          HakoApi.reset_feedback(asset_name, true)
+          {:cont, :ok}
+        true ->
+          Process.sleep(@hako_asset_wait_time_usec / 1000)
+          {:cont, :ok}
+      end
+    end)
+  end
+
+  # PDU作成まで待機
+  defp wait_pdu_created() do
+    Stream.repeatedly(fn -> :ok end)
+    |> Enum.each_while(fn _ ->
+      if HakoApi.is_pdu_created() do
+        {:halt, :ok}
+      else
+        Process.sleep(@hako_asset_wait_time_usec / 1000)
+        {:cont, :ok}
+      end
+    end)
+  end
+  defp wait_running() do
+    IO.puts("WAIT START")
+
+    # イベントが Start になるのを待機
+    case wait_event(:start) do
+      :ok -> :ok
+      _ -> false
+    end
+
+    IO.puts("WAIT RUNNING")
+
+    # 状態が Running になるのを待機
+    case wait_state(:running) do
+      :ok -> :ok
+      _ -> false
+    end
+
+    IO.puts("PDU CREATED")
+
+    # PDU が作成されるのを待機
+    case wait_pdu_created() do
+      :ok -> :ok
+      _ -> false
+    end
+
+    # コールバック on_initialize を呼び出す
+    callback = get_asset_instance().callback
+
+    if callback && callback.on_initialize do
+      callback.on_initialize(nil)
+    end
+
+    true
+  end
+
+  defp execute_simulation() do
+    asset_instance = get_asset_instance()
+    HakoApi.notify_simtime(asset_instance.asset_name, asset_instance.current_usec)
+
+    cond do
+      HakoSimevent.get_state() != :running ->
+        false
+
+      not HakoApi.is_pdu_created() ->
+        false
+
+      HakoApi.is_pdu_sync_mode(asset_instance.asset_name) ->
+        HakoApi.notify_write_pdu_done(asset_instance.asset_name)
+        false
+
+      not HakoApi.is_simulation_mode() ->
+        false
+
+      asset_instance.current_usec >= HakoApi.get_worldtime() ->
+        false
+
+      asset_instance.callback && asset_instance.callback.on_simulation_step ->
+        asset_instance.callback.on_simulation_step(nil)
+        true
+
+      true ->
+        false
+    end
+  end
+  defp pdus_write_done() do
+    asset_instance = get_asset_instance()
+
+    Enum.each(asset_instance.robots, fn robot ->
+      Enum.each(robot.pdu_writers, fn writer ->
+        IO.puts("INFO: hako_asset_impl_pdus_write_done() Robot: #{robot.name}, PduWriter: #{writer.name}")
+        IO.puts("channel_id: #{writer.channel_id} pdu_size: #{writer.pdu_size}")
+
+        # Bufferをゼロで埋める
+        buffer = :binary.copy(<<0>>, writer.pdu_size)
+
+        # PDU書き込みの実行
+        case HakoApi.pdu_write(robot.name, writer.channel_id, buffer) do
+          :ok -> :ok
+          _ -> raise "PDU write failed"
+        end
+      end)
+    end)
+  end
+
+  defp proc() do
+    loop()
+  end
+
+  defp loop() do
+    if execute_simulation() == false do
+      curr = HakoSimevent.get_state()
+
+      if curr != :running do
+        IO.puts("WAIT STOP")
+        case wait_event(:stop) do
+          :ok -> :ok
+          _ -> raise "Waiting for STOP event failed"
+        end
+
+        IO.puts("WAIT RESET")
+        case wait_event(:reset) do
+          :ok -> :ok
+          _ -> raise "Waiting for RESET event failed"
+        end
+
+        false
+      else
+        if HakoApi.is_pdu_sync_mode(get_asset_instance().asset_name) do
+          pdus_write_done()
+        end
+        # ループを再帰的に呼び出す
+        loop()
+      end
+    else
+      true
+    end
+  end
+  def step(increment_step) do
+    asset_instance = get_asset_instance()
+    target_time_usec = asset_instance.current_usec + (increment_step * asset_instance.delta_usec)
+
+    run_until_target_time(asset_instance.current_usec, target_time_usec)
+  end
+
+  defp run_until_target_time(current_usec, target_time_usec) when current_usec < target_time_usec do
+    if proc() do
+      asset_instance = get_asset_instance()
+      run_until_target_time(asset_instance.current_usec, target_time_usec)
+    else
+      false
+    end
+  end
+
+  defp run_until_target_time(_, _) do
+    true
+  end
+
+
 end

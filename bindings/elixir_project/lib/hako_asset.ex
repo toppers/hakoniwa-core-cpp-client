@@ -85,8 +85,51 @@ defmodule HakoAsset do
   @doc """
   Starts the asset management process.
   """
+
   def start() do
-    #TODO
+    asset_instance = HakoAssetImpl.get_asset_instance()
+
+    # 初期化がされていない場合はエラー
+    unless asset_instance.is_initialized do
+      IO.puts("Error: not initialized.")
+      {:error, :not_initialized}
+    else
+      # シミュレーション状態が停止状態でない場合はエラー
+      if HakoSimevent.get_state() != :stopped do
+        IO.puts("Error: simulation state is invalid, expecting stopped.")
+        {:error, :invalid_state}
+      else
+        # シミュレーションの実行を待機
+        case HakoAssetImpl.wait_running() do
+          true ->
+            IO.puts("INFO: start simulation")
+
+            # manual_timing_controlが設定されていれば実行
+            if asset_instance.callback && asset_instance.callback.on_manual_timing_control do
+              asset_instance.callback.on_manual_timing_control(nil)
+            else
+              # シミュレーションステップを実行し続ける
+              loop_simulation()
+            end
+
+          false ->
+            IO.puts("Error: can not wait running for start.")
+            {:error, :wait_running_failed}
+        end
+      end
+    end
+  end
+
+  # シミュレーションステップを実行し続ける
+  defp loop_simulation() do
+    case HakoAssetImpl.step(1) do
+      true ->
+        loop_simulation()
+
+      false ->
+        IO.puts("INFO: stopped simulation")
+        {:error, :simulation_stopped}
+    end
   end
 
   @doc """
