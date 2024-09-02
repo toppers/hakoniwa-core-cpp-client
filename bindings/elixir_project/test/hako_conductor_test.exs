@@ -8,9 +8,6 @@ defmodule HakoConductorTest do
     max_delay_usec = 20000
 
     assert HakoConductor.start(delta_usec, max_delay_usec) == :ok
-  end
-
-  test "stops the conductor" do
     assert HakoConductor.stop() == :ok
   end
 end

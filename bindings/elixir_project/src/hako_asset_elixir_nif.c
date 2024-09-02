@@ -16,6 +16,7 @@ static ERL_NIF_TERM nif_hako_asset_register(ErlNifEnv* env, int argc, const ERL_
     ErlNifBinary name_bin;
 
     if (!enif_inspect_binary(env, argv[0], &name_bin)) {
+        printf("error register arguments\n");
         return enif_make_badarg(env);
     }
 
@@ -23,6 +24,8 @@ static ERL_NIF_TERM nif_hako_asset_register(ErlNifEnv* env, int argc, const ERL_
     snprintf(name, sizeof(name), "%.*s", (int)name_bin.size, (char *)name_bin.data);
 
     bool result = hako_asset_register_polling(name);
+    printf("register(%s) error: %d\n", name, result);
+
     return result ? enif_make_atom(env, "true") : enif_make_atom(env, "false");
 }
 
