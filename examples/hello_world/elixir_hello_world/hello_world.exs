@@ -1,4 +1,6 @@
 alias HakoAsset
+alias HakoConductor
+Code.append_path("../../../bindings/elixir_project/_build/dev/lib/elixir_project/ebin")
 
 defmodule HelloWorld do
   require Logger
@@ -43,60 +45,47 @@ defmodule HelloWorld do
   end
 
   def main(args) do
+    IO.inspect(args, label: "Received args")
+
+    HakoAsset.start_link(nil)
     case args do
       [asset_name, config_path, delta_time_msec] ->
         Logger.info("INFO: 自動タイミングモードで実行中")
         delta_time_usec = String.to_integer(delta_time_msec) * 1000
-        HakoAsset.conductor_start(delta_time_usec, delta_time_usec)
+        HakoConductor.start(delta_time_usec, delta_time_usec)
         callbacks = %{
           on_initialize: &HelloWorld.my_on_initialize/1,
           on_manual_timing_control: nil,
           on_simulation_step: &HelloWorld.my_on_simulation_step/1,
           on_reset: &HelloWorld.my_on_reset/1
         }
-        case HakoAsset.asset_register(asset_name, config_path, callbacks, delta_time_usec, :controller) do
+        case HakoAsset.register(asset_name, config_path, callbacks, delta_time_usec, :controller) do
           :false ->
             Logger.error("ERROR: hako_asset_register() が #{:false} を返しました。")
-            HakoAsset.conductor_stop()
+            HakoConductor.stop()
             System.halt(1)
           _ ->
             :ok
         end
-        case HakoAsset.start() do
-          ret ->
-            Logger.info("INFO: hako_asset_start() が #{ret} を返しました。")
-        end
-        HakoAsset.conductor_stop()
+        Logger.info("INFO: HakoAsset.asset_register() completed successfully")
 
-      [asset_name, config_path, delta_time_msec, "manual"] ->
-        Logger.info("INFO: マニュアルタイミングモードで実行中")
-        delta_time_usec = String.to_integer(delta_time_msec) * 1000
-        HakoAsset.conductor_start(delta_time_usec, delta_time_usec)
-        callbacks = %{
-          on_initialize: &HelloWorld.my_on_initialize/1,
-          on_simulation_step: nil,
-          on_manual_timing_control: &HelloWorld.my_on_manual_timing_control/1,
-          on_reset: &HelloWorld.my_on_reset/1
-        }
-        case HakoAsset.register_asset(asset_name, config_path, callbacks, delta_time_usec, :controller) do
-          :false ->
-            Logger.error("ERROR: hako_asset_register() が #{:false} を返しました。")
-            HakoAsset.conductor_stop()
-            System.halt(1)
-          _ ->
-            :ok
+        result = HakoAsset.start()
+        case result do
+          {:ok, _} ->
+            Logger.info("INFO: hako_asset_start() completed successfully")
+          {:error, reason} ->
+            Logger.error("ERROR: hako_asset_start() failed with reason: #{inspect(reason)}")
         end
-        case HakoAsset.start() do
-          ret ->
-            Logger.info("INFO: hako_asset_start() が #{ret} を返しました。")
-        end
-        HakoAsset.conductor_stop()
+
+        HakoConductor.stop()
 
       _ ->
-        IO.puts("Usage: elixir hello_world.exs <asset_name> <config_path> <delta_time_msec> [manual]")
+        Logger.error("ERROR: Invalid arguments. Expected: [asset_name, config_path, delta_time_msec]")
+        System.halt(1)
     end
   end
-end
 
+
+end
 args = System.argv()
 HelloWorld.main(args)
