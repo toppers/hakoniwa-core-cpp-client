@@ -51,6 +51,8 @@ extern "C" {
 	HAKO_API bool hako_asset_is_pdu_dirty(const char* asset_name, const char* robo_name, HakoPduChannelIdType channel_id);
 	HAKO_API bool hako_asset_write_pdu(const char* asset_name, const char* robo_name, HakoPduChannelIdType channel_id, const char *pdu_data, size_t len);
 	HAKO_API bool hako_asset_read_pdu(const char* asset_name, const char* robo_name, HakoPduChannelIdType channel_id, char *pdu_data, size_t len);
+	HAKO_API bool hako_asset_write_pdu_nolock(const char* robo_name, HakoPduChannelIdType channel_id, const char *pdu_data, size_t len);
+	HAKO_API bool hako_asset_read_pdu_nolock(const char* robo_name, HakoPduChannelIdType channel_id, char *pdu_data, size_t len);
 	HAKO_API void hako_asset_notify_read_pdu_done(const char* asset_name);
 	HAKO_API void hako_asset_notify_write_pdu_done(const char* asset_name);
 	HAKO_API bool hako_asset_is_pdu_sync_mode(const char* asset_name);

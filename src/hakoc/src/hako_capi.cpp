@@ -266,6 +266,28 @@ bool hako_asset_read_pdu(const char* asset_name, const char* robo_name, HakoPduC
     }
 }
 
+bool hako_asset_write_pdu_nolock(const char* robo_name, HakoPduChannelIdType channel_id, const char *pdu_data, size_t len)
+{
+    try {
+        std::string hako_robo_name(robo_name);
+        return hako_asset->write_pdu_nolock(hako_robo_name, channel_id, pdu_data, len);
+    } catch (std::exception *) {
+        //hako::logger::get("core")->error(e->what());
+        return false;
+    }
+}
+
+bool hako_asset_read_pdu_nolock(const char* robo_name, HakoPduChannelIdType channel_id, char *pdu_data, size_t len)
+{
+    try {
+        std::string hako_robo_name(robo_name);
+        return hako_asset->read_pdu_nolock(hako_robo_name, channel_id, pdu_data, len);
+    } catch (std::exception *) {
+        //hako::logger::get("core")->error(e->what());
+        return false;
+    }
+}
+
 void hako_asset_notify_read_pdu_done(const char* asset_name)
 {
     try {
