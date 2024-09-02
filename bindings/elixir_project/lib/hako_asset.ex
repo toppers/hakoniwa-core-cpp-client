@@ -46,9 +46,6 @@ defmodule HakoAsset do
 
   @doc """
   Registers an asset with the specified callbacks and configuration.
-  """
-  @doc """
-  Registers an asset with the specified callbacks and configuration.
   Returns {:ok, :registered} on success, or {:error, reason} on failure.
   """
   def register(asset_name, config_path, callbacks, delta_usec, model_type) do
@@ -132,32 +129,79 @@ defmodule HakoAsset do
     end
   end
 
+  # PDUデータの読み込み
   @doc """
   Reads PDU data from the specified robot and channel.
   """
-  def pdu_read(robo_name, channel_id, buffer_len) do
-    #TODO
+  def pdu_read(robo_name, lchannel, buffer_len) when is_binary(robo_name) and is_integer(lchannel) and is_integer(buffer_len) do
+    if !HakoAssetImpl.is_initialized?() do
+      {:error, "Error: not initialized."}
+    else
+      cond do
+        robo_name == "" ->
+          {:error, "Error: robo_name is not set."}
+
+        buffer_len <= 0 ->
+          {:error, "Error: Invalid buffer or buffer_len."}
+
+        true ->
+          case HakoAssetImpl.pdu_read(robo_name, lchannel, buffer_len) do
+            {:ok, buffer} -> {:ok, buffer}
+            :error -> {:error, "Error: Failed to read PDU data."}
+          end
+      end
+    end
   end
 
+  # PDUデータの書き込み
   @doc """
   Writes PDU data to the specified robot and channel.
   """
-  def pdu_write(robo_name, channel_id, buffer) do
-    #TODO
+  def pdu_write(robo_name, lchannel, buffer) when is_binary(robo_name) and is_integer(lchannel) and is_binary(buffer) do
+    if !HakoAssetImpl.is_initialized?() do
+      {:error, "Error: not initialized."}
+    else
+      cond do
+        robo_name == "" ->
+          {:error, "Error: robo_name is not set."}
+
+        byte_size(buffer) == 0 ->
+          {:error, "Error: Invalid buffer or buffer_len."}
+
+        true ->
+          case HakoAssetImpl.pdu_write(robo_name, lchannel, buffer) do
+            :ok -> :ok
+            :error -> {:error, "Error: Failed to write PDU data."}
+          end
+      end
+    end
   end
 
+  # シミュレーション時間の取得
   @doc """
   Retrieves the current simulation time.
   """
   def simulation_time() do
-    #TODO
+    HakoAssetImpl.get_world_time()
   end
 
+  # 指定された時間だけスリープする
   @doc """
-  Puts the asset to sleep for the specified amount of time.
+  Puts the asset to sleep for the specified amount of time in microseconds.
   """
-  def usleep(sleep_time_usec) do
-    #TODO
+  def usleep(sleep_time_usec) when is_integer(sleep_time_usec) and sleep_time_usec >= 0 do
+    step =
+      if sleep_time_usec == 0 do
+        1
+      else
+        delta_usec = HakoAssetImpl.get_delta_usec()
+        div(sleep_time_usec + delta_usec - 1, delta_usec)
+      end
+
+    case HakoAssetImpl.step(step) do
+      :ok -> :ok
+      :error -> :eintr
+    end
   end
 
 end

@@ -432,4 +432,37 @@ defmodule HakoAssetImpl do
   end
 
 
+  def pdu_read(robo_name, lchannel, buffer_len) do
+    asset_instance = get_asset_instance()
+
+    if get_external_use() do
+      HakoApi.read_pdu_nolock(robo_name, lchannel, buffer_len)
+    else
+      case HakoApi.read_pdu(asset_instance.asset_name, robo_name, lchannel, buffer_len) do
+        {:ok, buffer} -> {:ok, buffer}
+        :error -> :error
+      end
+    end
+  end
+
+  def pdu_write(robo_name, lchannel, buffer) do
+    asset_instance = get_asset_instance()
+
+    if get_external_use() do
+      HakoApi.write_pdu_nolock(robo_name, lchannel, buffer)
+    else
+      case HakoApi.write_pdu(asset_instance.asset_name, robo_name, lchannel, buffer) do
+        :ok ->
+          HakoApi.notify_write_pdu_done(asset_instance.asset_name)
+          :ok
+
+        :error -> :error
+      end
+    end
+  end
+
+  def get_world_time() do
+    HakoApi.get_worldtime()
+  end
+
 end
