@@ -17,8 +17,6 @@ FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download
 FetchContent_MakeAvailable(json)
 
 
-# ENABLE_HAKO_TIME_MEASURE オプションを追加 (デフォルトはOFF)
-option(ENABLE_HAKO_TIME_MEASURE "Enable time measurement feature" OFF)
 
 
 if(WIN32)
@@ -30,8 +28,6 @@ add_library(
 else()
     # ENABLE_HAKO_TIME_MEASURE のオプションに基づいて、条件付きで src/hako_asset_impl_measure.cpp を追加
     if(ENABLE_HAKO_TIME_MEASURE)
-        message(STATUS "Building with ENABLE_HAKO_TIME_MEASURE")
-        add_definitions(-DENABLE_HAKO_TIME_MEASURE)
         add_library(
             assets SHARED
             src/hako_asset.cpp

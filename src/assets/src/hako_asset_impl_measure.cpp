@@ -90,7 +90,7 @@ void* hako_asset_impl_measure_create_csv(const char* asset_name) {
 }
 
 // CSVファイルに書き込み
-void hako_asset_impl_measure_write_csv(void* vp, hako_time_t core_time, hako_time_t asset_time) 
+void hako_asset_impl_measure_write_csv(void* vp, long long int core_time, long long int asset_time) 
 {
     HakoAssetImplMeasureCsvBuffer* buffer = (HakoAssetImplMeasureCsvBuffer*)vp;
     if (buffer == nullptr || buffer->fp == nullptr) {

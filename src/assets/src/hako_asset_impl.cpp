@@ -357,6 +357,10 @@ static bool hako_asset_impl_proc(void)
     while (hako_asset_impl_execute() == false) {
         HakoSimulationStateType curr = hako_asset_instance.hako_sim->state();
         if (curr != HakoSim_Running) {
+#ifdef ENABLE_HAKO_TIME_MEASURE
+            //close file
+            hako_asset_impl_measure_close_csv(hako_asset_instance.measure_vp);
+#endif /* ENABLE_HAKO_TIME_MEASURE */
             std::cout << "WAIT STOP" << std::endl;
             auto ret = hako_asset_impl_wait_event(HakoSimAssetEvent_Stop);
             HAKO_ASSET_ASSERT(ret == true);
@@ -366,10 +370,6 @@ static bool hako_asset_impl_proc(void)
             // WAINT FOR RUNNING STATE
             //ret = hako_asset_impl_wait_running();
             //HAKO_ASSET_ASSERT(ret == true);
-#ifdef ENABLE_HAKO_TIME_MEASURE
-            //close file
-            hako_asset_impl_measure_close_csv(hako_asset_instance.measure_vp);
-#endif /* ENABLE_HAKO_TIME_MEASURE */
             return false;
         }
         else if (hako_asset_instance.hako_asset->is_pdu_sync_mode(hako_asset_instance.asset_name_str) == true) {
