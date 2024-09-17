@@ -192,7 +192,7 @@ bool hako_asset_stop_feedback(const char* asset_name, bool isOk)
 {
     try {
 #ifdef ENABLE_HAKO_TIME_MEASURE
-        hako_asset_impl_measure_close_csv(hako_measure_vp);
+        hako_asset_impl_measure_flush_csv(hako_measure_vp);
 #endif /* ENABLE_HAKO_TIME_MEASURE */
         std::string hako_asset_name(asset_name);
         return hako_asset->stop_feedback(hako_asset_name, isOk);

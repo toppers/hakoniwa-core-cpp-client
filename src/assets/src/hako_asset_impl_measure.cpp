@@ -115,6 +115,14 @@ void hako_asset_impl_measure_write_csv(void* vp, long long int core_time, long l
     }
 }
 
+void hako_asset_impl_measure_flush_csv(void* vp) {
+    HakoAssetImplMeasureCsvBuffer* buffer = (HakoAssetImplMeasureCsvBuffer*)vp;
+    if (buffer == nullptr) {
+        return;
+    }
+    buffer->flush();
+}
+
 // CSVファイルをクローズ
 void hako_asset_impl_measure_close_csv(void* vp) {
     HakoAssetImplMeasureCsvBuffer* buffer = (HakoAssetImplMeasureCsvBuffer*)vp;

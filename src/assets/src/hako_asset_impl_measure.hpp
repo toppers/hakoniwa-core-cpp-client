@@ -14,6 +14,7 @@ do {	\
 #endif
 extern void * hako_asset_impl_measure_create_csv(const char* asset_name);
 extern void hako_asset_impl_measure_write_csv(void* vp, long long int core_time, long long int asset_time);
+extern void hako_asset_impl_measure_flush_csv(void* vp);
 extern void hako_asset_impl_measure_close_csv(void* vp);
 
 #endif /* _HAKO_ASSET_IMPL_MEASURE_HPP_ */
