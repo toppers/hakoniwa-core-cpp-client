@@ -31,6 +31,13 @@ struct HakoAssetType {
     std::shared_ptr<hako::IHakoAssetController> hako_asset;
     std::shared_ptr<hako::IHakoSimulationEventController> hako_sim;
     std::vector<hako::asset::Robot> robots;
+
+#ifdef ENABLE_HAKO_TIME_MEASURE
+    /*
+     * for sim time measurement 
+     */
+    void* measure_vp;
+#endif /* ENABLE_HAKO_TIME_MEASURE */
 };
 
 extern HakoAssetType hako_asset_instance;
