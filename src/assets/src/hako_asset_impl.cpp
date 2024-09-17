@@ -359,7 +359,7 @@ static bool hako_asset_impl_proc(void)
         if (curr != HakoSim_Running) {
 #ifdef ENABLE_HAKO_TIME_MEASURE
             //close file
-            hako_asset_impl_measure_close_csv(hako_asset_instance.measure_vp);
+            hako_asset_impl_measure_flush_csv(hako_asset_instance.measure_vp);
 #endif /* ENABLE_HAKO_TIME_MEASURE */
             std::cout << "WAIT STOP" << std::endl;
             auto ret = hako_asset_impl_wait_event(HakoSimAssetEvent_Stop);
