@@ -39,7 +39,7 @@ def wait_for_flag_files(multi_num, measure_dir):
 def wait_for_completion(multi_num, measure_dir):
     print("INFO: wait for completion")
     while True:
-        time.sleep(1)
+        time.sleep(0.01)
         if all(not os.path.exists(os.path.join(measure_dir, f"measure-{inx}.txt")) for inx in range(multi_num)):
             break
 

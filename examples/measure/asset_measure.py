@@ -1,5 +1,6 @@
 import hakopy
 import sys
+import random
 import time
 import os
 
@@ -10,9 +11,8 @@ def my_on_reset(context):
     return 0
 
 def my_on_simulation_step(context):
-    print(f"INFO: {my_asset_name} - step")
+    #print(f"INFO: {my_asset_name} - step")
     perform_work()  # 所定の作業を呼び出す
-    time.sleep(1.0)
     return 0
 
 my_asset_name = None
@@ -34,11 +34,26 @@ def delete_flag_file(asset_name):
         print(f"WARNING: {asset_name} - Flag file not found: {flag_file}")
 
 perform_count = 0
+end_flag = False
+perform_max = 100
 def perform_work():
     global perform_count
+    global perform_max
+    global end_flag
+    if end_flag:
+        time.sleep(0.1)
+        return
+    
+    # 1000回から10,000回の間で乱数のビジーループを実行
+    busy_loop_count = random.randint(1000, 10000)
+    print(f"ビジーループ回数: {busy_loop_count}")
+    for _ in range(busy_loop_count):
+        pass  # ビジーループ (何もしない)
+
     perform_count += 1
     print(f"INFO: {my_asset_name} - Performing work count: {perform_count}")
-    if perform_count > 10:
+    if perform_count > perform_max:
+        end_flag = True
         delete_flag_file(my_asset_name)
         return True
     return False
