@@ -2,7 +2,7 @@
 source ~/myenv/bin/activate  
 
 DELTA_TIME_MSEC=10
-STEP_NUM=1000
+STEP_NUM=10000
 if [ $# -ne 2 ]
 then
     echo "Usage: $0  <multi-num> <max_delay_time_msec>"

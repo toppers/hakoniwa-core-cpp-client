@@ -9,3 +9,5 @@ do
 	done
 done
 
+python calc-result.py
+mv results.csv results/
