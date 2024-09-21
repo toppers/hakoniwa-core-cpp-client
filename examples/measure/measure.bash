@@ -9,6 +9,14 @@ then
     exit 1
 fi
 
+if [ -d ~/myenv/bin/activate ]
+then
+    source ~/myenv/bin/activate
+    PYTHON_BIN=python3.12
+else
+    PYTHON_BIN=python
+fi
+
 MULTI_NUM=${1}
 MAX_DELAY_TIME_MSEC=${2}
 INDEX=${3}
@@ -29,9 +37,9 @@ then
     mkdir ${DIR_NAME}
 fi
 
-python3.12 master.py ${MULTI_NUM} ${DELTA_TIME_MSEC} ${MAX_DELAY_TIME_MSEC} ${STEP_NUM}
+${PYTHON_BIN} master.py ${MULTI_NUM} ${DELTA_TIME_MSEC} ${MAX_DELAY_TIME_MSEC} ${STEP_NUM}
 
 mv asset-*.csv ${DIR_NAME}/
 mv elapse.txt ${DIR_NAME}/
 
-python3.12 graph.py --multi-num ${MULTI_NUM} --type time --csv-dir ${DIR_NAME} --stddev-only
+${PYTHON_BIN} graph.py --multi-num ${MULTI_NUM} --type time --csv-dir ${DIR_NAME} --stddev-only

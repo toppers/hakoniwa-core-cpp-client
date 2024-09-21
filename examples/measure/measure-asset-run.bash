@@ -6,7 +6,13 @@ then
     exit 1
 fi
 
-source ~/myenv/bin/activate
+if [ -d ~/myenv/bin/activate ]
+then
+    source ~/myenv/bin/activate
+    PYTHON_BIN=python3.12
+else
+    PYTHON_BIN=python
+fi
 
 ASSET_NAME=${1}
 CONFIG_PATH=${2}
@@ -14,4 +20,4 @@ DELTA_TIME_MSEC=${3}
 STEP_NUM=${4}
 
 # execを使ってシェルをPythonプロセスに置き換える
-exec python3.12 ./asset_measure.py ${ASSET_NAME} ${CONFIG_PATH} ${DELTA_TIME_MSEC} ${STEP_NUM}
+exec ${PYTHON_BIN} ./asset_measure.py ${ASSET_NAME} ${CONFIG_PATH} ${DELTA_TIME_MSEC} ${STEP_NUM}
