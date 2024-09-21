@@ -8,6 +8,14 @@ else
     ENABLE_HAKO_TIME_MEASURE_FLAG=""
 fi
 
+DEFAULT_HAKO_ASSET_NUM=4
+if [ ! -z "${ASSET_NUM}" ] && [ ${ASSET_NUM} -gt ${DEFAULT_HAKO_ASSET_NUM} ]; then
+    :
+else
+    ASSET_NUM=${DEFAULT_HAKO_ASSET_NUM}
+fi
+echo "ASSET_NUM is ${ASSET_NUM}"
+
 OS_TYPE="posix"
 OS=`uname`
 if [ "$OS" = "Linux" -o "$OS" = "Darwin"  ]
@@ -22,7 +30,7 @@ then
     cd cmake-build
     if [ ${OS_TYPE} = "posix" ]
     then
-        cmake .. $ENABLE_HAKO_TIME_MEASURE_FLAG
+        cmake .. $ENABLE_HAKO_TIME_MEASURE_FLAG -DHAKO_DATA_MAX_ASSET_NUM=${ASSET_NUM}
         make
     else
         cmake ..
