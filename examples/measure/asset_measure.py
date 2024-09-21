@@ -45,7 +45,8 @@ def perform_work():
         return
     
     # 1000回から10,000回の間で乱数のビジーループを実行
-    busy_loop_count = random.randint(1000, 10000)
+    #busy_loop_count = random.randint(1000, 10000)
+    busy_loop_count = 10000
     #print(f"busy loop num: {busy_loop_count}")
     for _ in range(busy_loop_count):
         pass  # ビジーループ (何もしない)

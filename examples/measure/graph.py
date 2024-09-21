@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import argparse
 import os
+import numpy as np
 
 # コマンドライン引数を設定
 parser = argparse.ArgumentParser(description='Measure data plotter')
@@ -13,6 +14,9 @@ args = parser.parse_args()
 
 # グラフの初期化（複数のアセットを同じグラフにプロットするため）
 plt.figure(figsize=(10, 6))
+
+# 標準偏差を記録するリスト
+std_devs = []
 
 for i in range(0, args.multi_num):
     print(f"index: {i}")
@@ -61,18 +65,25 @@ for i in range(0, args.multi_num):
         x_value = core_time
         y_value = core_time - asset_time
         plt.plot(x_value, y_value, label=f'asset-{i}', marker='o')
+        
+        # アセットごとの標準偏差を計算して出力
+        std_dev = np.std(y_value)
+        std_devs.append(std_dev)
+        print(f"Asset-{i} の標準偏差: {std_dev:.4f}")
 
-if args.type == 'phase':
-    plt.xlabel('core-time')
-    plt.ylabel('asset-time')
-elif args.type == 'time':
-    plt.xlabel('core-time')
-    plt.ylabel('core-time - asset-time')
+# 全アセットの標準偏差の平均を計算して出力
+if std_devs:
+    mean_std_dev = np.mean(std_devs)
+    variance_std_dev = np.var(std_devs)  # 標準偏差の分散
+    max_std_dev = np.max(std_devs)
+    min_std_dev = np.min(std_devs)
+    range_std_dev = max_std_dev - min_std_dev  # 最大値と最小値の差
 
-plt.title('hako-time graph')
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
+    print(f"全アセットの標準偏差の平均: {mean_std_dev:.4f}")
+    print(f"全アセットの標準偏差の分散: {variance_std_dev:.4f}")
+    print(f"標準偏差の最大値: {max_std_dev:.4f}")
+    print(f"標準偏差の最小値: {min_std_dev:.4f}")
+    print(f"標準偏差の最大値と最小値の差: {range_std_dev:.4f}")
 
 # すべてのアセットをプロットした後にグラフを表示
 plt.show()
