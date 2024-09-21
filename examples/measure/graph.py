@@ -6,6 +6,9 @@ import os
 # コマンドライン引数を設定
 parser = argparse.ArgumentParser(description='Measure data plotter')
 parser.add_argument('--multi-num', type=int, required=True, help='Index number for the measure file')
+parser.add_argument('--type', choices=['time', 'phase'], required=True, help='Select either "time" or "phase"')
+parser.add_argument('--start', type=int, required=False, default=0, help='Start time for the data')
+parser.add_argument('--duration', type=int, required=False, default=-1, help='Duration for the data')
 args = parser.parse_args()
 
 # グラフの初期化（複数のアセットを同じグラフにプロットするため）
@@ -36,17 +39,36 @@ for i in range(0, args.multi_num):
 
     asset_time = df['asset-time'] / 1000.0
     core_time = df['core-time'] / 1000.0
-    x_value = asset_time
-    y_value = core_time
 
-    if i == 0:
-        plt.plot(x_value, x_value, label=f'base', marker='o')
-    # 各アセットのデータを同じグラフにプロット
-    plt.plot(x_value, y_value, label=f'asset-{i}', marker='o')
+    # startとdurationの範囲にデータをフィルタリング
+    if args.duration > 0:
+        end_time = args.start + args.duration
+        df = df[(core_time >= args.start) & (core_time <= end_time)]
+    else:
+        df = df[core_time >= args.start]
 
-# グラフのラベルやタイトルを設定
-plt.xlabel('core-time')
-plt.ylabel('asset-time')
+    # フィルタ後の core_time, asset_timeを再計算
+    asset_time = df['asset-time'] / 1000.0
+    core_time = df['core-time'] / 1000.0
+
+    if args.type == 'phase':
+        x_value = asset_time
+        y_value = core_time
+        if i == 0:
+            plt.plot(x_value, x_value, label=f'base', marker='o')
+        plt.plot(x_value, y_value, label=f'asset-{i}', marker='o')
+    elif args.type == 'time':
+        x_value = core_time
+        y_value = core_time - asset_time
+        plt.plot(x_value, y_value, label=f'asset-{i}', marker='o')
+
+if args.type == 'phase':
+    plt.xlabel('core-time')
+    plt.ylabel('asset-time')
+elif args.type == 'time':
+    plt.xlabel('core-time')
+    plt.ylabel('core-time - asset-time')
+
 plt.title('hako-time graph')
 plt.legend()
 plt.grid(True)
