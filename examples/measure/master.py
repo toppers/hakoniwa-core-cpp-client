@@ -18,29 +18,29 @@ def create_measure_dir(measure_dir):
         if os.path.isfile(file_path):
             os.remove(file_path)
 
-def start_assets_in_parallel(multi_num, delta_time_usec):
+def start_assets_in_parallel(multi_num, delta_time_usec, step_num):
     global processes
     for inx in range(multi_num):
-        asset_name = f"measure-{inx}"
+        asset_name = f"asset-{inx}"
         config_path = f"./custom.json"  # Assuming a config file for each
         print("INFO: activate proc ", asset_name)
         process = subprocess.Popen(
-            ["/bin/bash", "./measure-asset-run.bash", asset_name, config_path, str(delta_time_usec // 1000)]
+            ["/bin/bash", "./measure-asset-run.bash", asset_name, config_path, str(delta_time_usec // 1000), str(step_num)]
         )
         processes.append(process)
 
 def wait_for_flag_files(multi_num, measure_dir):
-    print("INFO: wait for flag files: measure-<inx>.txt")
+    print("INFO: wait for flag files: asset-<inx>.txt")
     while True:
         time.sleep(1)
-        if all(os.path.exists(os.path.join(measure_dir, f"measure-{inx}.txt")) for inx in range(multi_num)):
+        if all(os.path.exists(os.path.join(measure_dir, f"asset-{inx}.txt")) for inx in range(multi_num)):
             break
 
 def wait_for_completion(multi_num, measure_dir):
     print("INFO: wait for completion")
     while True:
         time.sleep(0.01)
-        if all(not os.path.exists(os.path.join(measure_dir, f"measure-{inx}.txt")) for inx in range(multi_num)):
+        if all(not os.path.exists(os.path.join(measure_dir, f"asset-{inx}.txt")) for inx in range(multi_num)):
             break
 
 def calculate_total_time(start_time):
@@ -62,13 +62,14 @@ def handle_sigint(signal_received, frame):
     sys.exit(0)
 
 def main():
-    if len(sys.argv) != 4:
-        print(f"Usage: {sys.argv[0]} <multi-num> <delta_time_msec> <max_delay_time_msec>")
+    if len(sys.argv) != 5:
+        print(f"Usage: {sys.argv[0]} <multi-num> <delta_time_msec> <max_delay_time_msec> <step_num>")
         return 1
 
     multi_num = int(sys.argv[1])
     delta_time_usec = int(sys.argv[2]) * 1000
     max_delay_time_usec = int(sys.argv[3]) * 1000
+    step_num = int(sys.argv[4])
 
     # Set up SIGINT handler
     signal.signal(signal.SIGINT, handle_sigint)
@@ -81,7 +82,7 @@ def main():
     create_measure_dir(measure_dir)
 
     # Start asset_measure.py in parallel
-    start_assets_in_parallel(multi_num, delta_time_usec)
+    start_assets_in_parallel(multi_num, delta_time_usec, step_num)
 
     # Wait for flag file generation
     wait_for_flag_files(multi_num, measure_dir)

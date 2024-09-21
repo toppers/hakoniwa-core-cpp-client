@@ -46,7 +46,7 @@ def perform_work():
     
     # 1000回から10,000回の間で乱数のビジーループを実行
     busy_loop_count = random.randint(1000, 10000)
-    print(f"ビジーループ回数: {busy_loop_count}")
+    #print(f"busy loop num: {busy_loop_count}")
     for _ in range(busy_loop_count):
         pass  # ビジーループ (何もしない)
 
@@ -66,13 +66,17 @@ my_callback = {
 }
 
 def main():
-    if len(sys.argv) != 4:
-        print(f"Usage: {sys.argv[0]} <asset_name> <config_path> <delta_time_msec>")
+    if len(sys.argv) != 5:
+        print(f"Usage: {sys.argv[0]} <asset_name> <config_path> <delta_time_msec> <step_num>")
         return 1
     global my_asset_name
+    global perform_max
     asset_name = sys.argv[1]
     config_path = sys.argv[2]
     delta_time_usec = int(sys.argv[3]) * 1000
+    step_num = int(sys.argv[4])
+
+    perform_max = step_num
 
     my_asset_name = asset_name
     # フラグファイルの作成

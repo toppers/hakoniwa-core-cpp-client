@@ -13,7 +13,7 @@ plt.figure(figsize=(10, 6))
 
 for i in range(0, args.multi_num):
     print(f"index: {i}")
-    file_pattern = f"measure-{i}-measure.csv"
+    file_pattern = f"asset-{i}-measure.csv"
     csv_file = os.path.join(os.getcwd(), file_pattern)
 
     # ファイルの存在確認
