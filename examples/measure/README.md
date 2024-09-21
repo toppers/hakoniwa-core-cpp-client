@@ -146,8 +146,107 @@
 
 # 環境構築手順
 
-TODO
+以下を実施してください。
+
+```
+cd hakoniwa-core-cpp-client
+bash build.bash clean
+export ENABLE_HAKO_TIME_MEASURE=ON
+export ASSET_NUM=10
+bash build.bash
+bash install.bash
+```
 
 # 測定手順
 
-TODO
+以下を実行するだけです。
+
+```
+cd hakoniwa-core-cpp-client/examples/measure
+bash run.bash
+python calc-final-results.py 
+```
+
+測定結果は、以下の容量で格納されます。
+
+```tree
+results
+├── <サンプル番号>
+│   ├── result-m<アセット数>-d<最大許容遅延時間>
+│   ├── asset-<アセット番号>-measure.csv
+│   │   ├── elapse.txt
+│   │   └── stddev.txt
+```
+ 
+- サンプル番号：0-9
+- アセット数：評価項目に従う
+- アセット番号：0からの連番
+- asset-<アセット番号>-measure.csv
+  - real-time, core-time, asset-timeのデータが格納されます。
+  - real-time: リアル時間
+  - core-time: 箱庭時刻(usec)
+  - asset-time: 箱庭アセット時刻(usec)
+- elapse.txt: 処理時間（リアル時間）
+- stddev.txt: 箱庭コア時刻-箱庭アセット時刻の標準偏差
+
+## 基準1 のチェック方法
+
+```
+bash check-time.bash | tee log.txt
+grep NG log.txt
+```
+
+NGが出力されなければOK。
+
+## 基準2のデータ
+
+以下に配置されています。
+
+```
+ls ./final_results.csv 
+./final_results.csv
+```
+
+## 基準2のグラフ化方法
+
+### 箱庭アセット数×総処理時間
+
+```
+python plot-final-results.py --csv-file final_results.csv --plot-type elapse-vs-multi
+```
+
+### 箱庭アセット数×遅延時間の標準偏差
+
+```
+python plot-final-results.py --csv-file final_results.csv --plot-type stddev-vs-multi
+```
+
+### アセット数10の時の総処理時間x遅延時間の標準偏差
+
+```
+python plot-final-results.py --csv-file final_results.csv --plot-type stddev-vs-elapse --multi-num 10
+```
+
+
+### 各種ツールの役割
+
+* ./run.bash
+  * 全体の評価を実行するスクリプト
+* ./calc-final-results.py
+  * 基準2の結果を出力するスクリプト
+  * ./calc-result.py
+    * 最終結果をための準備スクリプト
+* ./check-time.bash
+  * 基準1をチェックするスクリプト
+  * ./check-time-diff.py
+    * 各CSVファイルをチェックします
+* ./plot-final-results.py
+  * 基準2をグラフ化するスクリプト
+* ./measure.bash
+  * ./master.py
+  * ./measure-asset-run.bash
+  * ./asset_measure.py
+* ./graph.py
+  * 個々のCSVファイルをグラフ化してくれます。詳細を理解したい場合に使います。
+* ./plot-results.py
+  * 平均化前の個別のデータをグラフ化してくれます。
