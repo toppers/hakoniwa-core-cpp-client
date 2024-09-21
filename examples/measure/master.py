@@ -61,6 +61,11 @@ def handle_sigint(signal_received, frame):
     print("INFO: All processes terminated.")
     sys.exit(0)
 
+def write_total_time_to_file(total_time, filename="elapse.txt"):
+    with open(filename, 'w') as f:
+        f.write(f"{total_time:.2f}\n")
+    print(f"INFO: Total processing time written to {filename}")
+
 def main():
     if len(sys.argv) != 5:
         print(f"Usage: {sys.argv[0]} <multi-num> <delta_time_msec> <max_delay_time_msec> <step_num>")
@@ -97,6 +102,9 @@ def main():
     # Calculate and print total time
     total_time = calculate_total_time(start_time)
     print(f"Total processing time: {total_time:.2f} seconds")
+
+    # Write total time to elapse.txt
+    write_total_time_to_file(total_time)
 
     # Stop hako-cmd 
     subprocess.run(["hako-cmd", "stop"])
