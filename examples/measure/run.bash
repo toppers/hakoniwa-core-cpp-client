@@ -1,4 +1,5 @@
 #!/bin/bash
+SAMPLE_NUM=10
 
 function do_test()
 {
@@ -18,7 +19,8 @@ function do_test()
 	python calc-result.py --index ${index}
 }
 
-for index in 0 1
+# ループの回数を SAMPLE_NUM で制御
+for index in $(seq 0 $(($SAMPLE_NUM - 1)))
 do
-	do_test ${index}
+    do_test ${index}
 done
