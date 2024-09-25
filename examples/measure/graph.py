@@ -65,6 +65,8 @@ for i in range(0, args.multi_num):
         if i == 0:
             plt.plot(x_value, x_value, label=f'base', marker='o')
         plt.plot(x_value, y_value, label=f'asset-{i}', marker='o')
+        plt.xlabel('Asset Time')  # x軸のラベル
+        plt.ylabel('Core Time')   # y軸のラベル
     elif args.type == 'time':
         x_value = core_time
         y_value = core_time - asset_time
