@@ -1,4 +1,7 @@
-(Version 3.2) https://github.com/toppers/hakoniwa-px4sim/issues/340 , issue #69 箱庭時刻同期の数学的証明より移動
+# 変更履歴
+
+- (Version 3.1) https://github.com/toppers/hakoniwa-px4sim/issues/340 , issue #69 箱庭時刻同期の数学的証明より移動
+- (Version 3.2) https://github.com/toppers/hakoniwa-core-cpp-client/issues/69#issue-2541993494 より移動
 
 #   概要
 
