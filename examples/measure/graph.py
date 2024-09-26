@@ -62,9 +62,10 @@ for i in range(0, args.multi_num):
     if args.type == 'phase' and not args.stddev_only:
         x_value = asset_time
         y_value = core_time
-        if i == 0:
-            plt.plot(x_value, x_value, label=f'base', marker='o')
         plt.plot(x_value, y_value, label=f'asset-{i}', marker='o')
+        if i == args.multi_num - 1:
+            print(f'{args.start} {end_time}')
+            plt.plot([args.start, end_time], [args.start, end_time], label='base', color='red', linestyle='--', linewidth=2)
         plt.xlabel('Asset Time')  # x軸のラベル
         plt.ylabel('Core Time')   # y軸のラベル
     elif args.type == 'time':
