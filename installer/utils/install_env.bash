@@ -15,7 +15,7 @@ mkdir -p ${ROOT_DIR}/usr/local/include/hakoniwa
 mkdir -p ${ROOT_DIR}/usr/local/lib/hakoniwa/hako_binary
 mkdir -p ${ROOT_DIR}/usr/local/lib/hakoniwa/py
 mkdir -p ${ROOT_DIR}/usr/local/lib/hakoniwa/py/hako_binary
-mkdir -p ${ROOT_DIR}/examples
+mkdir -p examples
 
 # hakoniwa-ros2pduのクローン
 git clone https://github.com/toppers/hakoniwa-ros2pdu.git
