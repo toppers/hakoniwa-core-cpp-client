@@ -26,7 +26,12 @@ add_to_setup() {
 rm -f setup.bash
 
 # 環境変数を.setupに追加 (すでに存在しない場合のみ)
-add_to_setup "LD_LIBRARY_PATH" "${LD_LIBRARY_PATH_VAR}:\$LD_LIBRARY_PATH"
+if [ ${OS_TYPE} = "linux" ]
+then
+    add_to_setup "LD_LIBRARY_PATH" "${LD_LIBRARY_PATH_VAR}:\$LD_LIBRARY_PATH"
+else
+    add_to_setup "DYLD_LIBRARY_PATH" "${LD_LIBRARY_PATH_VAR}:\$DYLD_LIBRARY_PATH"
+fi
 add_to_setup "PATH" "${PATH_VAR}:\$PATH"
 add_to_setup "PYTHONPATH" "${PYTHONPATH_VAR}:\$PYTHONPATH"
 add_to_setup "BIN_PATH" "${BIN_PATH_VAR}"

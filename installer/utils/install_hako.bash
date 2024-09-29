@@ -17,7 +17,7 @@ cp ${HAKO_CORE_BUILD_DIR}/src/hakoc/libshakoc.* ${ROOT_DIR}/usr/local/lib/hakoni
 cp ${HAKO_CORE_BUILD_DIR}/src/hakoc/libshakoc.* ${ROOT_DIR}/usr/local/lib/hakoniwa/hakoc.so
 cp ${HAKO_CORE_BUILD_DIR}/src/assets/libassets.* ${ROOT_DIR}/usr/local/lib/hakoniwa/
 cp ${HAKO_CORE_BUILD_DIR}/src/conductor/libconductor.* ${ROOT_DIR}/usr/local/lib/hakoniwa/
-cp ${HAKO_CORE_BUILD_DIR}/bindings/python/libhako_asset_python.so ${ROOT_DIR}/usr/local/lib/hakoniwa/py/hakopy.so
+cp ${HAKO_CORE_BUILD_DIR}/bindings/python/libhako_asset_python.${SHARELIB_EXT} ${ROOT_DIR}/usr/local/lib/hakoniwa/py/hakopy.so
 
 cp ${HAKONIWA_REPO_PATH}/src/include/*.h ${ROOT_DIR}/usr/local/include/hakoniwa/
 cp -rp ${HAKONIWA_REPO_PATH}/bindings/python/hako_binary/offset ${ROOT_DIR}/usr/local/lib/hakoniwa/hako_binary/

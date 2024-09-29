@@ -2,9 +2,11 @@
 
 if [ `uname` = "Darwin" ]
 then
-    OS_TYPE="mac"
+    export OS_TYPE="mac"
+    export SHARELIB_EXT="dylib"
 else
-    OS_TYPE="linux"
+    export OS_TYPE="linux"
+    export SHARELIB_EXT="so"
 fi
 
 script_path=$(realpath "$0")
@@ -26,19 +28,19 @@ export HAKONIWA_REPO_PATH=$(realpath "${DIR_PATH}/..")
 CURR_DIR=`pwd`
 export ROOT_DIR=${CURR_DIR}/root
 
-bash ${UTILS_PATH}/install_env.bash
+bash ${DIR_PATH}/utils/install_env.bash
 if [ $? -ne 0 ]
 then
     echo "ERROR: instal_env.bash error"
     exit 1
 fi
-bash ${UTILS_PATH}/build_hako.bash
+bash ${DIR_PATH}/utils/build_hako.bash
 if [ $? -ne 0 ]
 then
     echo "ERROR: build_hako.bash error"
     exit 1
 fi
-bash ${UTILS_PATH}/install_hako.bash
+bash ${DIR_PATH}/utils/install_hako.bash
 if [ $? -ne 0 ]
 then
     echo "ERROR: instal_hako.bash error"
@@ -49,8 +51,8 @@ fi
 
 export default_core_mmap_path=${ROOT_DIR}/var/lib/hakoniwa/mmap
 export config_file=${ROOT_DIR}/etc/hakoniwa/cpp_core_config.json
-bash ${UTILS_PATH}/hako-mmap-set.bash -p ${ROOT_DIR}/var/lib/hakoniwa/mmap
+bash ${DIR_PATH}/utils/hako-mmap-set.bash -p ${ROOT_DIR}/var/lib/hakoniwa/mmap
 
-bash ${UTILS_PATH}/create_setup.bash
+bash ${DIR_PATH}/utils/create_setup.bash
 
 cp ${DIR_PATH}/common/* .

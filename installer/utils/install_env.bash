@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ $OS_TYPE = "linux" ]
+then
+  ${SUDO} apt update
+fi
+
 # root ディレクトリ作成 (存在する場合は作成しない)
 mkdir -p ${ROOT_DIR}/etc/hakoniwa 
 mkdir -p ${ROOT_DIR}/var/lib/hakoniwa/mmap
@@ -10,7 +15,7 @@ mkdir -p ${ROOT_DIR}/usr/local/include/hakoniwa
 mkdir -p ${ROOT_DIR}/usr/local/lib/hakoniwa/hako_binary
 mkdir -p ${ROOT_DIR}/usr/local/lib/hakoniwa/py
 mkdir -p ${ROOT_DIR}/usr/local/lib/hakoniwa/py/hako_binary
-mkdir -p examples
+mkdir -p ${ROOT_DIR}/examples
 
 # hakoniwa-ros2pduのクローン
 git clone https://github.com/toppers/hakoniwa-ros2pdu.git
@@ -26,17 +31,7 @@ else
   exit 1
 fi
 
-
-# Google Test のインストール (失敗時はエラーメッセージ表示)
-if ! brew install googletest; then
-  echo "Failed to install Google Test."
-  exit 1
-fi
-
-# jq のインストール (失敗時はエラーメッセージ表示)
-if ! brew install jq; then
-  echo "Failed to install jq."
-  exit 1
-fi
+bash ${HAKONIWA_REPO_PATH}/installer/${OS_TYPE}/install_env.bash
 
 pip3 install -r ${HAKONIWA_REPO_PATH}/bindings/python/requirements.txt
+
