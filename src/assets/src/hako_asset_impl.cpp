@@ -2,6 +2,9 @@
 #ifdef WIN32
 #else
 #include <unistd.h>
+#ifdef ENABLE_HAKO_TIME_MEASURE
+#include "hako_asset_impl_measure.hpp"
+#endif /* ENABLE_HAKO_TIME_MEASURE */
 #endif
 
 HakoAssetType hako_asset_instance;
@@ -151,6 +154,11 @@ bool hako_asset_impl_init(const char* asset_name, const char* config_path, hako_
             }            
         }
     }
+#ifdef ENABLE_HAKO_TIME_MEASURE
+    //create buffer
+    hako_asset_instance.measure_vp = hako_asset_impl_measure_create_csv(asset_name);
+    HAKO_IMPL_ASSERT(hako_asset_instance.measure_vp != nullptr);
+#endif /* ENABLE_HAKO_TIME_MEASURE */
     hako_asset_instance.is_initialized = true;
     return true;
 }
@@ -319,6 +327,10 @@ static bool hako_asset_impl_execute(void)
     }
     hako_asset_instance.current_usec += hako_asset_instance.delta_usec;
     //std::cout << "# current_usec = " << hako_asset_instance.current_usec << std::endl;
+#ifdef ENABLE_HAKO_TIME_MEASURE
+    //write csv
+    hako_asset_impl_measure_write_csv(hako_asset_instance.measure_vp, world_time, hako_asset_instance.current_usec);
+#endif /* ENABLE_HAKO_TIME_MEASURE */
     return true;
 }
 static void hako_asset_impl_pdus_write_done(void)
@@ -345,6 +357,10 @@ static bool hako_asset_impl_proc(void)
     while (hako_asset_impl_execute() == false) {
         HakoSimulationStateType curr = hako_asset_instance.hako_sim->state();
         if (curr != HakoSim_Running) {
+#ifdef ENABLE_HAKO_TIME_MEASURE
+            //close file
+            hako_asset_impl_measure_flush_csv(hako_asset_instance.measure_vp);
+#endif /* ENABLE_HAKO_TIME_MEASURE */
             std::cout << "WAIT STOP" << std::endl;
             auto ret = hako_asset_impl_wait_event(HakoSimAssetEvent_Stop);
             HAKO_ASSET_ASSERT(ret == true);

@@ -16,6 +16,9 @@ include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz DOWNLOAD_EXTRACT_TIMESTAMP true)
 FetchContent_MakeAvailable(json)
 
+
+
+
 if(WIN32)
 add_library(
     assets STATIC
@@ -23,11 +26,21 @@ add_library(
     src/hako_asset_impl.cpp
 )
 else()
-add_library(
-    assets SHARED
-    src/hako_asset.cpp
-    src/hako_asset_impl.cpp
-)
+    # ENABLE_HAKO_TIME_MEASURE のオプションに基づいて、条件付きで src/hako_asset_impl_measure.cpp を追加
+    if(ENABLE_HAKO_TIME_MEASURE)
+        add_library(
+            assets SHARED
+            src/hako_asset.cpp
+            src/hako_asset_impl.cpp
+            src/hako_asset_impl_measure.cpp # 計測機能が有効な場合にビルド
+        )
+    else()
+        add_library(
+            assets SHARED
+            src/hako_asset.cpp
+            src/hako_asset_impl.cpp
+        )
+    endif()
 endif()
 
 target_link_libraries(

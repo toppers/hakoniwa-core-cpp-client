@@ -20,8 +20,8 @@ include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz DOWNLOAD_EXTRACT_TIMESTAMP true)
 FetchContent_MakeAvailable(json)
 
-add_library(
-    shakoc SHARED
+# ベースとなるソースファイルリスト
+set(SHARED_SRC
     src/hako_capi.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/hako_impl.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/hako_asset_impl.cpp
@@ -29,19 +29,24 @@ add_library(
     ${HAKO_CORE_SOURCE_DIR}/src/hako/hako_master_impl.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/core/simulation/time/hako_time.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/core/rpc/hako_internal_rpc.cpp
-
-    #for filelock && mmap
     ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/hako_sem_flock.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/hako_shared_memory_mmap.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/${OS_TYPE}/hako_mmap.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/${OS_TYPE}/hako_flock.cpp
-    
-    #for sem && shared memory
     ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/hako_shared_memory_factory.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_share/impl/${OS_TYPE}/os_file_io.cpp
-
     ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_string.cpp
     ${HAKO_CORE_SOURCE_DIR}/src/hako/utils/hako_logger.cpp
+)
+
+# ENABLE_HAKO_TIME_MEASURE が有効な場合、追加する
+if(ENABLE_HAKO_TIME_MEASURE)
+    list(APPEND SHARED_SRC ${HAKO_MEASURE_SRC_DIR}/hako_asset_impl_measure.cpp)
+endif()
+
+add_library(
+    shakoc SHARED
+    ${SHARED_SRC}
 )
 # POSIX特有のファイルをWIN32ではない場合にのみ追加
 if(NOT WIN32)
@@ -90,6 +95,12 @@ target_include_directories(
     PRIVATE ${HAKO_CORE_SOURCE_DIR}/src/hako
     PRIVATE ${nlohmann_json_SOURCE_DIR}/single_include
 )
+if(ENABLE_HAKO_TIME_MEASURE)
+target_include_directories(
+    shakoc
+    PRIVATE ${HAKO_MEASURE_SRC_DIR}
+)
+endif()
 
 target_include_directories(
     hakoarun

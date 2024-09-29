@@ -2,6 +2,10 @@
 #include "hako_capi.h"
 #include <fstream>
 #include <iostream>
+#ifdef ENABLE_HAKO_TIME_MEASURE
+#include "hako_asset_impl_measure.hpp"
+static void* hako_measure_vp;
+#endif /* ENABLE_HAKO_TIME_MEASURE */
 
 static std::shared_ptr<hako::IHakoMasterController>  hako_master;
 static std::shared_ptr<hako::IHakoSimulationEventController>  hako_simevent;
@@ -98,6 +102,10 @@ bool hako_asset_init()
 bool hako_asset_register(const char* name, hako_asset_callback_t *callbacks)
 {
     try {
+#ifdef ENABLE_HAKO_TIME_MEASURE
+        hako_measure_vp = hako_asset_impl_measure_create_csv((const char*)name);
+        HAKO_IMPL_ASSERT(hako_measure_vp != nullptr);
+#endif /* ENABLE_HAKO_TIME_MEASURE */
         std::string asset_name(name);
         if (callbacks != nullptr) {
             AssetCallbackType cbk;
@@ -144,6 +152,11 @@ bool hako_asset_unregister(const char* name)
 void hako_asset_notify_simtime(const char* name, hako_time_t simtime)
 {
     try {
+#ifdef ENABLE_HAKO_TIME_MEASURE
+        hako_asset_impl_measure_write_csv(hako_measure_vp, 
+            (long long int)hako_asset_get_worldtime(), 
+            (long long int)simtime);
+#endif /* ENABLE_HAKO_TIME_MEASURE */
         std::string asset_name(name);
         hako_asset->notify_simtime(asset_name, (HakoTimeType)simtime);
     }
@@ -178,6 +191,9 @@ bool hako_asset_start_feedback(const char* asset_name, bool isOk)
 bool hako_asset_stop_feedback(const char* asset_name, bool isOk)
 {
     try {
+#ifdef ENABLE_HAKO_TIME_MEASURE
+        hako_asset_impl_measure_flush_csv(hako_measure_vp);
+#endif /* ENABLE_HAKO_TIME_MEASURE */
         std::string hako_asset_name(asset_name);
         return hako_asset->stop_feedback(hako_asset_name, isOk);
     } catch (std::exception *) {
