@@ -30,18 +30,34 @@ else()
     include(../default-cmake-options.cmake)
 endif()
 
-if(DEFINED ENV{DYLD_LIBRARY_PATH})
-    # DYLD_LIBRARY_PATHを分割
-    string(REPLACE ":" ";" DYLD_LIBRARY_PATH_LIST $ENV{DYLD_LIBRARY_PATH})
-    
-    # 各パスをリンクディレクトリに追加
-    foreach(LIB_PATH IN LISTS DYLD_LIBRARY_PATH_LIST)
-        link_directories(${LIB_PATH})
-        message(STATUS "Linking to: ${LIB_PATH}")
-    endforeach()
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    # macOS (Darwin) の場合
+    if(DEFINED ENV{DYLD_LIBRARY_PATH})
+        # DYLD_LIBRARY_PATHを分割
+        string(REPLACE ":" ";" LIBRARY_PATH_LIST $ENV{DYLD_LIBRARY_PATH})
+        foreach(LIB_PATH IN LISTS LIBRARY_PATH_LIST)
+            link_directories(${LIB_PATH})
+            message(STATUS "Linking to: ${LIB_PATH} on macOS")
+        endforeach()
+    else()
+        message(STATUS "DYLD_LIBRARY_PATH is not defined on macOS")
+    endif()
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    # Linuxの場合
+    if(DEFINED ENV{LD_LIBRARY_PATH})
+        # LD_LIBRARY_PATHを分割
+        string(REPLACE ":" ";" LIBRARY_PATH_LIST $ENV{LD_LIBRARY_PATH})
+        foreach(LIB_PATH IN LISTS LIBRARY_PATH_LIST)
+            link_directories(${LIB_PATH})
+            message(STATUS "Linking to: ${LIB_PATH} on Linux")
+        endforeach()
+    else()
+        message(STATUS "LD_LIBRARY_PATH is not defined on Linux")
+    endif()
 else()
-    message(STATUS "DYLD_LIBRARY_PATH is not defined")
+    message(STATUS "Unsupported OS: ${CMAKE_SYSTEM_NAME}")
 endif()
+
 
 message(STATUS "BUILD_TYPE" ${BUILD_TYPE})
 message(STATUS "GCOV" ${GCOV})
