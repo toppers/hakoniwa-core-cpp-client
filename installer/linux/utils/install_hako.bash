@@ -31,4 +31,4 @@ chmod -R 755 ${ROOT_DIR}/var/lib/hakoniwa
 cp -rp hakoniwa-ros2pdu/pdu/offset  ${ROOT_DIR}/usr/local/lib/hakoniwa/hako_binary/
 
 # install drone_api
-cp -rp ${HAKONIWA_REPO_PATH}/examples/* ${ROOT_DIR}/examples/
+cp -rp ${HAKONIWA_REPO_PATH}/examples/* ${CURR_DIR}/examples/

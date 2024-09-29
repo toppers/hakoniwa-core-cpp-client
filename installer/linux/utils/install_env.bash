@@ -62,5 +62,5 @@ if ! ${SUDO} apt install -y cmake; then
   exit 1
 fi
 
-pip3 install -r ${HAKONIWA_REPO_PATH}/requirements.txt
+pip3 install -r ${HAKONIWA_REPO_PATH}/bindings/python/requirements.txt
 

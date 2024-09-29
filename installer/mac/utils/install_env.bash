@@ -1,7 +1,5 @@
 #!/bin/bash
 
-${SUDO} apt update
-
 # root ディレクトリ作成 (存在する場合は作成しない)
 mkdir -p ${ROOT_DIR}/etc/hakoniwa 
 mkdir -p ${ROOT_DIR}/var/lib/hakoniwa/mmap
@@ -12,7 +10,7 @@ mkdir -p ${ROOT_DIR}/usr/local/include/hakoniwa
 mkdir -p ${ROOT_DIR}/usr/local/lib/hakoniwa/hako_binary
 mkdir -p ${ROOT_DIR}/usr/local/lib/hakoniwa/py
 mkdir -p ${ROOT_DIR}/usr/local/lib/hakoniwa/py/hako_binary
-mkdir -p ${ROOT_DIR}/examples
+mkdir -p examples
 
 # hakoniwa-ros2pduのクローン
 git clone https://github.com/toppers/hakoniwa-ros2pdu.git
@@ -41,4 +39,4 @@ if ! brew install jq; then
   exit 1
 fi
 
-pip3 install -r ${HAKONIWA_REPO_PATH}/requirements.txt
+pip3 install -r ${HAKONIWA_REPO_PATH}/bindings/python/requirements.txt

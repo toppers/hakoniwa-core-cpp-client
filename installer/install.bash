@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ `uname` = "Darwin" ]
+then
+    OS_TYPE="mac"
+else
+    OS_TYPE="linux"
+fi
+
 script_path=$(realpath "$0")
 echo "Script path: $script_path"
 
@@ -12,8 +19,8 @@ else
 fi
 
 DIR_PATH=`(cd "$(dirname $script_path)" && pwd)`
-UTILS_PATH=${DIR_PATH}/utils
-export HAKONIWA_REPO_PATH=$(realpath "${DIR_PATH}/../..")
+UTILS_PATH=${DIR_PATH}/${OS_TYPE}/utils
+export HAKONIWA_REPO_PATH=$(realpath "${DIR_PATH}/..")
 
 # ROOT_DIR ディレクトリは好みで変えてください
 CURR_DIR=`pwd`
@@ -38,7 +45,7 @@ then
     exit 1
 fi
 
-cp -rp ${DIR_PATH}/config/* ${ROOT_DIR}/var/lib/hakoniwa/config/
+#cp -rp ${DIR_PATH}/config/* ${ROOT_DIR}/var/lib/hakoniwa/config/
 
 export default_core_mmap_path=${ROOT_DIR}/var/lib/hakoniwa/mmap
 export config_file=${ROOT_DIR}/etc/hakoniwa/cpp_core_config.json
@@ -46,3 +53,4 @@ bash ${UTILS_PATH}/hako-mmap-set.bash -p ${ROOT_DIR}/var/lib/hakoniwa/mmap
 
 bash ${UTILS_PATH}/create_setup.bash
 
+cp ${DIR_PATH}/common/* .
