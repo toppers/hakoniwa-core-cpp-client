@@ -27,9 +27,10 @@ if os.path.isdir(index_folder_path):
                 multi_num = parts[1][1:]  # 'm' の後の数値を取得
                 max_delay = parts[2][1:]  # 'd' の後の数値を取得
 
-                # elapse.txt と stddev.txt のファイルパス
+                # elapse.txt, stddev.txt, mean.txt のファイルパス
                 elapse_file = os.path.join(folder_path, 'elapse.txt')
                 stddev_file = os.path.join(folder_path, 'stddev.txt')
+                mean_file = os.path.join(folder_path, 'mean.txt')
 
                 # elapse.txt の内容を読み取る
                 if os.path.exists(elapse_file):
@@ -45,15 +46,22 @@ if os.path.isdir(index_folder_path):
                 else:
                     stddev_content = 'N/A'
 
+                # mean.txt の内容を読み取る
+                if os.path.exists(mean_file):
+                    with open(mean_file, 'r') as mf:
+                        mean_content = mf.read().strip()
+                else:
+                    mean_content = 'N/A'
+
                 # 結果をリストに追加
-                results.append([max_delay, multi_num, elapse_content, stddev_content])
+                results.append([max_delay, multi_num, elapse_content, stddev_content, mean_content])
 
 # CSVファイルとして保存
 csv_file = f'results/{args.index}/results.csv'
 with open(csv_file, mode='w', newline='') as file:
     writer = csv.writer(file)
     # ヘッダーを書き込む
-    writer.writerow(['max-delay', 'multi-num', 'elapse', 'stddev'])
+    writer.writerow(['max-delay', 'multi-num', 'elapse', 'stddev', 'mean'])
     # データを書き込む
     writer.writerows(results)
 

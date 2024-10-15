@@ -22,12 +22,14 @@ for index_folder in os.listdir(base_dir):
 # 全ての index ディレクトリからのデータを1つに統合
 combined_df = pd.concat(all_data, ignore_index=True)
 
-# max-delay と multi-num ごとにグループ化し、elapse と stddev の平均と標準偏差を計算
+# max-delay と multi-num ごとにグループ化し、elapse, stddev, mean の平均と標準偏差を計算
 grouped = combined_df.groupby(['max-delay', 'multi-num']).agg(
     elapse_mean=('elapse', 'mean'),
     elapse_std=('elapse', 'std'),
     stddev_mean=('stddev', 'mean'),
-    stddev_std=('stddev', 'std')
+    stddev_std=('stddev', 'std'),
+    mean_mean=('mean', 'mean'),
+    mean_std=('mean', 'std')
 ).reset_index()
 
 # 結果を CSV ファイルに保存
