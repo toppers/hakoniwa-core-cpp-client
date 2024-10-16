@@ -29,6 +29,12 @@ else()
     include(default-cmake-options.cmake)
 endif()
 
+if(APPLE AND CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
+    set(CMAKE_OSX_ARCHITECTURES "arm64")
+endif()
+message(STATUS "CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "CMAKE_OSX_ARCHITECTURES: ${CMAKE_OSX_ARCHITECTURES}")
+
 message(STATUS "BUILD_TYPE" ${BUILD_TYPE})
 message(STATUS "GCOV" ${GCOV})
 

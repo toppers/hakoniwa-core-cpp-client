@@ -6,7 +6,7 @@ HAKONIWA_DIR=""
 if [ "$OS" = "Linux" -o "$OS" = "Darwin"  ]
 then
 	SUDO=
-	which sudo
+	which sudo > /dev/null
 	if [ $? -eq 0 ]
 	then
 		SUDO=sudo
