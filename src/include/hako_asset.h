@@ -16,7 +16,7 @@ struct hako_asset_callbacks_s {
     int (*on_manual_timing_control)(hako_asset_context_t*);
     int (*on_reset)(hako_asset_context_t*);
 };
-#define HAKO_ASSET_MIN_DELTA_TIME_USEC  1000
+#define HAKO_ASSET_MIN_DELTA_TIME_USEC  1
 typedef enum {
     HAKO_ASSET_MODEL_PLANT = 0,
     HAKO_ASSET_MODEL_CONTROLLER
