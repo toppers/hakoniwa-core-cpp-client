@@ -5,7 +5,7 @@ import argparse
 # コマンドライン引数を設定
 parser = argparse.ArgumentParser(description='Plot final results data')
 parser.add_argument('--csv-file', type=str, required=True, help='Path to the CSV file containing the final results data')
-parser.add_argument('--plot-type', choices=['elapse-vs-multi', 'stddev-vs-multi', 'stddev-vs-elapse'], required=True, help='Type of plot to generate')
+parser.add_argument('--plot-type', choices=['elapse-vs-multi', 'stddev-vs-multi', 'stddev-vs-elapse', 'mean-vs-multi'], required=True, help='Type of plot to generate')
 parser.add_argument('--multi-num', type=int, help='Specify the multi-num (only for stddev-vs-elapse plot)')
 args = parser.parse_args()
 
@@ -19,6 +19,8 @@ df['elapse_mean'] = df['elapse_mean'].astype(float)
 df['elapse_std'] = df['elapse_std'].astype(float)
 df['stddev_mean'] = df['stddev_mean'].astype(float)
 df['stddev_std'] = df['stddev_std'].astype(float)
+df['mean_mean'] = df['mean_mean'].astype(float)
+df['mean_std'] = df['mean_std'].astype(float)
 
 # 1. 横軸：multi-num、縦軸：elapse_meanとして、max-delay毎に重ねて表示
 if args.plot_type == 'elapse-vs-multi':
@@ -61,6 +63,19 @@ elif args.plot_type == 'stddev-vs-elapse':
     plt.xlabel('elapse mean (± std)')
     plt.ylabel('stddev mean (± std)')
     plt.title(f'Stddev Mean vs Elapse Mean for multi-num={args.multi_num}' if args.multi_num is not None else 'Stddev Mean vs Elapse Mean for different max-delay values')
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+
+# 4. 横軸：multi-num、縦軸：mean_meanとして、max-delay毎に重ねて表示
+elif args.plot_type == 'mean-vs-multi':
+    plt.figure(figsize=(10, 6))
+    for delay in sorted(df['max-delay'].unique()):
+        subset = df[df['max-delay'] == delay].sort_values(by='multi-num')  # multi-numでソート
+        plt.errorbar(subset['multi-num'], subset['mean_mean'], yerr=subset['mean_std'], marker='o', label=f'max-delay={delay}')
+    plt.xlabel('multi-num')
+    plt.ylabel('mean (± std)')
+    plt.title('Mean vs Multi-num with Stddev for different max-delay values')
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
