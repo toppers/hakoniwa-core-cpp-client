@@ -9,6 +9,22 @@ if( ${CMAKE_VERSION} LESS 3.12 )
     include_directories(${Python_INCLUDE_DIRS})
     set(HAKO_PYTHON_LIBS ${PYTHON_LIBRARIES})
 else()
+    # check pyenv
+    execute_process(
+        COMMAND pyenv which python
+        RESULT_VARIABLE PYENV_FOUND
+        OUTPUT_VARIABLE PYENV_PYTHON_PATH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    message(STATUS "PYENV_FOUND:${PYENV_FOUND}")
+
+    if(PYENV_FOUND EQUAL 0)
+        # if pyenv found, use pyenv python
+        set(Python_EXECUTABLE ${PYENV_PYTHON_PATH})
+        set(Python_ROOT_DIR ${PYENV_PYTHON_PATH})
+    endif()
+
     find_package(Python COMPONENTS Interpreter Development)
     include_directories(${Python_INCLUDE_DIRS})
     set(HAKO_PYTHON_LIBS ${Python_LIBRARIES})
