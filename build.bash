@@ -8,6 +8,9 @@ else
     ENABLE_HAKO_TIME_MEASURE_FLAG=""
 fi
 
+# C_FLAGS と CXX_FLAGS に -m32 オプションを追加
+# BUILD_C_FLAGS="-DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32"
+
 DEFAULT_HAKO_ASSET_NUM=4
 if [ ! -z "${ASSET_NUM}" ] && [ ${ASSET_NUM} -gt ${DEFAULT_HAKO_ASSET_NUM} ]; then
     :
@@ -30,7 +33,7 @@ then
     cd cmake-build
     if [ ${OS_TYPE} = "posix" ]
     then
-        cmake .. $ENABLE_HAKO_TIME_MEASURE_FLAG -DHAKO_DATA_MAX_ASSET_NUM=${ASSET_NUM}
+        cmake .. $ENABLE_HAKO_TIME_MEASURE_FLAG -DHAKO_DATA_MAX_ASSET_NUM=${ASSET_NUM} $BUILD_C_FLAGS
         make
     else
         cmake ..
