@@ -64,6 +64,7 @@ ${SUDO} cp -rp py ${INSTALL_DIR}/lib/hakoniwa/
 if [ ${OS_TYPE} = "posix" ]
 then
 	${SUDO} cp cmake-build/src/proxy/hako-proxy /usr/local/bin/hakoniwa/
+	# Comment out if Python installation is not needed
 	bash bindings/python/install.bash
 fi
 
