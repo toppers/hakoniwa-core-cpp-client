@@ -1,0 +1,20 @@
+{
+  "robots": [
+    {
+      "name": "LiDAR2D",
+      "rpc_pdu_readers": [],
+      "rpc_pdu_writers": [],
+      "shm_pdu_readers": [],
+      "shm_pdu_writers": [
+        {
+          "type": "sensor_msgs/LaserScan",
+          "org_name": "scan",
+          "name": "LiDAR2D_scan",
+          "channel_id": 0,
+          "pdu_size": 6088,
+          "write_cycle": 5
+        }
+      ]
+    }
+  ]
+}
