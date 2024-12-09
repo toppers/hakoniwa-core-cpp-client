@@ -8,15 +8,14 @@ from pyqtgraph import PlotWidget, ScatterPlotItem
 import pyqtgraph as pg
 import hakopy
 import hako_pdu
-import time
-
-# データ用キュー
-data_queue = Queue(maxsize=1)
-pdu_manager = None
 
 class LidarVisualizer(QMainWindow):
-    def __init__(self):
+    def __init__(self, mgr):
         super().__init__()
+        self.start_time_usec = 1000000
+        self.data_queue = Queue(maxsize=1)
+        self.pdu_manager = mgr
+        self.scan_data = None
 
         self.setWindowTitle("Real-time LiDAR Data")
 
@@ -44,57 +43,29 @@ class LidarVisualizer(QMainWindow):
         self.timer.timeout.connect(self.update_plot)
         self.timer.start(100)  # Update every 100ms
 
+    def scan(self):
+        if hakopy.simulation_time() > self.start_time_usec:
+            pdu = self.pdu_manager.get_pdu("LiDAR2D", 0)
+            self.scan_data = pdu.read()
+
     def update_plot(self):
-        global data_queue
-        do_read_lidar_scan()
-        if not data_queue.empty():
-            # キューからデータを取得
-            data = data_queue.get()
-            ranges_data = data['ranges']
-            angle_min = data['angle_min']
-            angle_max = data['angle_max']
+        self.scan()
+        if self.scan_data is not None:
+            ranges_data = self.scan_data['ranges']
+            angle_min = np.rad2deg(self.scan_data['angle_min'])
+            angle_max = np.rad2deg(self.scan_data['angle_max'])
 
             if len(ranges_data) > 0:
                 angles = np.linspace(angle_min, angle_max, len(ranges_data))
                 angles_rad = np.deg2rad(angles)
                 x = np.array(ranges_data) * np.cos(angles_rad)
                 y = np.array(ranges_data) * np.sin(angles_rad)
-                self.scatter.setData(x, y, size=2)  # 点の大きさを調整
-
-def do_read_lidar_scan():
-    if hakopy.simulation_time() <= 1000000:
-        return
-    global pdu_manager, data_queue
-    pdu = pdu_manager.get_pdu("LiDAR2D", 0)
-    scan = pdu.read()
-    if scan:
-        # データの検証を追加
-        ranges = scan.get('ranges')
-        #print(f'ranges: {ranges}')
-        angle_min_raw = scan.get('angle_min')
-        angle_max_raw = scan.get('angle_max')
-
-        if ranges is None or angle_min_raw is None or angle_max_raw is None:
-            print("LiDAR data is incomplete or missing.")
-            return 0
-
-        if data_queue.full():
-            data_queue.get()  # 最古のデータを削除
-        data_queue.put({
-            'ranges': ranges,
-            'angle_min': np.rad2deg(angle_min_raw),
-            'angle_max': np.rad2deg(angle_max_raw)
-        })
-    else:
-        print("LiDAR data not available.")
-    return 0
-
+                self.scatter.setData(x, y, size=2)
 
 def main():
     if len(sys.argv) != 2:
         print(f"Usage: {sys.argv[0]} <config_path>")
         return 1
-    global pdu_manager
     asset_name = 'LidarPython'
     config_path = sys.argv[1]
     delta_time_usec = 20000
@@ -108,10 +79,10 @@ def main():
         return 1
 
     app = QApplication(sys.argv)
-    visualizer = LidarVisualizer()
+    visualizer = LidarVisualizer(pdu_manager)
     visualizer.show()
+    app.aboutToQuit.connect(hakopy.conductor_stop)
     sys.exit(app.exec_())
-    hakopy.conductor_stop()
     return 0
 
 if __name__ == "__main__":
