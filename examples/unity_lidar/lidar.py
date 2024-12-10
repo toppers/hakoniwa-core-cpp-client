@@ -8,6 +8,7 @@ from pyqtgraph import PlotWidget, ScatterPlotItem
 import pyqtgraph as pg
 import hakopy
 import hako_pdu
+import os
 
 class LidarVisualizer(QMainWindow):
     def __init__(self, mgr):
@@ -70,7 +71,8 @@ def main():
     config_path = sys.argv[1]
     delta_time_usec = 20000
 
-    pdu_manager = hako_pdu.HakoPduManager('/usr/local/lib/hakoniwa/hako_binary/offset', config_path)
+    hako_binary_path = os.getenv('HAKO_BINARY_PATH', '/usr/local/lib/hakoniwa/hako_binary/offset')
+    pdu_manager = hako_pdu.HakoPduManager(hako_binary_path, config_path)
     hakopy.conductor_start(delta_time_usec, delta_time_usec)
 
     ret = hakopy.init_for_external()
