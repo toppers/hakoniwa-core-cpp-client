@@ -317,7 +317,8 @@ static bool hako_asset_impl_execute(void)
         return false;
     }
     hako_time_t world_time = hako_asset_instance.hako_asset->get_worldtime();
-    if (hako_asset_instance.current_usec >= world_time) {
+    hako_time_t next_time = hako_asset_instance.current_usec + hako_asset_instance.delta_usec;
+    if (next_time > world_time) {
         return false;
     }
     if (hako_asset_instance.callback != NULL) {
@@ -325,7 +326,7 @@ static bool hako_asset_impl_execute(void)
             hako_asset_instance.callback->on_simulation_step(nullptr);
         }
     }
-    hako_asset_instance.current_usec += hako_asset_instance.delta_usec;
+    hako_asset_instance.current_usec = next_time;
     //std::cout << "# current_usec = " << hako_asset_instance.current_usec << std::endl;
 #ifdef ENABLE_HAKO_TIME_MEASURE
     //write csv
