@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef _WIN32
+#include <windows.h>
 static inline void usleep(long microseconds) {
     Sleep(microseconds / 1000);
 }
@@ -13,15 +14,18 @@ static inline void usleep(long microseconds) {
 
 static int my_on_initialize(hako_asset_context_t* context)
 {
+    (void)context;
     return 0;
 }
 static int my_on_reset(hako_asset_context_t* context)
 {
+    (void)context;
     return 0;
 }
 
 static int my_on_manual_timing_control(hako_asset_context_t* context)
 {
+    (void)context;
     Hako_Twist motor;
     Hako_Twist pos;
     printf("INFO: on_manual_timing_control enter\n");

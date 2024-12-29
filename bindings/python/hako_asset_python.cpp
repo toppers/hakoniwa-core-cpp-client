@@ -202,7 +202,7 @@ static PyObject* py_hako_asset_pdu_write(PyObject*, PyObject* args) {
         return NULL;
     }
     char* pdu_data = PyByteArray_AsString(py_pdu_data);
-    bool ret = hako_asset_pdu_write(robo_name, lchannel, pdu_data, len);
+    int ret = hako_asset_pdu_write(robo_name, lchannel, pdu_data, len);
     if (ret == 0) {
         return Py_BuildValue("O", Py_True);
     }

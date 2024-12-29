@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef _WIN32
+#include <windows.h>
 static inline void usleep(long microseconds) {
     Sleep(microseconds / 1000);
 }
@@ -13,6 +14,7 @@ static inline void usleep(long microseconds) {
 
 static int my_on_initialize(hako_asset_context_t* context)
 {
+    (void)context;
     printf("INFO: my_on_initialize enter\n");
     printf("INFO: sleep 1sec\n");
     usleep(1000*1000);
@@ -21,6 +23,7 @@ static int my_on_initialize(hako_asset_context_t* context)
 }
 static int my_on_reset(hako_asset_context_t* context)
 {
+    (void)context;
     printf("INFO: my_on_reset enter\n");
     printf("INFO: sleep 1sec\n");
     usleep(1000*1000);
@@ -29,6 +32,7 @@ static int my_on_reset(hako_asset_context_t* context)
 }
 static int my_on_simulation_step(hako_asset_context_t* context)
 {
+    (void)context;
     static unsigned int count = 0;
     Hako_UInt32 rvalue;
     Hako_UInt32 value;
