@@ -63,22 +63,29 @@ add_library(
     hakoarun
     src/hako_asset_runner.cpp
 )
+if (NOT WIN32)
+    set(PTHREAD_LIB -pthread)
+else()
+    set(PTHREAD_LIB "")
+endif()
 
+# 各ターゲットに適用
 target_link_libraries(
     hakoc 
     hako
-    -pthread
+    ${PTHREAD_LIB}
 )
 
 target_link_libraries(
     shakoc 
-    -pthread
+    ${PTHREAD_LIB}
     ${HAKO_PYTHON_LIBS}
 )
+
 target_link_libraries(
     hakoarun 
     hako
-    -pthread
+    ${PTHREAD_LIB}
 )
 
 target_include_directories(
