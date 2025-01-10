@@ -162,7 +162,7 @@ $$
 - 想定最大遅延幅
 
 $$
-d\prime_{max} = \max_{i = 1 \ldots n}(T_c\prime(t) - T_i(t))
+D\prime_{max} = \max_{i = 1 \ldots n}(T_c\prime(t) - T_i(t))
 $$
 
 - 確定新時刻
@@ -170,8 +170,8 @@ $$
 $$
 T_c(t)  =
 \begin{cases}
-T_c\prime(t)  & (d\prime_{max}  \leq D_{max} の時) \ldots 進行 \\
-T_c(t - \Delta t_c) & (d\prime_{max} \gt D_{max} の時) \ldots 停留
+T_c\prime(t)  & (D\prime_{max}  \leq D_{max} の時) \ldots 進行 \\
+T_c(t - \Delta t_c) & (D\prime_{max} \gt D_{max} の時) \ldots 停留
 \end{cases}
 $$
 
