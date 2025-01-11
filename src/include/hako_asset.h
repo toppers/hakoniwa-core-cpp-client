@@ -29,6 +29,7 @@ extern hako_time_t hako_asset_simulation_time(void);
 extern int hako_asset_usleep(hako_time_t sleep_time_usec);
 
 extern int hako_initialize_for_external(void);
+extern int hako_asset_pdu_create(const char *robo_name, HakoPduChannelIdType lchannel, size_t pdu_size);
 
 #ifdef __cplusplus
 }

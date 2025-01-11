@@ -210,6 +210,23 @@ static PyObject* py_hako_asset_pdu_write(PyObject*, PyObject* args) {
         return Py_BuildValue("O", Py_False);
     }
 }
+static PyObject* py_hako_asset_pdu_create(PyObject*, PyObject* args) {
+    const char* robo_name;
+    HakoPduChannelIdType lchannel;
+    size_t pdu_size;
+
+    if (!PyArg_ParseTuple(args, "siL", &robo_name, &lchannel, &pdu_size)) {
+        return NULL;
+    }
+
+    int result = hako_asset_pdu_create(robo_name, lchannel, pdu_size);
+
+    if (result == 0) {
+        Py_RETURN_TRUE;
+    } else {
+        Py_RETURN_FALSE;
+    }
+}
 static PyObject* py_hako_conductor_start(PyObject*, PyObject* args) {
     hako_time_t delta_usec, max_delay_usec;
 
@@ -241,6 +258,7 @@ static PyObject* py_init_for_external(PyObject*, PyObject*) {
 static PyMethodDef hako_asset_python_methods[] = {
     {"asset_register", asset_register, METH_VARARGS, "Register asset"},
     {"init_for_external", py_init_for_external, METH_NOARGS, "Initialize for external"},
+    {"pdu_create", py_hako_asset_pdu_create, METH_VARARGS, "Create PDU data for the specified robot name and channel ID."},
     {"start", py_hako_asset_start, METH_VARARGS, "Start the asset."},
     {"simulation_time", py_hako_asset_simulation_time, METH_NOARGS, "Get the current simulation time."},
     {"usleep", py_hako_asset_usleep, METH_VARARGS, "Sleep for the specified time in microseconds."},

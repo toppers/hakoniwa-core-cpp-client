@@ -45,6 +45,10 @@ int hako_initialize_for_external(void)
     std::cout << "INFO: Success for external initialization." << std::endl;
     return 0;
 }
+int hako_asset_pdu_create(const char *robo_name, HakoPduChannelIdType lchannel, size_t pdu_size)
+{
+    return hako_asset_impl_pdu_create(robo_name, lchannel, pdu_size);
+}
 int hako_asset_start(void) {
     if (hako_asset_instance.is_initialized == false) {
         std::cerr << "Error: not initialized." << std::endl;
