@@ -215,6 +215,13 @@ ls ./final_results.csv
 
 ## 基準2のグラフ化方法
 
+グラフ生成のスクリプトを実行するために以下のモジュールをインストールします。
+
+```
+pip install pandas
+pip install matplotlib
+```
+
 ### 箱庭アセット数×総処理時間
 
 ```
