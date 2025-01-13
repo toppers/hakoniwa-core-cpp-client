@@ -13,6 +13,7 @@ parser.add_argument('--duration', type=int, required=False, default=-1, help='Du
 parser.add_argument('--csv-dir', type=str, required=False, default='./', help='Directory containing the CSV files')
 parser.add_argument('--stddev-only', action='store_true', help='Output only the standard deviation mean')
 parser.add_argument('--mean-only', action='store_true', help='Output only the mean value of core time - asset time')
+parser.add_argument('--out-file', type=str, help='Plot file name(PDF)')
 
 args = parser.parse_args()
 
@@ -68,8 +69,8 @@ for i in range(0, args.multi_num):
         if i == args.multi_num - 1:
             print(f'{args.start} {end_time}')
             plt.plot([args.start, end_time], [args.start, end_time], label='base', color='red', linestyle='--', linewidth=2)
-        plt.xlabel('Asset Time')  # x軸のラベル
-        plt.ylabel('Core Time')   # y軸のラベル
+        plt.xlabel('The time of each asset [ms]')  # x軸のラベル
+        plt.ylabel('The time of hakoniwa core time to be synchronized [ms]')   # y軸のラベル
     elif args.type == 'time':
         x_value = core_time
         y_value = core_time - asset_time
@@ -113,8 +114,13 @@ if means:
 
 # すべてのアセットをプロットした後にグラフを表示
 if not args.stddev_only and not args.mean_only:
-    plt.title('hako-time graph')
+    # plt.title('hako-time graph')
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
+    # グラフをベクタ画像形式で保存
+    if args.out_file:
+        output_file = args.out_file
+        plt.savefig(output_file, format='pdf')
+    else:
+        plt.show()

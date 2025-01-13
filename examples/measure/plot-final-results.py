@@ -7,6 +7,7 @@ parser = argparse.ArgumentParser(description='Plot final results data')
 parser.add_argument('--csv-file', type=str, required=True, help='Path to the CSV file containing the final results data')
 parser.add_argument('--plot-type', choices=['elapse-vs-multi', 'stddev-vs-multi', 'stddev-vs-elapse', 'mean-vs-multi'], required=True, help='Type of plot to generate')
 parser.add_argument('--multi-num', type=int, help='Specify the multi-num (only for stddev-vs-elapse plot)')
+parser.add_argument('--out-file', type=str, help='Plot file name(PDF)')
 args = parser.parse_args()
 
 # CSVファイルを読み込む
@@ -28,9 +29,9 @@ if args.plot_type == 'elapse-vs-multi':
     for delay in sorted(df['max-delay'].unique()):
         subset = df[df['max-delay'] == delay].sort_values(by='multi-num')  # multi-numでソート
         plt.errorbar(subset['multi-num'], subset['elapse_mean'], yerr=subset['elapse_std'], marker='o', label=f'max-delay={delay}')
-    plt.xlabel('multi-num')
-    plt.ylabel('elapse mean (± std)')
-    plt.title('Elapse Mean vs Multi-num with Stddev for different max-delay values')
+    plt.xlabel('Hakoniwa assets [num]')
+    plt.ylabel('The average total processing time [s]')
+    # plt.title('Elapse Mean vs Multi-num with Stddev for different max-delay values')
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
@@ -41,9 +42,9 @@ elif args.plot_type == 'stddev-vs-multi':
     for delay in sorted(df['max-delay'].unique()):
         subset = df[df['max-delay'] == delay].sort_values(by='multi-num')  # multi-numでソート
         plt.errorbar(subset['multi-num'], subset['stddev_mean'], yerr=subset['stddev_std'], marker='o', label=f'max-delay={delay}')
-    plt.xlabel('multi-num')
-    plt.ylabel('stddev mean (± std)')
-    plt.title('Stddev Mean vs Multi-num with Stddev for different max-delay values')
+    plt.xlabel('Hakoniwa assets [num]')
+    plt.ylabel('The standard deviation of delay time')
+    # plt.title('Stddev Mean vs Multi-num with Stddev for different max-delay values')
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
@@ -60,9 +61,9 @@ elif args.plot_type == 'stddev-vs-elapse':
         subset = df[df['max-delay'] == delay].sort_values(by='elapse_mean')  # elapse_meanでソート
         plt.errorbar(subset['elapse_mean'], subset['stddev_mean'], xerr=subset['elapse_std'], yerr=subset['stddev_std'], fmt='o', label=f'max-delay={delay}')
     
-    plt.xlabel('elapse mean (± std)')
-    plt.ylabel('stddev mean (± std)')
-    plt.title(f'Stddev Mean vs Elapse Mean for multi-num={args.multi_num}' if args.multi_num is not None else 'Stddev Mean vs Elapse Mean for different max-delay values')
+    plt.xlabel('The average total processing time [s]')
+    plt.ylabel('The standard deviation of delay time')
+    # plt.title(f'Stddev Mean vs Elapse Mean for multi-num={args.multi_num}' if args.multi_num is not None else 'Stddev Mean vs Elapse Mean for different max-delay values')
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
@@ -80,5 +81,11 @@ elif args.plot_type == 'mean-vs-multi':
     plt.grid(True)
     plt.tight_layout()
 
-# グラフを表示
-plt.show()
+
+# グラフをベクタ画像形式で保存
+if args.out_file:
+    output_file = args.out_file
+    plt.savefig(output_file, format='pdf')
+else:
+    # グラフを表示
+    plt.show()
