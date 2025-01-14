@@ -413,7 +413,7 @@ bool hako_asset_impl_step(hako_time_t increment_step)
 bool hako_asset_impl_pdu_read(const char* robo_name, HakoPduChannelIdType lchannel, char* buffer, size_t buffer_len)
 {
     if (hako_asset_instance.external_use) {
-        return hako_asset_instance.hako_asset->read_pdu_nolock(robo_name, lchannel, buffer, buffer_len);
+        return hako_asset_instance.hako_asset->read_pdu_for_external(robo_name, lchannel, buffer, buffer_len);
     }
     bool ret = hako_asset_instance.hako_asset->read_pdu(hako_asset_instance.asset_name_str, robo_name, lchannel, buffer, buffer_len);
     if (ret == false) {
@@ -425,7 +425,7 @@ bool hako_asset_impl_pdu_read(const char* robo_name, HakoPduChannelIdType lchann
 bool hako_asset_impl_pdu_write(const char* robo_name, HakoPduChannelIdType lchannel, const char* buffer, size_t buffer_len)
 {
     if (hako_asset_instance.external_use) {
-        return hako_asset_instance.hako_asset->write_pdu_nolock(robo_name, lchannel, buffer, buffer_len);
+        return hako_asset_instance.hako_asset->write_pdu_for_external(robo_name, lchannel, buffer, buffer_len);
     }
     bool ret = hako_asset_instance.hako_asset->write_pdu(hako_asset_instance.asset_name_str, robo_name, lchannel, buffer, buffer_len);
     if (ret == false) {
