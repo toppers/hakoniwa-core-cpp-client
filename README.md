@@ -956,3 +956,7 @@ Windows 向け箱庭コア機能のパッケージング構成は以下の通り
 - HAKO_BINARY_PATH : <パッケージングディレクトリ>/hako_binary/offset
 - PATH : <パッケージングディレクトリ>
 - PYTHONPATH : <パッケージングディレクトリ>
+
+パッケージ全体構成図：
+<img width="996" alt="スクリーンショット 2025-02-27 7 25 04" src="https://github.com/user-attachments/assets/335bf959-c739-433d-953d-b1e45fd8e0a1" />
+
