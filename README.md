@@ -937,3 +937,22 @@ PDUデータに関する各設定項目の定義は以下の通りです。
   * SHM: 共有メモリ
   * UDP: UDP通信
   * MQTT: MQTT通信
+
+# Windows 向け箱庭コア機能のパッケージング構成
+
+Windows 向け箱庭コア機能のパッケージング構成は以下の通りです。
+
+- <パッケージングディレクトリ>
+  - hako-cmd.exe : 箱庭コマンド(Power Shellでのデバッグ用)
+  - shakoc.dll : 箱庭コア機能のDLLであり、主に Unity プラグインとして利用する
+  - hakopy.pyd : 箱庭コア機能のPythonラッパー
+  - hako_pdu.py : 箱庭PDUアクセス用のPythonライブラリ
+  - hako_binary : 箱庭PDUアクセス用のPythonのサブライブラリ群と箱庭PDUのデータ定義ファイル(offset配下)
+  - cpp_core_config.json : 箱庭コア機能の設定ファイル
+
+環境変数の設定は以下の通りです。
+
+- HAKO_CONFIG_PATH : <パッケージングディレクトリ>/cpp_core_config.json
+- HAKO_BINARY_PATH : <パッケージングディレクトリ>/hako_binary/offset
+- PATH : <パッケージングディレクトリ>
+- PYTHONPATH : <パッケージングディレクトリ>
