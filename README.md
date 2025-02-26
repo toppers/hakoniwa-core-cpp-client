@@ -960,3 +960,12 @@ Windows 向け箱庭コア機能のパッケージング構成は以下の通り
 パッケージ全体構成図：
 <img width="996" alt="スクリーンショット 2025-02-27 7 25 04" src="https://github.com/user-attachments/assets/335bf959-c739-433d-953d-b1e45fd8e0a1" />
 
+パッケージ対象ファイルのビルド配置場所：
+
+- hako-cmd.exe : out/build/x64-Release/core/sample/base-procs/hako-cmd/hako-cmd.exe
+- shakoc.dll : out/build/x64-Release/src/hakoc/shakoc.dll
+- hakopy.pyd : out/build/x64-Release/bindings/python/hako_asset_python.dll
+  - hako_asset_python.dll を hakopy.pyd にリネームします
+- hako_pdu.py : bindings/python/hako_pdu.py
+- hako_binary : bindings/python/hako_binary
+- cpp_core_config.json : core/cpp_core_config.json
