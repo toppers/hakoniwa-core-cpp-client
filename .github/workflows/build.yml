@@ -47,12 +47,12 @@ jobs:
 
       - name: Hakoniwa-core archive
         if: matrix.os == 'windows-latest'
-        shell: bash
+        shell: pwsh
         run: |
           bash install.bash
-          tar -czf hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz ../local/bin/hakoniwa ../local/lib/hakoniwa ../local/include/hakoniwa ../hakoniwa
-          ls -la
-          echo "ARTIFACT_ARCHIVE_PATH=hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.tar.gz" >> $GITHUB_ENV
+          Compress-Archive -Path "..\local\bin\hakoniwa","..\local\lib\hakoniwa","..\local\include\hakoniwa","..\hakoniwa" -DestinationPath "hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.zip"
+          ls
+          echo "ARTIFACT_ARCHIVE_PATH=hakoniwa-core-cpp-client_${{ env.OS_NAME }}_${{ env.OS_ARCH }}.zip" >> $env:GITHUB_ENV
   
       - name: Artifact Name for ubuntu
         if: matrix.os == 'ubuntu-latest'
