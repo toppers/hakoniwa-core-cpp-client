@@ -1,0 +1,2 @@
+single:struct:boundary_point:geometry_msgs/Point:0:24
+single:struct:boundary_normal:geometry_msgs/Vector3:24:24

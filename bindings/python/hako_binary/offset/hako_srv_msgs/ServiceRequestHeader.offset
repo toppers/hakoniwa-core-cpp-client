@@ -1,0 +1,5 @@
+single:primitive:request_id:uint32:0:4
+single:primitive:service_name:string:4:128
+single:primitive:client_name:string:132:128
+single:primitive:opcode:uint8:260:1
+single:primitive:status_poll_interval_msec:int32:264:4
