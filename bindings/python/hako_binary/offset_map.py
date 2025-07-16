@@ -3,7 +3,7 @@
 import glob
 import json
 import sys
-from hako_binary import offset_parser
+from . import offset_parser
 
 class OffsetMap:
     def __init__(self, offset_path):
@@ -16,6 +16,22 @@ class OffsetMap:
             lines = offset_parser.parse_offset(filepath)
             self.map[typename] =  lines
         return self.map[typename]
+
+    def align8(self, value):
+        return ((value + 7) // 8) * 8
+
+    def get_pdu_size(self, typename):
+        lines = self.get(typename)
+        size = 0
+        last_line = lines[-1]
+        last_offset = offset_parser.member_off(last_line)
+        if (offset_parser.is_varray(last_line)):
+            last_size = 8  # len + off
+        else:
+            last_size = offset_parser.member_size(last_line)
+
+        size = self.align8(last_offset + last_size + 8)
+        return size
 
     def find_filepath(self, path, filename):
         f_array = filename.split('/')

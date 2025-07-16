@@ -40,9 +40,20 @@ def binTofloat32(binary):
 def binTofloat64(binary):
     return struct.unpack('d', binary)[0]
 
-def binTostring(binary):
-    return binary.decode().replace('\0', '')
-    #return "Not Supported.."
+def binTostring(binary, max_len=128):
+    try:
+        sub = binary[:max_len]
+        end = sub.find(b'\0')
+        if end == -1:
+            end = max_len
+        return sub[:end].decode('utf-8')
+    except UnicodeDecodeError as e:
+        print("UnicodeDecodeError:")
+        print(f"  ERROR: {e}")
+        print(f"  RAW DATA: {binary}")
+        print(f"  HEXDUMP: {' '.join(f'{b:02x}' for b in binary)}")
+        raise e
+
 
 
 def int8Tobin(arg):
@@ -162,6 +173,46 @@ def binToArrayValues(type, arg):
         return struct.unpack(f'<{len(arg)//8}d', arg)
     else:
         return None
+
+def typeTobin_array(type, values, elm_size=None):
+    count = len(values)
+    if type == "int8":
+        return struct.pack(f'<{count}b', *values)
+    elif type == "uint8":
+        return struct.pack(f'<{count}B', *values)
+    elif type == "int16":
+        return struct.pack(f'<{count}h', *values)
+    elif type == "uint16":
+        return struct.pack(f'<{count}H', *values)
+    elif type == "int32":
+        return struct.pack(f'<{count}i', *values)
+    elif type == "bool":
+        return struct.pack(f'<{count}i', *values)
+    elif type == "uint32":
+        return struct.pack(f'<{count}I', *values)
+    elif type == "int64":
+        return struct.pack(f'<{count}q', *values)
+    elif type == "uint64":
+        return struct.pack(f'<{count}Q', *values)
+    elif type == "float32":
+        return struct.pack(f'<{count}f', *values)
+    elif type == "float64":
+        return struct.pack(f'<{count}d', *values)
+    elif type == "string":
+        if elm_size is None:
+            raise ValueError("elm_size required for string array")
+        binaries = []
+        for val in values:
+            raw = val.encode('utf-8') + b'\x00'
+            if len(raw) > elm_size:
+                raw = raw[:elm_size]
+            buffer = bytearray(elm_size)
+            buffer[:len(raw)] = raw
+            binaries.append(buffer)
+        return b''.join(binaries)
+    else:
+        raise ValueError(f"typeTobin_array: Unsupported type {type}")
+
 
 def writeBinary(binary_data, off, bin):
     i = 0
