@@ -1,0 +1,49 @@
+# Doxyfile template configured by CMake
+# Generated from docs/Doxyfile.in
+
+# Project
+PROJECT_NAME           = "@PROJECT_NAME@"
+PROJECT_NUMBER         = "@PROJECT_VERSION@"
+PROJECT_BRIEF          = "hakoniwa-core-cpp-client API documentation"
+
+# Input
+INPUT                  = @DOXYGEN_INPUT_DIRS_STR@
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.hpp *.hh *.hxx *.c *.cc *.cpp *.cxx *.dox *.md
+EXCLUDE_PATTERNS       = */.git/* */cmake-build/* */build/* */_deps/* */third_party/*
+
+# Output
+OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_BINARY_DIR@/docs"
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+GENERATE_XML           = YES
+XML_OUTPUT             = xml
+
+# General
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = NO
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
+MARKDOWN_SUPPORT       = YES
+USE_MDFILE_AS_MAINPAGE = @PROJECT_SOURCE_DIR@/docs/mainpage.md
+FULL_PATH_NAMES        = YES
+STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@
+EXTRACT_ALL            = YES
+
+# Warnings
+WARN_IF_UNDOCUMENTED   = NO
+WARNINGS               = YES
+QUIET                  = YES
+
+# Diagrams
+HAVE_DOT               = NO
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+
+# Misc
+GENERATE_TREEVIEW      = YES
+MULTILINE_CPP_IS_BRIEF = YES
+TAB_SIZE               = 4
+CASE_SENSE_NAMES       = NO
+ALIASES                =

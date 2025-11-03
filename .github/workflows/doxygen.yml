@@ -1,0 +1,55 @@
+name: Generate Doxygen Documentation
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Doxygen
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get install -y cmake build-essential python3-dev
+
+      - name: Configure CMake with documentation enabled
+        run: |
+          cmake -S . -B cmake-build \
+            -DBUILD_DOCS=ON \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Doxygen documentation
+        run: |
+          cmake --build cmake-build --target docs
+
+      - name: Copy docs for local testing (act only)
+        if: ${{ env.ACT }}
+        run: |
+          mkdir -p /tmp/act-artifacts
+          cp -r cmake-build/docs/html /tmp/act-artifacts/doxygen-html
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: doxygen-html-${{ github.ref_name }}
+          path: cmake-build/docs/html
+          retention-days: 7
+
+      - name: Upload XML documentation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: doxygen-xml-${{ github.ref_name }}
+          path: cmake-build/docs/xml
+          retention-days: 7
