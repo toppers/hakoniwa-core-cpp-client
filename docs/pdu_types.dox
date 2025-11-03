@@ -1,0 +1,26 @@
+/*! \file pdu_types.dox
+    \brief 箱庭PDUのデータ型をまとめたトピック定義。
+*/
+
+/** \defgroup pdu_types PDU Data Types
+ *  箱庭(Hakoniwa)におけるPDU関連のデータ型をまとめたトピックです。
+ *  代表的には以下の構造体があります。
+ *  - hako::asset::PduReader
+ *  - hako::asset::PduWriter
+ *  - hako::asset::Robot
+ */
+
+/** \class hako::asset::PduReader
+ *  \ingroup pdu_types
+ *  \brief PDUを読み取る側の設定を表す構造体。
+ */
+
+/** \class hako::asset::PduWriter
+ *  \ingroup pdu_types
+ *  \brief PDUへ書き込む側の設定を表す構造体。
+ */
+
+/** \class hako::asset::Robot
+ *  \ingroup pdu_types
+ *  \brief ロボット単位のPDU設定を表す構造体。
+ */

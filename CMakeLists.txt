@@ -59,4 +59,41 @@ endif()
 #    add_subdirectory(test)
 #endif()
 
+# ---------------------------------------------
+# Documentation (Doxygen)
+# ---------------------------------------------
+option(BUILD_DOCS "Enable building API documentation with Doxygen" OFF)
+if(BUILD_DOCS)
+    find_package(Doxygen QUIET)
+    if(DOXYGEN_FOUND)
+        set(DOXYGEN_INPUT_DIRS
+            "${PROJECT_SOURCE_DIR}/src"
+            "${PROJECT_SOURCE_DIR}/src/include"
+            "${PROJECT_SOURCE_DIR}/core/src"
+            "${PROJECT_SOURCE_DIR}/core/src/include"
+            "${PROJECT_SOURCE_DIR}/docs"
+        )
+        # Doxygen expects space-separated paths, not semicolon-separated lists
+        string(REPLACE ";" " " DOXYGEN_INPUT_DIRS_STR "${DOXYGEN_INPUT_DIRS}")
+
+        # Configure Doxyfile from template
+        set(DOXYFILE_IN "${PROJECT_SOURCE_DIR}/docs/Doxyfile.in")
+        set(DOXYFILE_OUT "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile")
+        set(PROJECT_VERSION "${PROJECT_VERSION}")
+    configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
+
+        add_custom_target(docs
+            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Generating API documentation with Doxygen"
+            VERBATIM
+        )
+
+        add_custom_target(doc DEPENDS docs)
+        message(STATUS "Doxygen found. 'docs' target is available.")
+    else()
+        message(WARNING "Doxygen not found. Set BUILD_DOCS=OFF or install Doxygen to build documentation.")
+    endif()
+endif()
+
 
