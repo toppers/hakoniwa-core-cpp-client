@@ -1,11 +1,13 @@
 # 変更履歴
 
-**このドキュメントが最新版です**
+**このドキュメントは移動されています**
+
 
 - (Version 3.1) https://github.com/toppers/hakoniwa-px4sim/issues/340 , issue #69 箱庭時刻同期の数学的証明より移動
 - (Version 3.2) https://github.com/toppers/hakoniwa-core-cpp-client/issues/69#issue-2541993494 より移動
 - (Version 4.0) https://github.com/toppers/hakoniwa-paper/tree/main/robosym2025 高瀬先生により論文化される（そこからのフィードバック戻し）
 - (Version 4.1) 査読結果を一部反映
+- (Version 5.1) 複数Federate対応 -------> https://github.com/hakoniwalab/hakoniwa-design-docs/
 
 #   概要
 
@@ -263,22 +265,21 @@ $$
 # 多段拡張
 
 コアとアセット（複数）の組み（同一ノードで動くケースが多く、HLAから用語を借りてFederateと呼ぶ）が複数あり、それらがツリー状に親子関係を有している場合に拡張する。
-Federateのツリーは、トップを1として、その子を11, 12, ...、11の子を111, 112, ... 12の子を121, 122, ...と番号づける。Federate には必ず1つのコアが存在する。
 
 Federate同士の時刻調停は、そのコア同士で行われる。1対の親子ペアにおいて、親のコア時刻を $T_c^{parent}$、子のコア時刻を $T_c^{child}$ と表記する。
-常に $T_c^{parent}$ が $T_c^{child}$ より進んでおり、かつ $d_{max}$ 以上先に進まない状態を維持するように時刻を交換する。
-（親Federateはコア時刻 $T_c^{parent}$ を、子Federateは最も遅れているアセット時刻 $\min T_i^{child}$ を交換？、以下はコア時刻同士を交換）
+親子関係にある２つのFederateのコアの同士は、上記で考察したコアとアセットの関係同様、常に $T_c^{parent}$ が $T_c^{child}$ より進んでおり、かつ $D_{max}$ 以上先に進まない状態を維持するように時刻を交換する。
+
 親Federateのコアは、自身のアセットと同様に子Federateを扱い、前述の時刻更新規則に従えば、次の２式が常に保たれる。
 
 $$
-T_c^{child} \leq T_c^{parent} \leq T_c^{child} + d_{max} \ldots 親Federate内
+T_c^{child} \leq T_c^{parent} \leq T_c^{child} + d_{max} \ldots 親Federate内の時刻関係
 $$
 
 $$
-\max T_i^{child} \leq T_c^{child} \leq \min T_i^{child} + d_{max} \ldots 子Federate内
+\max T_i^{child} \leq T_c^{child} \leq \min T_i^{child} + d_{max} \ldots 子Federate内の時刻関係
 $$
 
-両式を二つに分けて、さらに辺々加えて、「子Federateの最遅アセット」と「親のコア」の時刻のずれは、
+両式を左右二つに分けて、さらにそれぞれを辺々加えて、「子のコア」と「親のコア」の時刻のずれは、
 
 $$
 \max T_i^{child} \leq T_c^{parent} \leq \min T_i^{child} + 2d_{max}
@@ -286,25 +287,25 @@ $$
 
 を得る。すなわち、
 
-- 親Federateコア時刻はどの子Federateのアセットより時刻が進んでおり、子Federateのどのアセットの遅れは、親Ferateのコア時刻より $2d_{max}$ を超えない。
+- 親コア時刻はどの子コアより時刻が進んでおり、子Federateのアセットの遅れは、親コア時刻から $2D_{max}$ を超えない。
 
-また、これによって親子階層を $n$ 層にしても、先頭と最後尾は $n*d_{max}$以内に収まる。すなわち、
+また、これによって親子階層を $n$ 層にしても、先頭（最上位親コア）と最後尾（最下位子アセット）は $n Dd_{max}$以内に収まる。すなわち、
 
-- どの階層のどのアセットのペア $(i, j)$ を選んでも、シミュレーション時刻差は最大許容時間の $n$ （階層数）倍以内である。
+- どの階層のどのアセットのペア $(i, j)$ を選んでも、シミュレーション時刻差は最大許容時間 $D_{max}$ の $n$ （階層数）倍以内である。
 
 $$
 | T_i(t) - T_j(t) | \leq n*D_{max}  \quad  for \quad \forall i, j
 $$
 
 
-ドローンを $N$ 台をFederate（ $k$ アセットを持つ）で階層分散する場合、階層数は $n = \log_k N$となるため、
+アセット $N$ 個を最上位から（ $k$ 本の枝を持つ）Federateで階層分散する場合、階層数は $n = \log_k N$となるため、
 遅延時間は、
 
 $$
 n*d_{max} = d_{max} \log_k N
 $$
 
-であり、 $O(\log N)$ で有効にスケールするモデルとなっている。
+であり、総アセット数 $N$ に対して遅延時間 $O(\log N)$ で有効にスケールするモデルとなっている。
 （※　ちなみに、子Federateが最後尾を報告すれば、 全体で$d_{max}$ 内に収まる。）
 
 # 実験結果
