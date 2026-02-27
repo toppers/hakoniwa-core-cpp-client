@@ -1,13 +1,13 @@
 # 変更履歴
 
-**このドキュメントは移動されています**
-
+**このドキュメントの最新は移動されています**
+https://github.com/hakoniwalab/hakoniwa-design-docs/blob/main/src/math/hakoniwa-time.md
 
 - (Version 3.1) https://github.com/toppers/hakoniwa-px4sim/issues/340 , issue #69 箱庭時刻同期の数学的証明より移動
 - (Version 3.2) https://github.com/toppers/hakoniwa-core-cpp-client/issues/69#issue-2541993494 より移動
 - (Version 4.0) https://github.com/toppers/hakoniwa-paper/tree/main/robosym2025 高瀬先生により論文化される（そこからのフィードバック戻し）
 - (Version 4.1) 査読結果を一部反映
-- (Version 5.1) 複数Federate対応 -------> https://github.com/hakoniwalab/hakoniwa-design-docs/
+- (Version 5.1) 複数Federate対応（移動） -------> https://github.com/hakoniwalab/hakoniwa-design-docs/blob/main/src/math/hakoniwa-time.md
 
 #   概要
 
